@@ -3,45 +3,32 @@ package com.example.diceless
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.diceless.common.enums.PositionEnum
+import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.ui.playergrid.IndividualGrid
 import com.example.diceless.ui.theme.DicelessTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContent {
             DicelessTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+//                val viewModel = BattlegridViewModel()
+                val players = listOf(
+                    PlayerData(name ="Jogador 1", playerPosition = PositionEnum.PLAYER_ONE),
+                    PlayerData(name ="Jogador 2", playerPosition = PositionEnum.PLAYER_TWO),
+                    PlayerData(name = "Jogador 3", playerPosition = PositionEnum.PLAYER_THREE),
+                    PlayerData(name ="Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
+                )
+
+                val schemeEnum = SchemeEnum.TRIPLE_STANDARD
+                IndividualGrid(
+                    players = players,
+                    schemeEnum = schemeEnum
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DicelessTheme {
-        Greeting("Android")
     }
 }
