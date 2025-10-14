@@ -14,11 +14,13 @@ import androidx.compose.ui.draw.rotate
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 
 @Composable
 fun LifeGrid(
     playerData: PlayerData,
-    rotation: RotationEnum = RotationEnum.NONE
+    rotation: RotationEnum = RotationEnum.NONE,
+    onAction: (BattleGridActions) -> Unit // Recebendo a função!
 ) {
     when (rotation) {
         RotationEnum.NONE -> {
@@ -30,7 +32,9 @@ fun LifeGrid(
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life -= 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeDecreased(playerData))
+                            }
                         )
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight()
@@ -40,7 +44,9 @@ fun LifeGrid(
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life += 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeIncreased(playerData))
+                            }
                         )
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight()
@@ -60,13 +66,14 @@ fun LifeGrid(
         RotationEnum.INVERTED -> {
             Box(
                 modifier = Modifier
-                    .rotate(rotation.degrees)
                     .fillMaxSize(),
             ) {
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life -= 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeDecreased(playerData))
+                            }
                         )
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight()
@@ -76,7 +83,9 @@ fun LifeGrid(
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life += 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeIncreased(playerData))
+                            }
                         )
                         .fillMaxWidth(0.5f)
                         .fillMaxHeight()
@@ -84,9 +93,11 @@ fun LifeGrid(
                 ){}
 
                 Text(
-                    modifier = Modifier.align(
-                        alignment = Alignment.Center
-                    ),
+                    modifier = Modifier
+                        .rotate(rotation.degrees)
+                        .align(
+                            alignment = Alignment.Center
+                        ),
                     text = "${playerData.life}",
                     style = MaterialTheme.typography.headlineLarge
                 )
@@ -97,7 +108,9 @@ fun LifeGrid(
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life -= 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeDecreased(playerData))
+                            }
                         )
                         .fillMaxWidth()
                         .fillMaxHeight(0.5f)
@@ -107,7 +120,9 @@ fun LifeGrid(
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life += 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeIncreased(playerData))
+                            }
                         )
                         .fillMaxWidth()
                         .fillMaxHeight(0.5f)
@@ -130,7 +145,9 @@ fun LifeGrid(
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life -= 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeDecreased(playerData))
+                            }
                         )
                         .fillMaxWidth()
                         .fillMaxHeight(0.5f)
@@ -140,7 +157,9 @@ fun LifeGrid(
                 Box(
                     modifier = Modifier
                         .clickable(
-                            onClick = { playerData.life += 1 }
+                            onClick = {
+                                onAction(BattleGridActions.OnLifeIncreased(playerData))
+                            }
                         )
                         .fillMaxWidth()
                         .fillMaxHeight(0.5f)

@@ -1,4 +1,4 @@
-package com.example.diceless.ui.playergrid
+package com.example.diceless.ui.battlegrid
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,25 +13,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.ui.battlegrid.viewmodel.BattleGridViewModel
 import com.example.diceless.ui.playergrid.components.pager.InnerHorizontalPager
 import com.example.diceless.ui.playergrid.components.pager.InnerVerticalPager
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 
 @Composable
-fun IndividualGrid(
-    players: List<PlayerData> = emptyList(),
-    schemeEnum: SchemeEnum = SchemeEnum.QUADRA_STANDARD
+fun BattleGridScreen(
+    viewmodel: BattleGridViewModel = hiltViewModel()
+){
+    val state by viewmodel.state.collectAsState()
+
+    BattleGridContent(
+        players = state.players,
+        selectedScheme = state.selectedScheme,
+        onAction = viewmodel::onAction
+    )
+}
+
+@Composable
+fun BattleGridContent(
+    players: List<PlayerData>,
+    selectedScheme: SchemeEnum,
+    onAction: (BattleGridActions) -> Unit//(player: PlayerData, amount: Int) -> Unit
 ){
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         // Posiciona cada PlayerGrid em um quadrante
         players.forEachIndexed { index, playerState ->
-            val orientation = getCorrectOrientation(playerState.playerPosition, scheme = schemeEnum)
+            val orientation = getCorrectOrientation(playerState.playerPosition, scheme = selectedScheme)
 
             orientation?.let {
                 Card(
@@ -45,6 +64,7 @@ fun IndividualGrid(
                         players = players,
                         playerData = playerState,
                         rotation = orientation.rotation,
+                        onAction = onAction
                     )
                 }
             }
@@ -54,10 +74,11 @@ fun IndividualGrid(
 
 @Composable
 fun IndividualGridContent(
+    modifier: Modifier = Modifier,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
-    modifier: Modifier = Modifier
+    onAction: (BattleGridActions) -> Unit
 ) {
     Card(
         modifier = modifier
@@ -69,10 +90,10 @@ fun IndividualGridContent(
         Box {
             when(rotation){
                 RotationEnum.NONE, RotationEnum.INVERTED -> {
-                    InnerHorizontalPager(players, playerData, rotation)
+                    InnerHorizontalPager(players, playerData, rotation, onAction)
                 }
                 RotationEnum.RIGHT, RotationEnum.LEFT -> {
-                    InnerVerticalPager(players, playerData, rotation)
+                    InnerVerticalPager(players, playerData, rotation, onAction)
                 }
             }
         }
@@ -91,8 +112,9 @@ fun PreviewStubView() {
 
     val schemeEnum = SchemeEnum.QUADRA_STANDARD
 
-    IndividualGrid(
+    BattleGridContent(
         players = players,
-        schemeEnum = schemeEnum
+        selectedScheme = schemeEnum,
+        onAction = {}
     )
 }

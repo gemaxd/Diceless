@@ -6,9 +6,11 @@ import androidx.activity.compose.setContent
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.ui.playergrid.IndividualGrid
+import com.example.diceless.ui.battlegrid.BattleGridScreen
 import com.example.diceless.ui.theme.DicelessTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,10 +26,7 @@ class MainActivity : ComponentActivity() {
                 )
 
                 val schemeEnum = SchemeEnum.TRIPLE_STANDARD
-                IndividualGrid(
-                    players = players,
-                    schemeEnum = schemeEnum
-                )
+                BattleGridScreen()
             }
         }
     }
