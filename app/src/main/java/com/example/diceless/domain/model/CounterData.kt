@@ -18,7 +18,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 data class CounterData(
     var icon: ImageVector,
     var toggleValue: Boolean?,
-    var value: Int?
+    var value: Int?,
+    var isSelected: Boolean = false
 ){
     fun isToggle() = this.toggleValue != null
 }
