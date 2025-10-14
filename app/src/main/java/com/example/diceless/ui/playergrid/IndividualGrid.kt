@@ -18,12 +18,8 @@ import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.ui.playergrid.components.CountersGrid
-import com.example.diceless.ui.playergrid.components.LifeGrid
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.VerticalPager
-import com.google.accompanist.pager.rememberPagerState
-import kotlin.collections.forEachIndexed
+import com.example.diceless.ui.playergrid.components.pager.InnerHorizontalPager
+import com.example.diceless.ui.playergrid.components.pager.InnerVerticalPager
 
 @Composable
 fun IndividualGrid(
@@ -46,6 +42,7 @@ fun IndividualGrid(
                         .fillMaxHeight(it.proportion.height),
                 ) {
                     IndividualGridContent(
+                        players = players,
                         playerData = playerState,
                         rotation = orientation.rotation,
                     )
@@ -57,6 +54,7 @@ fun IndividualGrid(
 
 @Composable
 fun IndividualGridContent(
+    players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
     modifier: Modifier = Modifier
@@ -71,74 +69,15 @@ fun IndividualGridContent(
         Box {
             when(rotation){
                 RotationEnum.NONE, RotationEnum.INVERTED -> {
-                    InnerHorizontalPager(playerData, rotation)
+                    InnerHorizontalPager(players, playerData, rotation)
                 }
                 RotationEnum.RIGHT, RotationEnum.LEFT -> {
-                    InnerVerticalPager(playerData, rotation)
+                    InnerVerticalPager(players, playerData, rotation)
                 }
             }
         }
     }
 }
-
-@Composable
-fun InnerHorizontalPager(
-    playerData: PlayerData,
-    rotation: RotationEnum
-){
-    val pagerState = rememberPagerState(initialPage = 1)
-
-    HorizontalPager(
-        count = 3,
-        state = pagerState,
-        modifier = Modifier
-            .fillMaxSize()
-    ) { page ->
-        if(rotation == RotationEnum.NONE){
-            when (page) {
-                0 -> {} //CommanderDamageGrid(playerData)
-                1 -> LifeGrid(playerData, rotation)
-                2 -> CountersGrid(playerData, rotation)
-            }
-        } else {
-            when (page) {
-                0 -> CountersGrid(playerData, rotation)
-                1 -> LifeGrid(playerData, rotation)
-                2 -> {} //CommanderDamageGrid(playerData)
-            }
-        }
-    }
-}
-
-@Composable
-fun InnerVerticalPager(
-    playerData: PlayerData,
-    rotation: RotationEnum
-){
-    val pagerState = rememberPagerState(initialPage = 1)
-
-    VerticalPager(
-        count = 3,
-        state = pagerState,
-        modifier = Modifier
-            .fillMaxSize()
-    ) { page ->
-        if (rotation == RotationEnum.RIGHT){
-            when (page) {
-                0 -> {}//CommanderDamageGrid(playerData, rotation)
-                1 -> LifeGrid(playerData, rotation)
-                2 -> CountersGrid(playerData, rotation)
-            }
-        } else {
-            when (page) {
-                0 -> CountersGrid(playerData, rotation)
-                1 -> LifeGrid(playerData, rotation)
-                2 -> {}//CommanderDamageGrid(playerData)
-            }
-        }
-    }
-}
-
 
 @Preview
 @Composable
@@ -157,4 +96,3 @@ fun PreviewStubView() {
         schemeEnum = schemeEnum
     )
 }
-
