@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 import com.example.diceless.ui.battlegrid.mvi.BattleGridState
@@ -31,6 +32,9 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
             is BattleGridActions.OnLifeDecreased -> {
                 onLifeChange(player = action.player, amount = -1)
             }
+            is BattleGridActions.OnCounterToggled -> {
+                toggleCounterState(action.player, action.counter)
+            }
         }
     }
 
@@ -47,6 +51,27 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
         }
     }
 
+    private fun toggleCounterState(player: PlayerData, counterToToggle: CounterData) {
+        viewModelScope.launch {
+            val updatedPlayers = _state.value.players.map { p ->
+                if (p.playerPosition == player.playerPosition) {
+                    // Atualiza a lista de contadores para o jogador específico
+                    val updatedCounters = p.counters.map { c ->
+                        if (c.id == counterToToggle.id) {
+                            c.copy(isSelected = !c.isSelected) // Inverte o estado de seleção
+                        } else {
+                            c
+                        }
+                    }
+                    p.copy(counters = updatedCounters)
+                } else {
+                    p
+                }
+            }
+            _state.value = _state.value.copy(players = updatedPlayers)
+        }
+    }
+
     private fun prepareFakeData(){
         val players = listOf(
             PlayerData(name ="Jogador 1", playerPosition = PositionEnum.PLAYER_ONE),
@@ -55,7 +80,7 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
             PlayerData(name ="Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
         )
 
-        val selectedScheme = SchemeEnum.VERSUS_OPPOSITE
+        val selectedScheme = SchemeEnum.TRIPLE_STANDARD
 
         _state.value = _state.value.copy(
             players = players,

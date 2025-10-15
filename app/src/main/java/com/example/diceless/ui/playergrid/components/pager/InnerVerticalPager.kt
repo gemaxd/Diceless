@@ -53,7 +53,7 @@ fun VerticalRightPagerContent(
                     }
                 }
             }
-            1 -> CountersGrid(playerData, rotation)
+            1 -> CountersGrid(playerData, rotation, onAction)
         }
     }
 }
@@ -73,7 +73,7 @@ fun VerticalLeftPagerContent(
         modifier = Modifier.fillMaxSize()
     ) { page ->
         when (page) {
-            0 -> CountersGrid(playerData, rotation)
+            0 -> CountersGrid(playerData, rotation, onAction)
             1 -> {
                 VerticalPager(
                     state = verticalPagerState,

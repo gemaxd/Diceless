@@ -55,7 +55,7 @@ fun RegularHorizontalPagerContent(
                     }
                 }
             }
-            0 -> CountersGrid(playerData, rotation)
+            0 -> CountersGrid(playerData, rotation, onAction)
         }
     }
 }
@@ -89,7 +89,7 @@ fun InvertedHorizontalPagerContent(
                     }
                 }
             }
-            1 -> CountersGrid(playerData, rotation)
+            1 -> CountersGrid(playerData, rotation, onAction)
         }
     }
 }
