@@ -16,7 +16,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,6 +24,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
@@ -44,11 +44,40 @@ fun CommanderDamageGrid(
             .background(color = Color.Cyan),
         contentAlignment = Alignment.Center
     ) {
+        Text(
+            text = "Dano de commander",
+            modifier = Modifier
+                .then(
+                    other = when (rotationEnum) {
+                        RotationEnum.NONE ->
+                            Modifier.align(Alignment.TopCenter)
+
+                        RotationEnum.INVERTED ->
+                            Modifier.align(Alignment.BottomCenter)
+
+                        RotationEnum.RIGHT ->
+                            Modifier
+                                .vertical()
+                                .align(Alignment.CenterEnd)
+                                .rotate(rotationEnum.degrees)
+
+                        RotationEnum.LEFT ->
+                            Modifier
+                                .vertical()
+                                .align(Alignment.CenterStart)
+                                .rotate(rotationEnum.degrees)
+                    }
+                ),
+            fontSize = if (rotationEnum.isVerticalRotated()) 25.sp else 40.sp
+        )
+        Text("")
+
+
         when (rotationEnum) {
             RotationEnum.NONE, RotationEnum.INVERTED -> {
                 Row {
                     playerData.commanderDamageReceived.forEach { cmd ->
-                        HorizontalCommanderDamageControlCell(
+                        CommanderDamageControlCell(
                             playerData = playerData,
                             rotationEnum = rotationEnum,
                             cmdDamage = cmd,
@@ -59,20 +88,23 @@ fun CommanderDamageGrid(
             }
 
             RotationEnum.RIGHT, RotationEnum.LEFT -> {
-                Text(
-                    modifier = Modifier
-                        .vertical()
-                        .rotate(rotationEnum.degrees),
-                    text = "Dano de Commander",
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                Column {
+                    playerData.commanderDamageReceived.forEach { cmd ->
+                        CommanderDamageControlCell(
+                            playerData = playerData,
+                            rotationEnum = rotationEnum,
+                            cmdDamage = cmd,
+                            onAction = onAction,
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun HorizontalCommanderDamageControlCell(
+fun CommanderDamageControlCell(
     playerData: PlayerData,
     rotationEnum: RotationEnum,
     cmdDamage: CommanderDamage,
@@ -80,6 +112,13 @@ fun HorizontalCommanderDamageControlCell(
 ) {
     Card(
         modifier = Modifier
+            .then(
+                if (rotationEnum.isVerticalRotated()) {
+                    Modifier.vertical()
+                } else {
+                    Modifier
+                }
+            )
             .rotate(rotationEnum.degrees)
             .padding(4.dp),
         elevation = CardDefaults.cardElevation(
@@ -88,14 +127,20 @@ fun HorizontalCommanderDamageControlCell(
         shape = RoundedCornerShape(50)
     ) {
         Box(
-            modifier = Modifier.padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(text = cmdDamage.damage.toString())
 
             Column {
                 IconButton(
-                    modifier = Modifier.padding(2.dp),
+                    modifier = Modifier
+                        .then(
+                            if (rotationEnum.isVerticalRotated()) {
+                                Modifier
+                            } else {
+                                Modifier.padding(4.dp)
+                            }
+                        ),
                     onClick = {
                         onAction(
                             BattleGridActions.OnCommanderDamageChanged(
@@ -112,10 +157,25 @@ fun HorizontalCommanderDamageControlCell(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(
+                    modifier = Modifier.then(
+                        if (rotationEnum.isVerticalRotated()) {
+                            Modifier
+                        } else {
+                            Modifier.height(4.dp)
+                        }
+                    )
+                )
 
                 IconButton(
-                    modifier = Modifier.padding(2.dp),
+                    modifier = Modifier
+                        .then(
+                            if (rotationEnum.isVerticalRotated()) {
+                                Modifier
+                            } else {
+                                Modifier.padding(4.dp)
+                            }
+                        ),
                     onClick = {
                         onAction(
                             BattleGridActions.OnCommanderDamageChanged(
@@ -138,14 +198,84 @@ fun HorizontalCommanderDamageControlCell(
 
 @Preview
 @Composable
-fun PreviewCommanderDamageControl() {
-    val cmdDamage = CommanderDamage(name = "Teste", damage = 10)
-    val playerData = PlayerData(name = "Teste", playerPosition = PositionEnum.PLAYER_ONE)
+fun PreviewCommanderDamageGridRIGHT() {
+    val playerData = PlayerData(
+        name = "Teste",
+        playerPosition = PositionEnum.PLAYER_ONE,
+        commanderDamageReceived = mutableListOf(
+            CommanderDamage(
+                name = "teste",
+                damage = 10
+            )
+        )
+    )
 
-    HorizontalCommanderDamageControlCell(
+    CommanderDamageGrid(
+        playerData = playerData,
+        rotationEnum = RotationEnum.RIGHT,
+        onAction = {}
+    )
+}
+
+@Preview
+@Composable
+fun PreviewCommanderDamageGridLEFT() {
+    val playerData = PlayerData(
+        name = "Teste",
+        playerPosition = PositionEnum.PLAYER_ONE,
+        commanderDamageReceived = mutableListOf(
+            CommanderDamage(
+                name = "teste",
+                damage = 10
+            )
+        )
+    )
+
+    CommanderDamageGrid(
+        playerData = playerData,
+        rotationEnum = RotationEnum.LEFT,
+        onAction = {}
+    )
+}
+
+@Preview
+@Composable
+fun PreviewCommanderDamageGridNONE() {
+    val playerData = PlayerData(
+        name = "Teste",
+        playerPosition = PositionEnum.PLAYER_ONE,
+        commanderDamageReceived = mutableListOf(
+            CommanderDamage(
+                name = "teste",
+                damage = 10
+            )
+        )
+    )
+
+    CommanderDamageGrid(
         playerData = playerData,
         rotationEnum = RotationEnum.NONE,
-        cmdDamage = cmdDamage,
+        onAction = {}
+    )
+}
+
+@Preview
+@Composable
+fun PreviewCommanderDamageGridINVERTED() {
+    val playerData = PlayerData(
+        name = "Teste",
+        playerPosition = PositionEnum.PLAYER_ONE,
+        commanderDamageReceived = mutableListOf(
+            CommanderDamage(
+                name = "teste",
+                damage = 10
+            )
+        )
+    )
+
+    CommanderDamageGrid(
+        playerData = playerData,
+        rotationEnum = RotationEnum.INVERTED,
         onAction = {}
     )
 }

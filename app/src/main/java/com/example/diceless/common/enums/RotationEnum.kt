@@ -5,4 +5,8 @@ enum class RotationEnum(val degrees: Float) {
     INVERTED(degrees = 180f),
     RIGHT(degrees = 90f),
     LEFT(degrees = 270f);
+
+    fun isVerticalRotated() : Boolean {
+        return this == RIGHT || this == LEFT
+    }
 }

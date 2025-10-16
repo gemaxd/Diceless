@@ -110,7 +110,7 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
             PlayerData(name ="Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
         )
 
-        val selectedScheme = SchemeEnum.VERSUS_OPPOSITE
+        val selectedScheme = SchemeEnum.TRIPLE_STANDARD
 
         val playersBasedOnScheme = players.take(selectedScheme.numbersOfPlayers)
 
