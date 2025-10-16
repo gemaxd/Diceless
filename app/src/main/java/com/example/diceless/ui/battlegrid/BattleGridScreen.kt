@@ -28,11 +28,11 @@ import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.ui.battlegrid.components.DyneMiddleMenu
+import com.example.diceless.ui.battlegrid.components.MiddleMenu
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 import com.example.diceless.ui.battlegrid.viewmodel.BattleGridViewModel
-import com.example.diceless.ui.playergrid.components.pager.InnerHorizontalPager
-import com.example.diceless.ui.playergrid.components.pager.InnerVerticalPager
+import com.example.diceless.ui.battlegrid.components.pager.InnerHorizontalPager
+import com.example.diceless.ui.battlegrid.components.pager.InnerVerticalPager
 
 @Composable
 fun BattleGridScreen(
@@ -80,7 +80,7 @@ fun BattleGridContent(
                 }
             }
         }
-        DyneMiddleMenu(
+        MiddleMenu(
             firstRow = listOf(
                 {
                     IconButton(onClick = {}) {

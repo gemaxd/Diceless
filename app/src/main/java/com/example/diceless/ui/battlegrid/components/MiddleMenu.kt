@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 enum class IconState { Add, Close }
 
 @Composable
-fun DyneMiddleMenu(
+fun MiddleMenu(
     firstRow: List<@Composable () -> Unit> = emptyList(),
     secondRow: List<@Composable () -> Unit> = emptyList()
 ) {

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
@@ -34,6 +35,13 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
             }
             is BattleGridActions.OnCounterToggled -> {
                 toggleCounterState(action.player, action.counter)
+            }
+            is BattleGridActions.OnCommanderDamageChanged -> {
+                onCommanderDamageChange(
+                    receivingPlayer = action.receivingPlayer,
+                    playerName = action.playerName,
+                    amount = action.amount
+                )
             }
         }
     }
@@ -72,6 +80,28 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
         }
     }
 
+    private fun onCommanderDamageChange(receivingPlayer: PlayerData ,playerName: String, amount: Int) {
+        viewModelScope.launch {
+            val updatedPlayers = _state.value.players.map { player ->
+                if (player.name == receivingPlayer.name) {
+                    val playerWithUpdatedDamage = player.copy(
+                        commanderDamageReceived = player.commanderDamageReceived.map { damageEntry ->
+                            if (damageEntry.name == playerName) {
+                                damageEntry.copy(damage = maxOf(0, damageEntry.damage + amount)) // Garante que o dano não seja negativo
+                            } else {
+                                damageEntry
+                            }
+                        }.toMutableList()
+                    )
+                    playerWithUpdatedDamage
+                } else {
+                    player
+                }
+            }
+            _state.value = _state.value.copy(players = updatedPlayers)
+        }
+    }
+
     private fun prepareFakeData(){
         val players = listOf(
             PlayerData(name ="Jogador 1", playerPosition = PositionEnum.PLAYER_ONE),
@@ -80,10 +110,18 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
             PlayerData(name ="Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
         )
 
-        val selectedScheme = SchemeEnum.TRIPLE_STANDARD
+        val playersWithCommanderDamage = players.map { currentPlayer ->
+            val opponents = players.filter { it.name != currentPlayer.name }
+            val damageTrackers = opponents.map { opponent ->
+                CommanderDamage(name = opponent.name, damage = 0)
+            }.toMutableList()
+            currentPlayer.copy(commanderDamageReceived = damageTrackers)
+        }
+
+        val selectedScheme = SchemeEnum.VERSUS_OPPOSITE
 
         _state.value = _state.value.copy(
-            players = players,
+            players = playersWithCommanderDamage,
             selectedScheme = selectedScheme
         )
     }
