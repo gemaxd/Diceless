@@ -3,11 +3,13 @@ package com.example.diceless.ui.battlegrid.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,28 +53,34 @@ fun CommanderDamageGrid(
                 .then(
                     other = when (rotationEnum) {
                         RotationEnum.NONE ->
-                            Modifier.align(Alignment.TopCenter)
+                            Modifier
+                                .padding(top = 45.dp)
+                                .rotate(rotationEnum.degrees)
+                                .align(Alignment.TopCenter)
 
                         RotationEnum.INVERTED ->
-                            Modifier.align(Alignment.BottomCenter)
+                            Modifier
+                                .padding(bottom = 45.dp)
+                                .rotate(rotationEnum.degrees)
+                                .align(Alignment.BottomCenter)
 
                         RotationEnum.RIGHT ->
                             Modifier
+                                .padding(end = 10.dp)
+                                .rotate(rotationEnum.degrees)
                                 .vertical()
                                 .align(Alignment.CenterEnd)
-                                .rotate(rotationEnum.degrees)
 
                         RotationEnum.LEFT ->
                             Modifier
+                                .padding(start = 10.dp)
+                                .rotate(rotationEnum.degrees)
                                 .vertical()
                                 .align(Alignment.CenterStart)
-                                .rotate(rotationEnum.degrees)
                     }
                 ),
-            fontSize = if (rotationEnum.isVerticalRotated()) 25.sp else 40.sp
+            fontSize = if (rotationEnum.isVerticalRotated()) 20.sp else 30.sp
         )
-        Text("")
-
 
         when (rotationEnum) {
             RotationEnum.NONE, RotationEnum.INVERTED -> {
@@ -88,7 +97,19 @@ fun CommanderDamageGrid(
             }
 
             RotationEnum.RIGHT, RotationEnum.LEFT -> {
-                Column {
+                Column(
+                    modifier = Modifier.then(
+                        other = if (rotationEnum == RotationEnum.RIGHT) {
+                            Modifier
+                                .padding(start = 25.dp)
+                                .align(Alignment.CenterStart)
+                        } else {
+                            Modifier
+                                .padding(end = 25.dp)
+                                .align(Alignment.CenterEnd)
+                        }
+                    )
+                ) {
                     playerData.commanderDamageReceived.forEach { cmd ->
                         CommanderDamageControlCell(
                             playerData = playerData,
@@ -114,7 +135,8 @@ fun CommanderDamageControlCell(
         modifier = Modifier
             .then(
                 if (rotationEnum.isVerticalRotated()) {
-                    Modifier.vertical()
+                    Modifier
+                        .vertical()
                 } else {
                     Modifier
                 }
@@ -126,9 +148,7 @@ fun CommanderDamageControlCell(
         ),
         shape = RoundedCornerShape(50)
     ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
+        Box(contentAlignment = Alignment.Center) {
             Text(text = cmdDamage.damage.toString())
 
             Column {
