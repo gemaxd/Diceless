@@ -6,25 +6,33 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.ui.battlegrid.components.DyneMiddleMenu
+import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 import com.example.diceless.ui.battlegrid.viewmodel.BattleGridViewModel
 import com.example.diceless.ui.playergrid.components.pager.InnerHorizontalPager
 import com.example.diceless.ui.playergrid.components.pager.InnerVerticalPager
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 
 @Composable
 fun BattleGridScreen(
@@ -43,32 +51,81 @@ fun BattleGridScreen(
 fun BattleGridContent(
     players: List<PlayerData>,
     selectedScheme: SchemeEnum,
-    onAction: (BattleGridActions) -> Unit//(player: PlayerData, amount: Int) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ){
     Box(
-        modifier = Modifier.fillMaxSize()
+        contentAlignment = Alignment.Center
     ) {
-        // Posiciona cada PlayerGrid em um quadrante
-        players.forEachIndexed { index, playerState ->
-            val orientation = getCorrectOrientation(playerState.playerPosition, scheme = selectedScheme)
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Posiciona cada PlayerGrid em um quadrante
+            players.forEachIndexed { index, playerState ->
+                val orientation = getCorrectOrientation(playerState.playerPosition, scheme = selectedScheme)
 
-            orientation?.let {
-                Card(
-                    modifier = Modifier
-                        .align(it.alignment.align)
-                        .padding(10.dp)
-                        .fillMaxWidth(it.proportion.width)
-                        .fillMaxHeight(it.proportion.height),
-                ) {
-                    IndividualGridContent(
-                        players = players,
-                        playerData = playerState,
-                        rotation = orientation.rotation,
-                        onAction = onAction
-                    )
+                orientation?.let {
+                    Card(
+                        modifier = Modifier
+                            .align(it.alignment.align)
+                            .fillMaxWidth(it.proportion.width)
+                            .fillMaxHeight(it.proportion.height),
+                    ) {
+                        IndividualGridContent(
+                            players = players,
+                            playerData = playerState,
+                            rotation = orientation.rotation,
+                            onAction = onAction
+                        )
+                    }
                 }
             }
         }
+        DyneMiddleMenu(
+            firstRow = listOf(
+                {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = Icons.Outlined.DateRange,
+                            contentDescription = "Refresh",
+                            tint = Color.White
+                        )
+                    }
+                },
+                {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = Icons.Outlined.Refresh,
+                            contentDescription = "Refresh",
+                            tint = Color.White
+                        )
+                    }
+                }
+            ),
+            secondRow = listOf(
+                {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Refresh",
+                            tint = Color.White
+                        )
+                    }
+                },
+                {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = Icons.Default.Face,
+                            contentDescription = "Refresh",
+                            tint = Color.White
+                        )
+                    }
+                }
+            )
+        )
     }
 }
 
@@ -83,8 +140,8 @@ fun IndividualGridContent(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFBBDEFB)) // Azul claro se focado
-            .padding(8.dp),
+            .padding(8.dp)
+            .background(Color(0xFFBBDEFB)),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box {
@@ -98,23 +155,4 @@ fun IndividualGridContent(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewStubView() {
-    val players = listOf(
-        PlayerData(name ="Jogador 1", playerPosition = PositionEnum.PLAYER_ONE),
-        PlayerData(name ="Jogador 2", playerPosition = PositionEnum.PLAYER_TWO),
-        PlayerData(name ="Jogador 3", playerPosition = PositionEnum.PLAYER_THREE),
-        PlayerData(name ="Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
-    )
-
-    val schemeEnum = SchemeEnum.QUADRA_STANDARD
-
-    BattleGridContent(
-        players = players,
-        selectedScheme = schemeEnum,
-        onAction = {}
-    )
 }

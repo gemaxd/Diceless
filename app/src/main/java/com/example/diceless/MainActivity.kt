@@ -17,15 +17,6 @@ class MainActivity : ComponentActivity() {
         //enableEdgeToEdge()
         setContent {
             DicelessTheme {
-//                val viewModel = BattlegridViewModel()
-                val players = listOf(
-                    PlayerData(name ="Jogador 1", playerPosition = PositionEnum.PLAYER_ONE),
-                    PlayerData(name ="Jogador 2", playerPosition = PositionEnum.PLAYER_TWO),
-                    PlayerData(name = "Jogador 3", playerPosition = PositionEnum.PLAYER_THREE),
-                    PlayerData(name ="Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
-                )
-
-                val schemeEnum = SchemeEnum.TRIPLE_STANDARD
                 BattleGridScreen()
             }
         }
