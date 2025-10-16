@@ -110,15 +110,18 @@ class BattleGridViewModel @Inject constructor(): ViewModel() {
             PlayerData(name ="Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
         )
 
-        val playersWithCommanderDamage = players.map { currentPlayer ->
-            val opponents = players.filter { it.name != currentPlayer.name }
+        val selectedScheme = SchemeEnum.VERSUS_OPPOSITE
+
+        val playersBasedOnScheme = players.take(selectedScheme.numbersOfPlayers)
+
+        val playersWithCommanderDamage = playersBasedOnScheme.map { currentPlayer ->
+            val opponents = playersBasedOnScheme.filter { it.name != currentPlayer.name }
             val damageTrackers = opponents.map { opponent ->
                 CommanderDamage(name = opponent.name, damage = 0)
             }.toMutableList()
+
             currentPlayer.copy(commanderDamageReceived = damageTrackers)
         }
-
-        val selectedScheme = SchemeEnum.VERSUS_OPPOSITE
 
         _state.value = _state.value.copy(
             players = playersWithCommanderDamage,

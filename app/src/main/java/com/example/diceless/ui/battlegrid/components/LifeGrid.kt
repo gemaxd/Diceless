@@ -57,7 +57,7 @@ fun LifeGrid(
                     modifier = Modifier.align(
                         alignment = Alignment.Center
                     ),
-                    text = "${playerData.life}",
+                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -98,7 +98,7 @@ fun LifeGrid(
                         .align(
                             alignment = Alignment.Center
                         ),
-                    text = "${playerData.life}",
+                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -134,7 +134,7 @@ fun LifeGrid(
                         .vertical()
                         .rotate(rotation.degrees)
                         .align(Alignment.Center),
-                    text = "${playerData.life}",
+                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
                     style = MaterialTheme.typography.headlineLarge
                 )
 
@@ -171,7 +171,7 @@ fun LifeGrid(
                         .vertical()
                         .rotate(rotation.degrees)
                         .align(Alignment.Center),
-                    text = "${playerData.life}",
+                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }

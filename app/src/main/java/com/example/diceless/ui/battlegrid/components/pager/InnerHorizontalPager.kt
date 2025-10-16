@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
-import com.example.diceless.ui.playergrid.components.CommanderDamageGrid
+import com.example.diceless.ui.battlegrid.components.CommanderDamageGrid
 import com.example.diceless.ui.battlegrid.components.CountersGrid
 import com.example.diceless.ui.battlegrid.components.LifeGrid
 
@@ -49,9 +49,9 @@ fun RegularHorizontalPagerContent(
                         .fillMaxSize()
                 ) { page ->
                     when (page) {
-                        0 -> CommanderDamageGrid(playerData, rotation)
+                        0 -> CommanderDamageGrid(playerData, rotation, onAction)
                         1 -> LifeGrid(playerData, rotation, onAction)
-                        2 -> CommanderDamageGrid(playerData, rotation)
+                        2 -> CommanderDamageGrid(playerData, rotation, onAction)
                     }
                 }
             }
@@ -83,9 +83,9 @@ fun InvertedHorizontalPagerContent(
                         .fillMaxSize()
                 ) { page ->
                     when (page) {
-                        0 -> CommanderDamageGrid(playerData,rotation)
+                        0 -> CommanderDamageGrid(playerData, rotation, onAction)
                         1 -> LifeGrid(playerData, rotation, onAction)
-                        2 -> CommanderDamageGrid(playerData,rotation)
+                        2 -> CommanderDamageGrid(playerData, rotation, onAction)
                     }
                 }
             }
