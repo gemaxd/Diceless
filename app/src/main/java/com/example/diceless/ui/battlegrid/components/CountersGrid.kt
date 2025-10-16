@@ -84,6 +84,8 @@ fun VerticalCountersGridContent(
         contentAlignment = Alignment.Center
     ) {
         val maxWidth = maxWidth.value.dp
+        val maxHeight = maxHeight.value.dp
+
 
         Column(
             modifier = Modifier.verticalScroll(verticalScrollState),
@@ -102,7 +104,7 @@ fun VerticalCountersGridContent(
 
                 if (selectedCounters.isNotEmpty()) {
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = maxWidth / 3),
+                        modifier = Modifier.padding(vertical = maxWidth / 5, horizontal = maxHeight / 10),
                         thickness = 2.dp
                     )
                 }
@@ -187,7 +189,7 @@ fun VerticalCountersGridContent(
 
                 if (selectedCounters.isNotEmpty()) {
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = maxWidth / 3),
+                        modifier = Modifier.padding(vertical = maxWidth / 5, horizontal = maxHeight / 10),
                         thickness = 2.dp
                     )
                 }
@@ -227,6 +229,7 @@ fun HorizontalCountersGridContent(
         contentAlignment = Alignment.Center
     ) {
         val maxHeight = maxHeight.value.dp
+        val maxWidth = maxWidth.value.dp
 
         Row(
             modifier = Modifier.horizontalScroll(horizontalScrollState),
@@ -244,7 +247,7 @@ fun HorizontalCountersGridContent(
 
                 if (selectedCounters.isNotEmpty()) {
                     VerticalDivider(
-                        modifier = Modifier.padding(vertical = maxHeight / 3),
+                        modifier = Modifier.padding(horizontal = maxWidth / 10, vertical = maxHeight / 3),
                         thickness = 2.dp
                     )
                 }
@@ -321,7 +324,7 @@ fun HorizontalCountersGridContent(
 
                 if (selectedCounters.isNotEmpty()) {
                     VerticalDivider(
-                        modifier = Modifier.padding(vertical = maxHeight / 3),
+                        modifier = Modifier.padding(horizontal = maxWidth / 10, vertical = maxHeight / 3),
                         thickness = 2.dp
                     )
                 }
