@@ -12,4 +12,5 @@ sealed class BattleGridActions {
         val playerName: String,     // O ID de quem causou o dano
         val amount: Int                  // A quantidade (+1 ou -1)
     ) : BattleGridActions()
+    data object OnRestart: BattleGridActions()
 }

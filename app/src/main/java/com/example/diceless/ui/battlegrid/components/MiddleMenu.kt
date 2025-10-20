@@ -29,13 +29,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.diceless.domain.model.MenuItem
 
 enum class IconState { Add, Close }
 
 @Composable
 fun MiddleMenu(
-    firstRow: List<@Composable () -> Unit> = emptyList(),
-    secondRow: List<@Composable () -> Unit> = emptyList()
+    firstRow: List<MenuItem> = emptyList(),
+    secondRow: List<MenuItem> = emptyList()
 ) {
     var expanded by remember { mutableStateOf(false) }
     val translation by animateFloatAsState(if (expanded) 0f else -50f, label = "translation")
@@ -64,7 +65,7 @@ fun MiddleMenu(
                             .offset(x = if (index == 0) translationExtremity.dp else translation.dp)
                             .scale(scale)
                     ){
-                        option()
+                        option.icon()
                     }
                 }
             }
@@ -98,7 +99,7 @@ fun MiddleMenu(
                             .offset(x = if (index == 0) translationExtremity.dp else translation.dp)
                             .scale(scale)
                     ){
-                        option()
+                        option.icon()
                     }
                 }
             }
