@@ -39,4 +39,3 @@ fun getDefaultCounterData() =
         CounterData(id = "tenth", icon = Icons.Filled.Build, toggleValue = true, value = 1),
         CounterData(id = "eleventh", icon = Icons.Filled.Face, toggleValue = true, value = 1),
     )
-

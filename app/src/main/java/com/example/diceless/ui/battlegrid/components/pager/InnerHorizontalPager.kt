@@ -15,19 +15,21 @@ import com.example.diceless.ui.battlegrid.components.LifeGrid
 
 @Composable
 fun InnerHorizontalPager(
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
     onAction: (BattleGridActions) -> Unit
 ){
     when(rotation){
-        RotationEnum.NONE -> RegularHorizontalPagerContent(players, playerData, rotation, onAction)
-        else -> InvertedHorizontalPagerContent(players, playerData, rotation, onAction)
+        RotationEnum.NONE -> RegularHorizontalPagerContent(isDamageLinked, players, playerData, rotation, onAction)
+        else -> InvertedHorizontalPagerContent(isDamageLinked, players, playerData, rotation, onAction)
     }
 }
 
 @Composable
 fun RegularHorizontalPagerContent(
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
@@ -50,7 +52,7 @@ fun RegularHorizontalPagerContent(
                 ) { page ->
                     when (page) {
                         0 -> CommanderDamageGrid(playerData, rotation, onAction)
-                        1 -> LifeGrid(playerData, rotation, onAction)
+                        1 -> LifeGrid(playerData, rotation,isDamageLinked, onAction)
                         2 -> CommanderDamageGrid(playerData, rotation, onAction)
                     }
                 }
@@ -62,6 +64,7 @@ fun RegularHorizontalPagerContent(
 
 @Composable
 fun InvertedHorizontalPagerContent(
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
@@ -84,7 +87,7 @@ fun InvertedHorizontalPagerContent(
                 ) { page ->
                     when (page) {
                         0 -> CommanderDamageGrid(playerData, rotation, onAction)
-                        1 -> LifeGrid(playerData, rotation, onAction)
+                        1 -> LifeGrid(playerData, rotation, isDamageLinked, onAction)
                         2 -> CommanderDamageGrid(playerData, rotation, onAction)
                     }
                 }

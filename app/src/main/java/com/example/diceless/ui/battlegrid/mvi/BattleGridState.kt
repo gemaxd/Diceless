@@ -6,5 +6,7 @@ import com.example.diceless.domain.model.PlayerData
 data class BattleGridState(
     val players: List<PlayerData> = emptyList(),
     val selectedScheme: SchemeEnum = SchemeEnum.QUADRA_STANDARD,
-    val selectedStartingLife: Int = 40
+    val selectedStartingLife: Int = 40,
+    val allowSelfCommanderDamage: Boolean = false,
+    val linkCommanderDamageToLife: Boolean = false
 )

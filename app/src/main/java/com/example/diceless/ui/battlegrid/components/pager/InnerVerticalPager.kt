@@ -15,19 +15,21 @@ import com.example.diceless.ui.battlegrid.components.LifeGrid
 
 @Composable
 fun InnerVerticalPager(
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
     onAction: (BattleGridActions) -> Unit
 ) {
     when (rotation) {
-        RotationEnum.RIGHT -> VerticalRightPagerContent(players, playerData, rotation, onAction)
-        else -> VerticalLeftPagerContent(players, playerData, rotation, onAction)
+        RotationEnum.RIGHT -> VerticalRightPagerContent(isDamageLinked, players, playerData, rotation, onAction)
+        else -> VerticalLeftPagerContent(isDamageLinked, players, playerData, rotation, onAction)
     }
 }
 
 @Composable
 fun VerticalRightPagerContent(
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
@@ -48,7 +50,7 @@ fun VerticalRightPagerContent(
                 ) { page ->
                     when (page) {
                         0 -> CommanderDamageGrid(playerData, rotation, onAction)
-                        1 -> LifeGrid(playerData, rotation, onAction)
+                        1 -> LifeGrid(playerData, rotation, isDamageLinked, onAction)
                         2 -> CommanderDamageGrid(playerData, rotation, onAction)
                     }
                 }
@@ -60,6 +62,7 @@ fun VerticalRightPagerContent(
 
 @Composable
 fun VerticalLeftPagerContent(
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
@@ -81,7 +84,7 @@ fun VerticalLeftPagerContent(
                 ) { page ->
                     when (page) {
                         0 -> CommanderDamageGrid(playerData, rotation, onAction)
-                        1 -> LifeGrid(playerData, rotation, onAction)
+                        1 -> LifeGrid(playerData, rotation, isDamageLinked, onAction)
                         2 -> CommanderDamageGrid(playerData, rotation, onAction)
                     }
                 }

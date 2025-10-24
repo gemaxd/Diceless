@@ -1,17 +1,13 @@
 package com.example.diceless.ui.battlegrid
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -24,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -37,9 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.common.enums.MenuItemEnum
 import com.example.diceless.common.enums.RotationEnum
@@ -49,6 +41,8 @@ import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.ui.battlegrid.components.MiddleMenu
+import com.example.diceless.ui.battlegrid.components.dialog.RestartDialog
+import com.example.diceless.ui.battlegrid.components.dialog.SettingsDialog
 import com.example.diceless.ui.battlegrid.components.pager.InnerHorizontalPager
 import com.example.diceless.ui.battlegrid.components.pager.InnerVerticalPager
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
@@ -62,6 +56,7 @@ fun BattleGridScreen(
     val state by viewmodel.state.collectAsState()
 
     BattleGridContent(
+        isDamageLinked = state.linkCommanderDamageToLife,
         players = state.players,
         selectedScheme = state.selectedScheme,
         onAction = viewmodel::onAction
@@ -71,6 +66,7 @@ fun BattleGridScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun BattleGridContent(
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     selectedScheme: SchemeEnum,
     onAction: (BattleGridActions) -> Unit
@@ -81,64 +77,12 @@ fun BattleGridContent(
     var showRestartDialog by remember { mutableStateOf(false) }
 
     if (showRestartDialog) {
-        Dialog(
-            properties = DialogProperties(usePlatformDefaultWidth = false),
-            onDismissRequest = {
-                showRestartDialog = false
+        RestartDialog(
+            onDismiss = {showRestartDialog = false},
+            onRestart = {
+                onAction(BattleGridActions.OnRestart)
             }
-        ) {
-            Box(
-                modifier = Modifier
-                    .background(color = Color.Black.copy(alpha = 0.8f))
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        color = Color.White,
-                        text = "Deseja reiniciar?",
-                        fontSize = 25.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        TextButton(
-                            onClick = {
-                                showRestartDialog = false
-                            }
-                        ) {
-                            Text(
-                                text = "Não",
-                                fontSize = 20.sp,
-                                color = Color.Red
-                            )
-                        }
-
-                        TextButton(
-                            onClick = {
-                                showRestartDialog = false
-                                onAction(BattleGridActions.OnRestart)
-                            }
-                        ) {
-                            Text(
-                                text = "Sim",
-                                fontSize = 20.sp,
-                                color = Color.Green
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        )
     }
 
     if (showHistoryBottomSheet) {
@@ -183,27 +127,9 @@ fun BattleGridContent(
     }
 
     if (showSettingsBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showSettingsBottomSheet = false },
-            sheetState = rememberModalBottomSheetState()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Settings", style = MaterialTheme.typography.headlineSmall)
-                Spacer(modifier = Modifier.padding(8.dp))
-                Text("Exibindo o settings dos jogadores...")
-                Spacer(modifier = Modifier.padding(8.dp))
-                Button(
-                    onClick = { showSettingsBottomSheet = false },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Fechar")
-                }
-            }
-        }
+        SettingsDialog(
+            onDismiss = {showSettingsBottomSheet = false},
+        )
     }
 
     if (showUsersBottomSheet) {
@@ -250,6 +176,7 @@ fun BattleGridContent(
                             .fillMaxHeight(it.proportion.height),
                     ) {
                         IndividualGridContent(
+                            isDamageLinked = isDamageLinked,
                             players = players,
                             playerData = playerState,
                             rotation = orientation.rotation,
@@ -287,6 +214,7 @@ fun BattleGridContent(
 @Composable
 fun IndividualGridContent(
     modifier: Modifier = Modifier,
+    isDamageLinked: Boolean,
     players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
@@ -302,11 +230,11 @@ fun IndividualGridContent(
         Box {
             when (rotation) {
                 RotationEnum.NONE, RotationEnum.INVERTED -> {
-                    InnerHorizontalPager(players, playerData, rotation, onAction)
+                    InnerHorizontalPager(isDamageLinked, players, playerData, rotation, onAction)
                 }
 
                 RotationEnum.RIGHT, RotationEnum.LEFT -> {
-                    InnerVerticalPager(players, playerData, rotation, onAction)
+                    InnerVerticalPager(isDamageLinked, players, playerData, rotation, onAction)
                 }
             }
         }

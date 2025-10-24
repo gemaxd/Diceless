@@ -20,7 +20,8 @@ import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 fun LifeGrid(
     playerData: PlayerData,
     rotation: RotationEnum = RotationEnum.NONE,
-    onAction: (BattleGridActions) -> Unit // Recebendo a função!
+    isCmdDamageLinked: Boolean,
+    onAction: (BattleGridActions) -> Unit
 ) {
     when (rotation) {
         RotationEnum.NONE -> {
@@ -57,7 +58,7 @@ fun LifeGrid(
                     modifier = Modifier.align(
                         alignment = Alignment.Center
                     ),
-                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
+                    text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -98,7 +99,7 @@ fun LifeGrid(
                         .align(
                             alignment = Alignment.Center
                         ),
-                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
+                    text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -134,7 +135,7 @@ fun LifeGrid(
                         .vertical()
                         .rotate(rotation.degrees)
                         .align(Alignment.Center),
-                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
+                    text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
                     style = MaterialTheme.typography.headlineLarge
                 )
 
@@ -171,7 +172,7 @@ fun LifeGrid(
                         .vertical()
                         .rotate(rotation.degrees)
                         .align(Alignment.Center),
-                    text = "${playerData.getCurrentLifeWithCommanderDamage()}",
+                    text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.data.SettingsRepository
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
@@ -17,13 +18,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BattleGridViewModel @Inject constructor() : ViewModel() {
+class BattleGridViewModel @Inject constructor(
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
 
     init {
         prepareFakeData()
+        loadSettingsFromPrefs() // Carrega configs do SharedPreferences
     }
 
     fun onAction(action: BattleGridActions) {
@@ -41,6 +45,11 @@ class BattleGridViewModel @Inject constructor() : ViewModel() {
             }
 
             is BattleGridActions.OnCommanderDamageChanged -> {
+                // Aplica regras de config antes de mudar dano
+                if (!state.value.allowSelfCommanderDamage &&
+                    action.receivingPlayer.name == action.playerName) {
+                    return // Ignora se não permite dano a si mesmo
+                }
                 onCommanderDamageChange(
                     receivingPlayer = action.receivingPlayer,
                     playerName = action.playerName,
@@ -51,6 +60,67 @@ class BattleGridViewModel @Inject constructor() : ViewModel() {
             BattleGridActions.OnRestart -> {
                 restartMatch()
             }
+
+            is BattleGridActions.OnStartingLifeChanged -> {
+                updateStartingLife(action.life)
+            }
+
+            is BattleGridActions.OnAllowSelfCommanderDamageChanged -> {
+                updateAllowSelfCommanderDamage(action.enabled)
+            }
+
+            is BattleGridActions.OnLinkCommanderDamageToLifeChanged -> {
+                updateLinkCommanderDamageToLife(action.enabled)
+            }
+        }
+    }
+
+    private fun loadSettingsFromPrefs() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(
+                selectedStartingLife = settingsRepository.getStartingLife(),
+                allowSelfCommanderDamage = settingsRepository.getAllowSelfCommanderDamage(),
+                linkCommanderDamageToLife = settingsRepository.getLinkCommanderDamageToLife()
+            )
+        }
+    }
+
+    private fun updateStartingLife(life: Int) {
+        viewModelScope.launch {
+            val newLife = life.coerceAtLeast(1) // Garante >= 1
+            settingsRepository.saveStartingLife(newLife)
+            _state.value = _state.value.copy(selectedStartingLife = newLife)
+        }
+    }
+
+    private fun updateAllowSelfCommanderDamage(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveAllowSelfCommanderDamage(enabled)
+            _state.value = _state.value.copy(allowSelfCommanderDamage = enabled)
+        }
+    }
+
+    private fun updateLinkCommanderDamageToLife(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.saveLinkCommanderDamageToLife(enabled)
+            _state.value = _state.value.copy(linkCommanderDamageToLife = enabled)
+        }
+    }
+
+    private fun restartMatch() {
+        viewModelScope.launch {
+            val updatedPlayers = _state.value.players.map { player ->
+                // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
+                player.copy(
+                    life = _state.value.selectedStartingLife,
+                    counters = getDefaultCounterData(),
+                    commanderDamageReceived = prepareCommanderDamage(
+                        _state.value.players,
+                        _state.value.selectedScheme.numbersOfPlayers
+                    )
+                )
+            }
+            _state.value = _state.value.copy(players = updatedPlayers)
         }
     }
 
@@ -119,29 +189,12 @@ class BattleGridViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun restartMatch() {
-        viewModelScope.launch {
-            val updatedPlayers = _state.value.players.map { player ->
-                player.copy(
-                    life = _state.value.selectedStartingLife,
-                    counters = getDefaultCounterData(),
-                    commanderDamageReceived = prepareCommanderDamage(
-                        _state.value.players,
-                        _state.value.selectedScheme.numbersOfPlayers
-                    )
-                )
-            }
-            _state.value = _state.value.copy(players = updatedPlayers)
-        }
-    }
-
     private fun prepareCommanderDamage(
         players: List<PlayerData>,
         numberOfPlayers: Int
     ): MutableList<CommanderDamage> {
         val playersBasedOnScheme = players.take(numberOfPlayers)
         var commanderDamage = mutableListOf<CommanderDamage>()
-
 
         playersBasedOnScheme.map { currentPlayer ->
             val opponents = playersBasedOnScheme.filter { it.name != currentPlayer.name }
@@ -150,7 +203,6 @@ class BattleGridViewModel @Inject constructor() : ViewModel() {
                 CommanderDamage(name = opponent.name, damage = 0)
             }.toMutableList()
         }
-
         return commanderDamage
     }
 
