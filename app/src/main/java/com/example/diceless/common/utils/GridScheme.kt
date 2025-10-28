@@ -12,10 +12,10 @@ fun getCorrectOrientation(position: PositionEnum, scheme: SchemeEnum): PlayerAre
     return when(scheme){
         SchemeEnum.SOLO -> soloSchemePlayerArea(position)
         SchemeEnum.VERSUS_OPPOSITE -> versusSchemePlayerArea(position)
-        SchemeEnum.VERSUS_SIDE_BY_SIDE -> versusSideBySideSchemePlayerArea(position)
+        //SchemeEnum.VERSUS_SIDE_BY_SIDE -> versusSideBySideSchemePlayerArea(position)
         SchemeEnum.TRIPLE_STANDARD -> tripleStandardSchemePlayerArea(position)
         SchemeEnum.QUADRA_STANDARD -> quadraStandardSchemePlayerArea(position)
-        SchemeEnum.QUADRA_VERTICAL -> quadraVerticalSchemePlayerArea(position)
+        //SchemeEnum.QUADRA_VERTICAL -> quadraVerticalSchemePlayerArea(position)
     }
 }
 

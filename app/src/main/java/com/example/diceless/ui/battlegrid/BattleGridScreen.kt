@@ -43,6 +43,7 @@ import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.ui.battlegrid.components.MiddleMenu
 import com.example.diceless.ui.battlegrid.components.dialog.RestartDialog
 import com.example.diceless.ui.battlegrid.components.dialog.SettingsDialog
+import com.example.diceless.ui.battlegrid.components.draggable.DraggableElement2D
 import com.example.diceless.ui.battlegrid.components.pager.InnerHorizontalPager
 import com.example.diceless.ui.battlegrid.components.pager.InnerVerticalPager
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
@@ -75,6 +76,7 @@ fun BattleGridContent(
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
     var showUsersBottomSheet by remember { mutableStateOf(false) }
     var showRestartDialog by remember { mutableStateOf(false) }
+    var expandedMiddleMenu by remember { mutableStateOf(false) }
 
     if (showRestartDialog) {
         RestartDialog(
@@ -187,6 +189,10 @@ fun BattleGridContent(
             }
         }
         MiddleMenu(
+            expanded = expandedMiddleMenu,
+            onExpandMiddleMenu = {
+                expandedMiddleMenu = !expandedMiddleMenu
+            },
             firstRow = listOf(
                 MenuItem(
                     action = { showHistoryBottomSheet = true },
@@ -208,6 +214,8 @@ fun BattleGridContent(
                 ).getIconButton()
             )
         )
+
+        DraggableElement2D(selectedScheme)
     }
 }
 

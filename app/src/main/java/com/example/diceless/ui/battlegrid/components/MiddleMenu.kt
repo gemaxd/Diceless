@@ -35,10 +35,11 @@ enum class IconState { Add, Close }
 
 @Composable
 fun MiddleMenu(
+    expanded: Boolean,
+    onExpandMiddleMenu: () -> Unit,
     firstRow: List<MenuItem> = emptyList(),
     secondRow: List<MenuItem> = emptyList()
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val translation by animateFloatAsState(if (expanded) 0f else -50f, label = "translation")
     val translationExtremity by animateFloatAsState(if (expanded) 0f else -100f, label = "translationExtremity")
     val scale by animateFloatAsState(if (expanded) 1f else 0f, label = "scale")
@@ -75,8 +76,8 @@ fun MiddleMenu(
                     .size(60.dp)
                     .clip(RoundedCornerShape(25))
                     .clickable {
-                        expanded = !expanded
-                        iconState = if (expanded) IconState.Close else IconState.Add
+                        onExpandMiddleMenu.invoke()
+                        iconState = if (expanded) IconState.Add else IconState.Close
                     },
                 contentAlignment = Alignment.Center
             ){

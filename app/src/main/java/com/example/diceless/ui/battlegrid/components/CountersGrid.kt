@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +27,7 @@ import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.ui.battlegrid.components.button.CounterControlButton
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 
 @Composable
@@ -104,7 +106,10 @@ fun VerticalCountersGridContent(
 
                 if (selectedCounters.isNotEmpty()) {
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = maxWidth / 5, horizontal = maxHeight / 10),
+                        modifier = Modifier.padding(
+                            vertical = maxWidth / 5,
+                            horizontal = maxHeight / 10
+                        ),
                         thickness = 2.dp
                     )
                 }
@@ -121,7 +126,7 @@ fun VerticalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -139,7 +144,7 @@ fun VerticalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -160,7 +165,7 @@ fun VerticalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -176,7 +181,7 @@ fun VerticalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -189,7 +194,10 @@ fun VerticalCountersGridContent(
 
                 if (selectedCounters.isNotEmpty()) {
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = maxWidth / 5, horizontal = maxHeight / 10),
+                        modifier = Modifier.padding(
+                            vertical = maxWidth / 5,
+                            horizontal = maxHeight / 10
+                        ),
                         thickness = 2.dp
                     )
                 }
@@ -238,16 +246,28 @@ fun HorizontalCountersGridContent(
         ) {
             if (rotationEnum == RotationEnum.NONE) {
                 selectedCounters.forEach { it ->
-                    CounterContent(
+                    Spacer(modifier = Modifier.padding(2.dp))
+                    CounterControlButton(
                         counter = it,
-                        rotationEnum = rotationEnum,
-                        onClick = { onAction(BattleGridActions.OnCounterToggled(playerData, it)) }
+                        onToggle = {
+                            onAction(BattleGridActions.OnCounterToggled(playerData, it))
+                        },
+                        onIncrement = {
+                            onAction(BattleGridActions.OnCounterIncrement(playerData, it))
+                        },
+                        onDecrement = {
+                            onAction(BattleGridActions.OnCounterDecrement(playerData, it))
+                        }
                     )
+                    Spacer(modifier = Modifier.padding(2.dp))
                 }
 
                 if (selectedCounters.isNotEmpty()) {
                     VerticalDivider(
-                        modifier = Modifier.padding(horizontal = maxWidth / 10, vertical = maxHeight / 3),
+                        modifier = Modifier.padding(
+                            horizontal = maxWidth / 10,
+                            vertical = maxHeight / 3
+                        ),
                         thickness = 2.dp
                     )
                 }
@@ -260,7 +280,7 @@ fun HorizontalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -276,7 +296,7 @@ fun HorizontalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -295,7 +315,7 @@ fun HorizontalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -311,7 +331,7 @@ fun HorizontalCountersGridContent(
                                 rotationEnum = rotationEnum,
                                 onClick = {
                                     onAction(
-                                        BattleGridActions.OnCounterToggled(
+                                        BattleGridActions.OnCounterSelected(
                                             playerData,
                                             it
                                         )
@@ -324,17 +344,30 @@ fun HorizontalCountersGridContent(
 
                 if (selectedCounters.isNotEmpty()) {
                     VerticalDivider(
-                        modifier = Modifier.padding(horizontal = maxWidth / 10, vertical = maxHeight / 3),
+                        modifier = Modifier.padding(
+                            horizontal = maxWidth / 10,
+                            vertical = maxHeight / 3
+                        ),
                         thickness = 2.dp
                     )
                 }
 
                 selectedCounters.forEach { it ->
-                    CounterContent(
+                    Spacer(modifier = Modifier.padding(2.dp))
+                    CounterControlButton(
+                        rotationEnum= rotationEnum,
                         counter = it,
-                        rotationEnum = rotationEnum,
-                        onClick = { onAction(BattleGridActions.OnCounterToggled(playerData, it)) }
+                        onToggle = {
+                            onAction(BattleGridActions.OnCounterToggled(playerData, it))
+                        },
+                        onIncrement = {
+                            onAction(BattleGridActions.OnCounterIncrement(playerData, it))
+                        },
+                        onDecrement = {
+                            onAction(BattleGridActions.OnCounterDecrement(playerData, it))
+                        }
                     )
+                    Spacer(modifier = Modifier.padding(2.dp))
                 }
             }
         }

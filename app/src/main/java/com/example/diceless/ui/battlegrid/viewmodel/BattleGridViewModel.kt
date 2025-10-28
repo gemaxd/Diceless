@@ -40,8 +40,28 @@ class BattleGridViewModel @Inject constructor(
                 onLifeChange(player = action.player, amount = -1)
             }
 
+            is BattleGridActions.OnCounterSelected -> {
+                selectCounter(action.player, action.counter)
+            }
+
             is BattleGridActions.OnCounterToggled -> {
                 toggleCounterState(action.player, action.counter)
+            }
+
+            is BattleGridActions.OnCounterIncrement -> {
+                updateCounterValue(
+                    player = action.player,
+                    counterToToggle = action.counter,
+                    updateValue = 1
+                )
+            }
+
+            is BattleGridActions.OnCounterDecrement -> {
+                updateCounterValue(
+                    player = action.player,
+                    counterToToggle = action.counter,
+                    updateValue = -1
+                )
             }
 
             is BattleGridActions.OnCommanderDamageChanged -> {
@@ -144,7 +164,53 @@ class BattleGridViewModel @Inject constructor(
                     // Atualiza a lista de contadores para o jogador específico
                     val updatedCounters = p.counters.map { c ->
                         if (c.id == counterToToggle.id) {
+                            c.toggleValue?.let { toggleValue ->
+                                c.copy(toggleValue = !toggleValue) // Inverte o estado de seleção
+                            } ?: c
+                        } else {
+                            c
+                        }
+                    }
+                    p.copy(counters = updatedCounters)
+                } else {
+                    p
+                }
+            }
+            _state.value = _state.value.copy(players = updatedPlayers)
+        }
+    }
+
+    private fun selectCounter(player: PlayerData, counterToToggle: CounterData) {
+        viewModelScope.launch {
+            val updatedPlayers = _state.value.players.map { p ->
+                if (p.playerPosition == player.playerPosition) {
+                    // Atualiza a lista de contadores para o jogador específico
+                    val updatedCounters = p.counters.map { c ->
+                        if (c.id == counterToToggle.id) {
                             c.copy(isSelected = !c.isSelected) // Inverte o estado de seleção
+                        } else {
+                            c
+                        }
+                    }
+                    p.copy(counters = updatedCounters)
+                } else {
+                    p
+                }
+            }
+            _state.value = _state.value.copy(players = updatedPlayers)
+        }
+    }
+
+    private fun updateCounterValue(player: PlayerData, counterToToggle: CounterData, updateValue: Int) {
+        viewModelScope.launch {
+            val updatedPlayers = _state.value.players.map { p ->
+                if (p.playerPosition == player.playerPosition) {
+                    // Atualiza a lista de contadores para o jogador específico
+                    val updatedCounters = p.counters.map { c ->
+                        if (c.id == counterToToggle.id) {
+                            c.value?.let { value ->
+                                c.copy(value = value.plus(updateValue)) // Inverte o estado de seleção
+                            } ?: c
                         } else {
                             c
                         }
