@@ -1,6 +1,5 @@
 package com.example.diceless.ui.battlegrid.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
@@ -20,17 +19,20 @@ import javax.inject.Inject
 @HiltViewModel
 class BattleGridViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
-) : ViewModel() {
+) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
 
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
+
+    override val initialState: BattleGridState
+        get() = BattleGridState()
 
     init {
         prepareFakeData()
         loadSettingsFromPrefs() // Carrega configs do SharedPreferences
     }
 
-    fun onAction(action: BattleGridActions) {
+    override fun onAction(action: BattleGridActions) {
         when (action) {
             is BattleGridActions.OnLifeIncreased -> {
                 onLifeChange(player = action.player, amount = 1)
@@ -91,6 +93,13 @@ class BattleGridViewModel @Inject constructor(
 
             is BattleGridActions.OnLinkCommanderDamageToLifeChanged -> {
                 updateLinkCommanderDamageToLife(action.enabled)
+            }
+
+            is BattleGridActions.ToggleMonarchCounter -> {
+                val toggle = state.value.showMonarchSymbol
+                updateBattleGridState {
+                    showMonarchSymbol = !toggle
+                }
             }
         }
     }
@@ -270,6 +279,15 @@ class BattleGridViewModel @Inject constructor(
             }.toMutableList()
         }
         return commanderDamage
+    }
+
+    private fun updateBattleGridState(properties: BattleGridState.() -> Unit) {
+        viewModelScope.launch {
+            val battleGridState = _state.value.copy().apply(properties)
+            _state.emit(
+                battleGridState
+            )
+        }
     }
 
     private fun prepareFakeData() {

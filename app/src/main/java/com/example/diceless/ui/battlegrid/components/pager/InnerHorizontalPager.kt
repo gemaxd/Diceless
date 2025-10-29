@@ -12,7 +12,6 @@ import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 import com.example.diceless.ui.battlegrid.components.CommanderDamageGrid
 import com.example.diceless.ui.battlegrid.components.CountersGrid
 import com.example.diceless.ui.battlegrid.components.LifeGrid
-import com.example.diceless.ui.battlegrid.components.draggable.DraggableElement2D
 
 @Composable
 fun InnerHorizontalPager(

@@ -8,5 +8,6 @@ data class BattleGridState(
     val selectedScheme: SchemeEnum = SchemeEnum.QUADRA_STANDARD,
     val selectedStartingLife: Int = 40,
     val allowSelfCommanderDamage: Boolean = false,
-    val linkCommanderDamageToLife: Boolean = false
+    val linkCommanderDamageToLife: Boolean = false,
+    var showMonarchSymbol: Boolean = false
 )

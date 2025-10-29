@@ -19,4 +19,5 @@ sealed class BattleGridActions {
     data class OnStartingLifeChanged(val life: Int) : BattleGridActions()
     data class OnAllowSelfCommanderDamageChanged(val enabled: Boolean) : BattleGridActions()
     data class OnLinkCommanderDamageToLifeChanged(val enabled: Boolean) : BattleGridActions()
+    data object ToggleMonarchCounter: BattleGridActions()
 }
