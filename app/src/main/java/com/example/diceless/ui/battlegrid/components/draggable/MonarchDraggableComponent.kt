@@ -28,15 +28,18 @@ import com.example.diceless.domain.model.extension.calculateRotation
 import kotlin.math.roundToInt
 
 @Composable
-fun MonarchDraggableComponent(schemeEnum: SchemeEnum, heightProportion: Dp) {
-    val initialHeightPoint = 0 - (heightProportion.value / 2)
-    val initialWidthPoint = 0f
-
-    var offsetX by remember { mutableFloatStateOf(initialWidthPoint) }
-    var offsetY by remember { mutableFloatStateOf(initialHeightPoint) }
+fun MonarchDraggableComponent(schemeEnum: SchemeEnum, maxHeight: Dp) {
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
 
     val targetRotation = remember(schemeEnum, offsetX, offsetY) {
-        calculateRotation(schemeEnum, offsetX, offsetY, offsetY == initialHeightPoint && offsetX == initialWidthPoint)
+        calculateRotation(
+            schemeEnum = schemeEnum,
+            offsetX = offsetX,
+            offsetY = offsetY,
+            isPristine = offsetY == 0f && offsetX == 0f,
+            maxHeightPx = maxHeight.value
+        )
     }
 
     val rotation by animateFloatAsState(

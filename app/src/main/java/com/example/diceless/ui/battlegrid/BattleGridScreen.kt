@@ -1,54 +1,36 @@
 package com.example.diceless.ui.battlegrid
 
-import android.R.attr.visible
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.common.enums.MenuItemEnum
@@ -60,14 +42,19 @@ import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.ui.battlegrid.components.MiddleMenu
 import com.example.diceless.ui.battlegrid.components.button.ActionPill
-import com.example.diceless.ui.battlegrid.components.dialog.RestartDialog
-import com.example.diceless.ui.battlegrid.components.dialog.SettingsDialog
+import com.example.diceless.ui.battlegrid.components.dialog.DicelessDialog
+import com.example.diceless.ui.battlegrid.components.dialog.GenericBottomSheet
+import com.example.diceless.ui.battlegrid.components.dialog.HistoryContainer
+import com.example.diceless.ui.battlegrid.components.dialog.RestartContainer
+import com.example.diceless.ui.battlegrid.components.dialog.SchemeContainer
+import com.example.diceless.ui.battlegrid.components.dialog.SettingsContainer
 import com.example.diceless.ui.battlegrid.components.draggable.MonarchDraggableComponent
 import com.example.diceless.ui.battlegrid.components.pager.InnerHorizontalPager
 import com.example.diceless.ui.battlegrid.components.pager.InnerVerticalPager
 import com.example.diceless.ui.battlegrid.mvi.BattleGridActions
 import com.example.diceless.ui.battlegrid.mvi.BattleGridState
 import com.example.diceless.ui.battlegrid.viewmodel.BattleGridViewModel
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @Composable
@@ -98,84 +85,52 @@ fun BattleGridContent(
     var showRestartDialog by remember { mutableStateOf(false) }
     var expandedMiddleMenu by remember { mutableStateOf(false) }
 
-    if (showRestartDialog) {
-        RestartDialog(
-            onDismiss = {showRestartDialog = false},
-            onRestart = {
-                onAction(BattleGridActions.OnRestart)
+    var restartModalSheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    if (showRestartDialog){
+        GenericBottomSheet(
+            sheetState = restartModalSheetState,
+            onDismiss = { showRestartDialog = false },
+            content = {
+                RestartContainer(
+                    onDismiss = {
+                        scope.launch { restartModalSheetState.hide() }.invokeOnCompletion {
+                            if (!restartModalSheetState.isVisible) {
+                                showRestartDialog = false
+                            }
+                        }
+                    }
+                )
             }
         )
     }
 
     if (showHistoryBottomSheet) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ModalBottomSheet(
-            onDismissRequest = { showHistoryBottomSheet = false },
-            sheetState = sheetState,
-            modifier = Modifier
-                .fillMaxSize(), // Ocupa toda a tela
-            containerColor = MaterialTheme.colorScheme.background
-        ) {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = "Modal Fullscreen",
-                                style = MaterialTheme.typography.headlineMedium,
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = {
-                                showHistoryBottomSheet = false
-                            }) {
-                                Icon(Icons.Default.Close, contentDescription = "Fechar")
-                            }
-                        }
-                    )
-                }
-            ) {
-                Column(modifier = Modifier.padding(it)) {
-                    repeat(20) {
-                        Text(
-                            text = "Item $it no Modal",
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    }
-                }
+        DicelessDialog(
+            onDismiss = { showHistoryBottomSheet = false },
+            content = {
+                HistoryContainer()
             }
-        }
+        )
     }
 
     if (showSettingsBottomSheet) {
-        SettingsDialog(
-            onDismiss = {showSettingsBottomSheet = false},
+        DicelessDialog(
+            onDismiss = { showSettingsBottomSheet = false },
+            content = {
+                SettingsContainer()
+            }
         )
     }
 
     if (showUsersBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showUsersBottomSheet = false },
-            sheetState = rememberModalBottomSheetState()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Settings", style = MaterialTheme.typography.headlineSmall)
-                Spacer(modifier = Modifier.padding(8.dp))
-                Text("Exibindo o settings dos jogadores...")
-                Spacer(modifier = Modifier.padding(8.dp))
-                Button(
-                    onClick = { showUsersBottomSheet = false },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Fechar")
-                }
+        DicelessDialog(
+            onDismiss = { showUsersBottomSheet = false },
+            content = {
+                SchemeContainer(onDismiss = {showUsersBottomSheet = false})
             }
-        }
+        )
     }
 
 
@@ -221,7 +176,10 @@ fun BattleGridContent(
                     menuItemEnum = MenuItemEnum.HISTORY
                 ).getIconButton(),
                 MenuItem(
-                    action = { showRestartDialog = true },
+                    action = {
+                        scope.launch {
+                            showRestartDialog = true
+                        } },
                     menuItemEnum = MenuItemEnum.RESTART
                 ).getIconButton()
             ),
@@ -238,30 +196,18 @@ fun BattleGridContent(
         )
 
         AnimatedVisibility(
+            modifier = Modifier.align(alignment = Alignment.TopCenter),
             visible = uiState.showMonarchSymbol,
-            enter = slideInVertically(
-                initialOffsetY = { fullHeight -> fullHeight },
+            enter = fadeIn(
                 animationSpec = tween(
-                    durationMillis = 600,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeIn(
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 100
+                    durationMillis = 500
                 )
             ),
-            exit = slideOutVertically(
-                targetOffsetY = { fullHeight -> fullHeight },
-                animationSpec = tween(
-                    durationMillis = 500,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeOut(
+            exit = fadeOut(
                 animationSpec = tween(durationMillis = 400)
             )
         ) {
-            MonarchDraggableComponent(schemeEnum = selectedScheme, heightProportion = maxHeight)
+            MonarchDraggableComponent(schemeEnum = selectedScheme, maxHeight)
         }
 
         AnimatedVisibility(

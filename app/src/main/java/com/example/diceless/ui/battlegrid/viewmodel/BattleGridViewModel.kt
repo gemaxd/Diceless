@@ -142,6 +142,7 @@ class BattleGridViewModel @Inject constructor(
                 // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
                 player.copy(
                     life = _state.value.selectedStartingLife,
+                    baseLife = _state.value.selectedStartingLife,
                     counters = getDefaultCounterData(),
                     commanderDamageReceived = prepareCommanderDamage(
                         _state.value.players,
@@ -298,7 +299,7 @@ class BattleGridViewModel @Inject constructor(
             PlayerData(name = "Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
         )
 
-        val selectedScheme = SchemeEnum.TRIPLE_STANDARD
+        val selectedScheme = SchemeEnum.QUADRA_STANDARD
         val playersBasedOnScheme = players.take(selectedScheme.numbersOfPlayers)
         val playersWithCommanderDamage = playersBasedOnScheme.map { currentPlayer ->
             val damageTrackers = prepareCommanderDamage(players, selectedScheme.numbersOfPlayers)
