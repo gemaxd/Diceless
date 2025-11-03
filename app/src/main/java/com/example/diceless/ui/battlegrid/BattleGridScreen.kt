@@ -41,13 +41,16 @@ import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.ui.battlegrid.components.MiddleMenu
+import com.example.diceless.ui.battlegrid.components.bottomsheet.GenericBottomSheet
+import com.example.diceless.ui.battlegrid.components.bottomsheet.HistoryIndicators
+import com.example.diceless.ui.battlegrid.components.bottomsheet.RestartIndicators
+import com.example.diceless.ui.battlegrid.components.bottomsheet.SchemeIndicators
+import com.example.diceless.ui.battlegrid.components.bottomsheet.SettingsIndicators
+import com.example.diceless.ui.battlegrid.components.bottomsheet.containers.HistoryContainer
+import com.example.diceless.ui.battlegrid.components.bottomsheet.containers.RestartContainer
+import com.example.diceless.ui.battlegrid.components.bottomsheet.containers.SchemeContainer
+import com.example.diceless.ui.battlegrid.components.bottomsheet.containers.SettingsContainer
 import com.example.diceless.ui.battlegrid.components.button.ActionPill
-import com.example.diceless.ui.battlegrid.components.dialog.DicelessDialog
-import com.example.diceless.ui.battlegrid.components.dialog.GenericBottomSheet
-import com.example.diceless.ui.battlegrid.components.dialog.HistoryContainer
-import com.example.diceless.ui.battlegrid.components.dialog.RestartContainer
-import com.example.diceless.ui.battlegrid.components.dialog.SchemeContainer
-import com.example.diceless.ui.battlegrid.components.dialog.SettingsContainer
 import com.example.diceless.ui.battlegrid.components.draggable.MonarchDraggableComponent
 import com.example.diceless.ui.battlegrid.components.pager.InnerHorizontalPager
 import com.example.diceless.ui.battlegrid.components.pager.InnerVerticalPager
@@ -79,13 +82,20 @@ fun BattleGridContent(
     selectedScheme: SchemeEnum,
     onAction: (BattleGridActions) -> Unit
 ) {
-    var showHistoryBottomSheet by remember { mutableStateOf(false) }
-    var showSettingsBottomSheet by remember { mutableStateOf(false) }
-    var showUsersBottomSheet by remember { mutableStateOf(false) }
-    var showRestartDialog by remember { mutableStateOf(false) }
     var expandedMiddleMenu by remember { mutableStateOf(false) }
 
-    var restartModalSheetState = rememberModalBottomSheetState()
+    var showUsersBottomSheet by remember { mutableStateOf(false) }
+    val schemeModalSheetState = rememberModalBottomSheetState()
+
+    var showSettingsBottomSheet by remember { mutableStateOf(false) }
+    val settingsModalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    var showHistoryBottomSheet by remember { mutableStateOf(false) }
+    val historyModalSheetState = rememberModalBottomSheetState()
+
+    var showRestartDialog by remember { mutableStateOf(false) }
+    val restartModalSheetState = rememberModalBottomSheetState()
+
     val scope = rememberCoroutineScope()
 
     if (showRestartDialog){
@@ -102,37 +112,59 @@ fun BattleGridContent(
                         }
                     }
                 )
+            },
+            indicators = {
+                RestartIndicators()
             }
         )
     }
 
     if (showHistoryBottomSheet) {
-        DicelessDialog(
+        GenericBottomSheet(
+            sheetState = historyModalSheetState,
             onDismiss = { showHistoryBottomSheet = false },
             content = {
                 HistoryContainer()
+            },
+            indicators = {
+                HistoryIndicators()
             }
         )
     }
 
     if (showSettingsBottomSheet) {
-        DicelessDialog(
+        GenericBottomSheet(
+            sheetState = settingsModalSheetState,
             onDismiss = { showSettingsBottomSheet = false },
             content = {
                 SettingsContainer()
+            },
+            indicators = {
+                SettingsIndicators()
             }
         )
     }
 
     if (showUsersBottomSheet) {
-        DicelessDialog(
+        GenericBottomSheet(
+            sheetState = schemeModalSheetState,
             onDismiss = { showUsersBottomSheet = false },
             content = {
-                SchemeContainer(onDismiss = {showUsersBottomSheet = false})
+                SchemeContainer(
+                    onDismiss = {
+                        scope.launch { schemeModalSheetState.hide() }.invokeOnCompletion {
+                            if (!schemeModalSheetState.isVisible) {
+                                showUsersBottomSheet = false
+                            }
+                        }
+                    }
+                )
+            },
+            indicators = {
+                SchemeIndicators()
             }
         )
     }
-
 
     BoxWithConstraints(
         contentAlignment = Alignment.Center
@@ -172,24 +204,37 @@ fun BattleGridContent(
             },
             firstRow = listOf(
                 MenuItem(
-                    action = { showHistoryBottomSheet = true },
+                    action = {
+                        scope.launch {
+                            showHistoryBottomSheet = true
+                        }
+                    },
                     menuItemEnum = MenuItemEnum.HISTORY
                 ).getIconButton(),
                 MenuItem(
                     action = {
                         scope.launch {
                             showRestartDialog = true
-                        } },
+                        }
+                    },
                     menuItemEnum = MenuItemEnum.RESTART
                 ).getIconButton()
             ),
             secondRow = listOf(
                 MenuItem(
-                    action = { showSettingsBottomSheet = true },
+                    action = {
+                        scope.launch {
+                            showSettingsBottomSheet = true
+                        }
+                    },
                     menuItemEnum = MenuItemEnum.SETTINGS
                 ).getIconButton(),
                 MenuItem(
-                    action = { showUsersBottomSheet = true },
+                    action = {
+                        scope.launch {
+                            showUsersBottomSheet = true
+                        }
+                    },
                     menuItemEnum = MenuItemEnum.SCHEMES
                 ).getIconButton()
             )
