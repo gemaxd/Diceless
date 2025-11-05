@@ -1,5 +1,6 @@
 package com.example.diceless.ui.battlegrid.mvi
 
+import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
 
@@ -20,4 +21,5 @@ sealed class BattleGridActions {
     data class OnAllowSelfCommanderDamageChanged(val enabled: Boolean) : BattleGridActions()
     data class OnLinkCommanderDamageToLifeChanged(val enabled: Boolean) : BattleGridActions()
     data object ToggleMonarchCounter: BattleGridActions()
+    data class OnUpdateScheme(val schemeEnum: SchemeEnum) : BattleGridActions()
 }

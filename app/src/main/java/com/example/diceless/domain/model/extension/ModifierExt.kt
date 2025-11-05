@@ -1,5 +1,11 @@
 package com.example.diceless.domain.model.extension
 
+import android.util.Size
+import androidx.compose.animation.animateContentSize
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.ui.battlegrid.components.draggable.RotationZone
 import com.example.diceless.ui.battlegrid.components.draggable.toDegrees
@@ -58,4 +64,3 @@ fun calculateRotation(
         else -> RotationZone.PRISTINE.toDegrees()
     }
 }
-

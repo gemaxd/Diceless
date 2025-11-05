@@ -1,6 +1,8 @@
 package com.example.diceless.ui.battlegrid
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -41,6 +43,7 @@ import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.ui.battlegrid.components.MiddleMenu
+import com.example.diceless.ui.battlegrid.components.MiddleMenuSolo
 import com.example.diceless.ui.battlegrid.components.bottomsheet.GenericBottomSheet
 import com.example.diceless.ui.battlegrid.components.bottomsheet.HistoryIndicators
 import com.example.diceless.ui.battlegrid.components.bottomsheet.RestartIndicators
@@ -85,7 +88,7 @@ fun BattleGridContent(
     var expandedMiddleMenu by remember { mutableStateOf(false) }
 
     var showUsersBottomSheet by remember { mutableStateOf(false) }
-    val schemeModalSheetState = rememberModalBottomSheetState()
+    val schemeModalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
     val settingsModalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -151,11 +154,16 @@ fun BattleGridContent(
             onDismiss = { showUsersBottomSheet = false },
             content = {
                 SchemeContainer(
-                    onDismiss = {
+                    selectedScheme = uiState.selectedScheme,
+                    onSelectScheme = { schemeEnum ->
                         scope.launch { schemeModalSheetState.hide() }.invokeOnCompletion {
                             if (!schemeModalSheetState.isVisible) {
+                                expandedMiddleMenu = !expandedMiddleMenu
                                 showUsersBottomSheet = false
                             }
+                            onAction(
+                                BattleGridActions.OnUpdateScheme(schemeEnum)
+                            )
                         }
                     }
                 )
@@ -171,74 +179,121 @@ fun BattleGridContent(
     ) {
         val maxHeight = maxHeight
 
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Posiciona cada PlayerGrid em um quadrante
-            players.forEachIndexed { index, playerState ->
-                val orientation =
-                    getCorrectOrientation(playerState.playerPosition, scheme = selectedScheme)
+        AnimatedContent(targetState = selectedScheme){ scheme ->
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                players.forEachIndexed { index, playerState ->
+                    val orientation =
+                        getCorrectOrientation(playerState.playerPosition, scheme = scheme)
 
-                orientation?.let {
-                    Card(
-                        modifier = Modifier
-                            .align(it.alignment.align)
-                            .fillMaxWidth(it.proportion.width)
-                            .fillMaxHeight(it.proportion.height),
-                    ) {
-                        IndividualGridContent(
-                            isDamageLinked = uiState.linkCommanderDamageToLife,
-                            players = players,
-                            playerData = playerState,
-                            rotation = orientation.rotation,
-                            onAction = onAction
-                        )
+                    orientation?.let { orient ->
+                        Card(
+                            modifier = Modifier
+                                .align(orient.alignment.align)
+                                .fillMaxWidth(orient.proportion.width)
+                                .fillMaxHeight(orient.proportion.height),
+                        ) {
+                            IndividualGridContent(
+                                isDamageLinked = uiState.linkCommanderDamageToLife,
+                                players = players,
+                                playerData = playerState,
+                                rotation = orient.rotation,
+                                onAction = onAction
+                            )
+                        }
                     }
                 }
             }
         }
-        MiddleMenu(
-            expanded = expandedMiddleMenu,
-            onExpandMiddleMenu = {
-                expandedMiddleMenu = !expandedMiddleMenu
-            },
-            firstRow = listOf(
-                MenuItem(
-                    action = {
-                        scope.launch {
-                            showHistoryBottomSheet = true
-                        }
-                    },
-                    menuItemEnum = MenuItemEnum.HISTORY
-                ).getIconButton(),
-                MenuItem(
-                    action = {
-                        scope.launch {
-                            showRestartDialog = true
-                        }
-                    },
-                    menuItemEnum = MenuItemEnum.RESTART
-                ).getIconButton()
-            ),
-            secondRow = listOf(
-                MenuItem(
-                    action = {
-                        scope.launch {
-                            showSettingsBottomSheet = true
-                        }
-                    },
-                    menuItemEnum = MenuItemEnum.SETTINGS
-                ).getIconButton(),
-                MenuItem(
-                    action = {
-                        scope.launch {
-                            showUsersBottomSheet = true
-                        }
-                    },
-                    menuItemEnum = MenuItemEnum.SCHEMES
-                ).getIconButton()
+
+
+        if (selectedScheme != SchemeEnum.SOLO){
+            MiddleMenu(
+                expanded = expandedMiddleMenu,
+                onExpandMiddleMenu = {
+                    expandedMiddleMenu = !expandedMiddleMenu
+                },
+                firstRow = listOf(
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showHistoryBottomSheet = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.HISTORY
+                    ).getIconButton(),
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showRestartDialog = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.RESTART
+                    ).getIconButton()
+                ),
+                secondRow = listOf(
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showSettingsBottomSheet = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.SETTINGS
+                    ).getIconButton(),
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showUsersBottomSheet = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.SCHEMES
+                    ).getIconButton()
+                )
             )
-        )
+        } else {
+            MiddleMenuSolo(
+                modifier = Modifier.align(alignment = Alignment.TopCenter),
+                expanded = expandedMiddleMenu,
+                onExpandMiddleMenu = {
+                    expandedMiddleMenu = !expandedMiddleMenu
+                },
+                firstRow = listOf(
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showHistoryBottomSheet = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.HISTORY
+                    ).getIconButton(),
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showRestartDialog = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.RESTART
+                    ).getIconButton(),
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showSettingsBottomSheet = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.SETTINGS
+                    ).getIconButton(),
+                    MenuItem(
+                        action = {
+                            scope.launch {
+                                showUsersBottomSheet = true
+                            }
+                        },
+                        menuItemEnum = MenuItemEnum.SCHEMES
+                    ).getIconButton()
+                ),
+            )
+        }
 
         AnimatedVisibility(
             modifier = Modifier.align(alignment = Alignment.TopCenter),

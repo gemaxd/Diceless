@@ -2,7 +2,6 @@ package com.example.diceless.ui.battlegrid.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
-import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.data.SettingsRepository
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
@@ -28,8 +27,8 @@ class BattleGridViewModel @Inject constructor(
         get() = BattleGridState()
 
     init {
-        prepareFakeData()
         loadSettingsFromPrefs() // Carrega configs do SharedPreferences
+        prepareBattleData()
     }
 
     override fun onAction(action: BattleGridActions) {
@@ -69,7 +68,8 @@ class BattleGridViewModel @Inject constructor(
             is BattleGridActions.OnCommanderDamageChanged -> {
                 // Aplica regras de config antes de mudar dano
                 if (!state.value.allowSelfCommanderDamage &&
-                    action.receivingPlayer.name == action.playerName) {
+                    action.receivingPlayer.name == action.playerName
+                ) {
                     return // Ignora se não permite dano a si mesmo
                 }
                 onCommanderDamageChange(
@@ -100,6 +100,13 @@ class BattleGridViewModel @Inject constructor(
                 updateBattleGridState {
                     showMonarchSymbol = !toggle
                 }
+            }
+
+            is BattleGridActions.OnUpdateScheme -> {
+                updateBattleGridState {
+                    selectedScheme = action.schemeEnum
+                }
+                restartMatch()
             }
         }
     }
@@ -211,7 +218,11 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
-    private fun updateCounterValue(player: PlayerData, counterToToggle: CounterData, updateValue: Int) {
+    private fun updateCounterValue(
+        player: PlayerData,
+        counterToToggle: CounterData,
+        updateValue: Int
+    ) {
         viewModelScope.launch {
             val updatedPlayers = _state.value.players.map { p ->
                 if (p.playerPosition == player.playerPosition) {
@@ -291,25 +302,45 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
-    private fun prepareFakeData() {
+    private fun prepareBattleData() {
         val players = listOf(
-            PlayerData(name = "Jogador 1", playerPosition = PositionEnum.PLAYER_ONE),
-            PlayerData(name = "Jogador 2", playerPosition = PositionEnum.PLAYER_TWO),
-            PlayerData(name = "Jogador 3", playerPosition = PositionEnum.PLAYER_THREE),
-            PlayerData(name = "Jogador 4", playerPosition = PositionEnum.PLAYER_FOUR)
+            PlayerData(
+                name = "Jogador 1",
+                life = _state.value.selectedStartingLife,
+                baseLife = _state.value.selectedStartingLife,
+                playerPosition = PositionEnum.PLAYER_ONE
+            ),
+            PlayerData(
+                name = "Jogador 2",
+                life = _state.value.selectedStartingLife,
+                baseLife = _state.value.selectedStartingLife,
+                playerPosition = PositionEnum.PLAYER_TWO
+            ),
+            PlayerData(
+                name = "Jogador 3",
+                life = _state.value.selectedStartingLife,
+                baseLife = _state.value.selectedStartingLife,
+                playerPosition = PositionEnum.PLAYER_THREE
+            ),
+            PlayerData(
+                name = "Jogador 4",
+                life = _state.value.selectedStartingLife,
+                baseLife = _state.value.selectedStartingLife,
+                playerPosition = PositionEnum.PLAYER_FOUR
+            )
         )
 
-        val selectedScheme = SchemeEnum.QUADRA_STANDARD
-        val playersBasedOnScheme = players.take(selectedScheme.numbersOfPlayers)
+        val playersBasedOnScheme = players.take(uiState.value.selectedScheme.numbersOfPlayers)
         val playersWithCommanderDamage = playersBasedOnScheme.map { currentPlayer ->
-            val damageTrackers = prepareCommanderDamage(players, selectedScheme.numbersOfPlayers)
+            val damageTrackers =
+                prepareCommanderDamage(players, uiState.value.selectedScheme.numbersOfPlayers)
 
             currentPlayer.copy(commanderDamageReceived = damageTrackers)
         }
 
         _state.value = _state.value.copy(
             players = playersWithCommanderDamage,
-            selectedScheme = selectedScheme
+            selectedScheme = uiState.value.selectedScheme
         )
     }
 }
