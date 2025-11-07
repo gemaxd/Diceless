@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.diceless.navigation.battleGrid
+import com.example.diceless.navigation.cardSearch
 import com.example.diceless.navigation.route.BattleGridRoute
 
 @Composable
@@ -18,6 +19,12 @@ internal fun NavigationGraph(
         startDestination = BattleGridRoute.BattleGrid.route
     ) {
         battleGrid(
+            onNavigation = { route ->
+                navController.navigate(route)
+            }
+        )
+
+        cardSearch(
             onNavigation = { route ->
                 navController.navigate(route)
             }

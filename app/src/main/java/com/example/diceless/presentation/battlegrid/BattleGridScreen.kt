@@ -64,7 +64,8 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterial3Api
 @Composable
 fun BattleGridScreen(
-    viewmodel: BattleGridViewModel = hiltViewModel()
+    viewmodel: BattleGridViewModel = hiltViewModel(),
+    onNavigation: (route: String) -> Unit
 ) {
     val state by viewmodel.state.collectAsState()
 
@@ -72,7 +73,8 @@ fun BattleGridScreen(
         uiState = state,
         players = state.players,
         selectedScheme = state.selectedScheme,
-        onAction = viewmodel::onAction
+        onAction = viewmodel::onAction,
+        onNavigation = onNavigation
     )
 }
 
@@ -82,7 +84,8 @@ fun BattleGridContent(
     uiState: BattleGridState,
     players: List<PlayerData>,
     selectedScheme: SchemeEnum,
-    onAction: (BattleGridActions) -> Unit
+    onAction: (BattleGridActions) -> Unit,
+    onNavigation: (route: String) -> Unit
 ) {
     var expandedMiddleMenu by remember { mutableStateOf(false) }
 
