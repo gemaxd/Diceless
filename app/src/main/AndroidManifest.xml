@@ -7,12 +7,12 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".DicelessApplication"
+        android:name=".features.battlegrid.DicelessApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Diceless">
         <activity
-            android:name=".MainActivity"
+            android:name=".features.battlegrid.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Diceless">
             <intent-filter>
