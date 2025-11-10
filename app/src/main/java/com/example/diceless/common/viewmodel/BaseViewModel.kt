@@ -1,4 +1,4 @@
-package com.example.diceless.features.battlegrid.viewmodel
+package com.example.diceless.common.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlin.getValue
 
 abstract class BaseViewModel<ACTION, RESULT, STATE> : ViewModel() {
 

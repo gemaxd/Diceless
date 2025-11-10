@@ -2,6 +2,7 @@ package com.example.diceless.features.battlegrid.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
+import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.SettingsRepository
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
