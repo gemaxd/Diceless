@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.CardRepository
-import com.example.diceless.features.cardsearch.mvi.CardImageState
+import com.example.diceless.features.cardsearch.mvi.CardListState
 import com.example.diceless.features.cardsearch.mvi.CardSearchActions
 import com.example.diceless.features.cardsearch.mvi.CardSearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,27 +16,27 @@ import javax.inject.Inject
 @HiltViewModel
 class CardSearchViewModel @Inject constructor() : BaseViewModel<CardSearchActions, Unit, CardSearchState>() {
     override val initialState: CardSearchState
-        get() = TODO("Not yet implemented")
+        get() = CardSearchState()
 
     override fun onAction(action: CardSearchActions) {
-        TODO("Not yet implemented")
+
     }
 
-    var state by mutableStateOf<CardImageState>(CardImageState.Idle)
+    var state by mutableStateOf<CardListState>(CardListState.Idle)
         private set
 
-    fun buscar(nomeCard: String) {
-        if (nomeCard.isBlank()) {
-            state = CardImageState.Error("Digite o nome do card")
+    fun buscar(query: String) {
+        if (query.isBlank()) {
+            state = CardListState.Error("Digite o nome do card")
             return
         }
 
-        state = CardImageState.Loading
+        state = CardListState.Loading
         viewModelScope.launch {
-            val result = CardRepository.buscarImagem(nomeCard)
+            val result = CardRepository.buscarCards(query)
             state = result.fold(
-                onSuccess = { CardImageState.Success(it) },
-                onFailure = { CardImageState.Error("Card não encontrado") }
+                onSuccess = { CardListState.Success(it) },
+                onFailure = { CardListState.Error(it.message ?: "Erro") }
             )
         }
     }

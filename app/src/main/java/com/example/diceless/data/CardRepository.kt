@@ -1,35 +1,43 @@
 package com.example.diceless.data
 
+import com.example.diceless.domain.model.ScryfallCard
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URLEncoder
 
 object CardRepository {
     private val api: ScryfallApi = Retrofit.Builder()
         .baseUrl("https://api.scryfall.com/")
-        .addConverterFactory(MoshiConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(ScryfallApi::class.java)
 
-    // Cache em memória (cardName -> url)
-    private val cache = mutableMapOf<String, String>()
+    private val cache = mutableMapOf<String, List<ScryfallCard>>()
 
-    suspend fun buscarImagem(nomeCard: String): Result<String> {
-        val nomeNormalizado = nomeCard.trim()
+    suspend fun buscarCards(query: String): Result<List<ScryfallCard>> {
+        val q = query.trim()
+        if (q.isBlank()) return Result.failure(IllegalArgumentException("Digite algo"))
 
-        // 1. Cache rápido
-        cache[nomeNormalizado]?.let { return Result.success(it) }
+        cache[q]?.let { return Result.success(it) }
 
         return try {
-            val card = api.getCardByExactName(nomeNormalizado)
-            val url = card.imageUris?.normal
-                ?: card.imageUris?.png
-                ?: card.imageUris?.large
-                ?: return Result.failure(Exception("Imagem não encontrada"))
+            val encoded = URLEncoder.encode(q, "UTF-8")
+            val response = api.searchCards(encoded)
 
-            cache[nomeNormalizado] = url
-            Result.success(url)
+            if (response.data.isEmpty()) {
+                return Result.failure(Exception("Nenhum card encontrado"))
+            }
+
+            cache[q] = response.data
+            Result.success(response.data)
+
+        } catch (e: retrofit2.HttpException) {
+            if (e.code() == 400 || e.code() == 404) {
+                Result.failure(Exception("Nenhum resultado para '$q'"))
+            } else {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
-            // Se der 404 ou erro, tenta busca fuzzy (opcional)
             Result.failure(e)
         }
     }

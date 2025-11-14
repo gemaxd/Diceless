@@ -1,20 +1,35 @@
 package com.example.diceless.domain.model
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.google.gson.annotations.SerializedName
 
-@JsonClass(generateAdapter = true)
 data class ScryfallCard(
     val name: String,
-    @Json(name = "image_uris") val imageUris: ImageUris?
+
+    @SerializedName("image_uris")
+    val imageUris: ImageUris?,
+
+    @SerializedName("card_faces")
+    val cardFaces: List<CardFace>?
 )
 
-@JsonClass(generateAdapter = true)
+data class CardFace(
+    val name: String,
+    @SerializedName("type_line") val typeLine: String?,
+
+    @SerializedName("image_uris")
+    val imageUris: ImageUris?
+)
+
 data class ImageUris(
     val small: String?,
     val normal: String?,
     val large: String?,
     val png: String?,
-    @Json(name = "art_crop") val artCrop: String?,
-    @Json(name = "border_crop") val borderCrop: String?
+
+    @SerializedName("art_crop")
+    val artCrop: String?,
+
+    @SerializedName("border_crop")
+    val borderCrop: String?
 )
+
