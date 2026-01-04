@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components
+package com.example.diceless.features.common.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -250,6 +250,16 @@ fun HorizontalCountersGridContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
+            Button(
+                onClick = {
+                    onNavigation(CardSearchRoute.CardSearch.route)
+                },
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(text = "Search image")
+            }
+
+            Spacer(modifier = Modifier.padding(8.dp))
 
             Button(
                 onClick = {

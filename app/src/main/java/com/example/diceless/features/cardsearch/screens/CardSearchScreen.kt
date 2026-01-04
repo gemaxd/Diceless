@@ -115,7 +115,7 @@ fun CardSearchScreen(
 
 @Composable
 fun CardItem(card: ScryfallCard) {
-    val imageUrl = card.imageUris?.large
+    val imageUrl = card.imageUris?.artCrop
         ?: card.cardFaces?.firstOrNull()?.imageUris?.large
 
 

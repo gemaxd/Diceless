@@ -10,7 +10,7 @@ import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.presentation.battlegrid.components.CommanderDamageGrid
-import com.example.diceless.presentation.battlegrid.components.CountersGrid
+import com.example.diceless.features.common.components.CountersGrid
 import com.example.diceless.presentation.battlegrid.components.LifeGrid
 
 @Composable
