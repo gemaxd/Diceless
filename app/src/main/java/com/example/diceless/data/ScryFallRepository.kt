@@ -1,20 +1,19 @@
 package com.example.diceless.data
 
 import com.example.diceless.domain.model.ScryfallCard
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URLEncoder
+import javax.inject.Inject
 
-object CardRepository {
-    private val api: ScryfallApi = Retrofit.Builder()
-        .baseUrl("https://api.scryfall.com/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(ScryfallApi::class.java)
+interface ScryFallRepository {
+    suspend fun searchCards(query: String): Result<List<ScryfallCard>>
+}
 
+class ScryFallRepositoryImpl @Inject constructor(
+    private val api: ScryfallApi
+): ScryFallRepository {
     private val cache = mutableMapOf<String, List<ScryfallCard>>()
 
-    suspend fun buscarCards(query: String): Result<List<ScryfallCard>> {
+    override suspend fun searchCards(query: String): Result<List<ScryfallCard>> {
         val q = query.trim()
         if (q.isBlank()) return Result.failure(IllegalArgumentException("Digite algo"))
 

@@ -16,6 +16,4 @@ interface ScryfallApi {
         @Query("page") page: Int = 1
     ): ScryfallSearchResponse
 
-    @GET("cards/search")
-    suspend fun getCardByExactName(@Query("q") name: String): ScryfallCard
 }

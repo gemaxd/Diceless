@@ -8,19 +8,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,95 +40,109 @@ import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.features.cardsearch.mvi.CardListState
 import com.example.diceless.features.cardsearch.viewmodel.CardSearchViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardSearchScreen(
     viewModel: CardSearchViewModel = hiltViewModel()
 ){
     var nomeCard by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        OutlinedTextField(
-            value = nomeCard,
-            onValueChange = { nomeCard = it },
-            label = { Text("Nome do card") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = { viewModel.buscar(nomeCard) },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Buscar imagem")
-        }
-
-        when (val state = viewModel.state) {
-            is CardListState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+    Scaffold(
+        topBar = {
+            Row {
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                }
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "Procure sua carta"
+                )
             }
-            is CardListState.Success -> {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    LazyColumn {
-                        items(state.cards) { card ->
-                            CardItem(card = card)
+        },
+        bottomBar = {
+            OutlinedTextField(
+                value = nomeCard,
+                onValueChange = {
+                    nomeCard = it
+                    viewModel.querySearchForCards(nomeCard)
+                },
+                label = { Text("Nome do card") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedPlaceholderColor = Color.Gray,
+                    focusedTextColor = Color.White,
+                    focusedPlaceholderColor = Color.Gray
+                )
+            )
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Black)
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    when (val state = viewModel.state) {
+                        is CardListState.Loading -> {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                         }
+                        is CardListState.Success -> {
+                            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                                items(state.cards) { card ->
+                                    CardItem(card = card)
+                                }
+                            }
+                        }
+                        is CardListState.Error -> {
+                            Text(
+                                text = state.message,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                        else -> {}
                     }
                 }
             }
-            is CardListState.Error -> {
-                Text(
-                    text = state.message,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-            else -> {}
         }
-    }
+    )
 }
 
 @Composable
 fun CardItem(card: ScryfallCard) {
-    val imageUrl = card.imageUris?.normal
-        ?: card.cardFaces?.firstOrNull()?.imageUris?.normal
+    val imageUrl = card.imageUris?.large
+        ?: card.cardFaces?.firstOrNull()?.imageUris?.large
 
-    Card(
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (imageUrl != null) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = card.name,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .background(Color.LightGray, RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Default.AccountCircle, contentDescription = null, tint = Color.Gray)
-                }
+        if (imageUrl != null) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = card.name,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .background(Color.LightGray, RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Default.AccountCircle, contentDescription = null, tint = Color.Gray)
             }
         }
     }
+
 }
