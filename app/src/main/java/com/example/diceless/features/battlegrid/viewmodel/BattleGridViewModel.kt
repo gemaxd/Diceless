@@ -153,6 +153,7 @@ class BattleGridViewModel @Inject constructor(
                     baseLife = _state.value.selectedStartingLife,
                     counters = getDefaultCounterData(),
                     commanderDamageReceived = prepareCommanderDamage(
+                        player = player,
                         _state.value.players,
                         _state.value.selectedScheme.numbersOfPlayers
                     )
@@ -278,14 +279,15 @@ class BattleGridViewModel @Inject constructor(
     }
 
     private fun prepareCommanderDamage(
+        player: PlayerData,
         players: List<PlayerData>,
         numberOfPlayers: Int
     ): MutableList<CommanderDamage> {
         val playersBasedOnScheme = players.take(numberOfPlayers)
         var commanderDamage = mutableListOf<CommanderDamage>()
 
-        playersBasedOnScheme.map { currentPlayer ->
-            val opponents = playersBasedOnScheme.filter { it.name != currentPlayer.name }
+        playersBasedOnScheme.map {
+            val opponents = playersBasedOnScheme.filter { it.name != player.name }
 
             commanderDamage = opponents.map { opponent ->
                 CommanderDamage(name = opponent.name, damage = 0)
@@ -334,7 +336,7 @@ class BattleGridViewModel @Inject constructor(
         val playersBasedOnScheme = players.take(uiState.value.selectedScheme.numbersOfPlayers)
         val playersWithCommanderDamage = playersBasedOnScheme.map { currentPlayer ->
             val damageTrackers =
-                prepareCommanderDamage(players, uiState.value.selectedScheme.numbersOfPlayers)
+                prepareCommanderDamage(currentPlayer, players, uiState.value.selectedScheme.numbersOfPlayers)
 
             currentPlayer.copy(commanderDamageReceived = damageTrackers)
         }

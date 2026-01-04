@@ -45,7 +45,7 @@ fun CommanderDamageGrid(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Dano de commander",
+            text = "Dano de commander ${playerData.name}",
             modifier = Modifier
                 .then(
                     other = when (rotationEnum) {
@@ -107,7 +107,7 @@ fun CommanderDamageGrid(
                         }
                     )
                 ) {
-                    playerData.commanderDamageReceived.forEach { cmd ->
+                    playerData.commanderDamageReceived.filterNot{ it.name == playerData.name }.forEach { cmd ->
                         CommanderDamageControlCell(
                             playerData = playerData,
                             rotationEnum = rotationEnum,
