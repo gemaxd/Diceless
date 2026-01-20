@@ -1,0 +1,21 @@
+package com.example.diceless.data
+
+import com.example.diceless.data.dao.PlayerDao
+import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.ScryfallCard
+import com.example.diceless.domain.model.toEntity
+import java.util.UUID
+
+interface PlayerProfileRepository {
+    suspend fun savePlayer(player: PlayerData, backgroundProfileId: ScryfallCard? = null)
+}
+
+class PlayerProfileRepositoryImpl (val playerDao: PlayerDao) : PlayerProfileRepository {
+
+    override suspend fun savePlayer(player: PlayerData, backgroundProfileId: ScryfallCard?) {
+        val entity = player.toEntity(
+            UUID.randomUUID().toString(), backgroundProfile = backgroundProfileId)
+        playerDao.upsertPlayer(entity)
+    }
+
+}

@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.example.diceless.navigation.NavigationRoot
 import com.example.diceless.navigation.graph.NavigationGraph
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,12 +18,14 @@ class MainActivity : ComponentActivity() {
         //enableEdgeToEdge()
         setContent {
 
-            val navController = rememberNavController()
+//            val navController = rememberNavController()
 
-            NavigationGraph(
-                modifier = Modifier,
-                navController = navController
-            )
+            NavigationRoot(modifier = Modifier)
+
+//            NavigationGraph(
+//                modifier = Modifier,
+//                navController = navController
+//            )
         }
     }
 }

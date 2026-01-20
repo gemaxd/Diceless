@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.CounterData
@@ -33,13 +34,14 @@ import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.navigation.route.CardSearchRoute
 import com.example.diceless.presentation.battlegrid.components.button.CounterControlButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
+import com.example.diceless.navigation.LocalNavigator
+import com.example.diceless.navigation.Route
 
 @Composable
 fun CountersGrid(
     playerData: PlayerData,
     rotationEnum: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -53,8 +55,7 @@ fun CountersGrid(
                 HorizontalCountersGridContent(
                     playerData = playerData,
                     rotationEnum = rotationEnum,
-                    onAction = onAction,
-                    onNavigation = onNavigation
+                    onAction = onAction
                 )
             }
 
@@ -223,9 +224,10 @@ fun VerticalCountersGridContent(
 fun HorizontalCountersGridContent(
     playerData: PlayerData,
     rotationEnum: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ) {
+    val navigator = LocalNavigator.current
+
     val selectedCounters = playerData.counters.filter { it.isSelected }
     val allCounters = playerData.counters
 
@@ -251,9 +253,7 @@ fun HorizontalCountersGridContent(
             horizontalArrangement = Arrangement.Center,
         ) {
             Button(
-                onClick = {
-                    onNavigation(CardSearchRoute.CardSearch.route)
-                },
+                onClick = { navigator.navigate(Route.CardSearch(playerData = playerData)) },
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(text = "Search image")
@@ -262,9 +262,7 @@ fun HorizontalCountersGridContent(
             Spacer(modifier = Modifier.padding(8.dp))
 
             Button(
-                onClick = {
-                    onNavigation(CardSearchRoute.CardSearch.route)
-                },
+                onClick = { navigator.navigate(Route.CardSearch(playerData = playerData)) },
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(text = "Load Profile")

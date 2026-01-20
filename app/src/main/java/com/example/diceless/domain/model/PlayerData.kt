@@ -1,8 +1,10 @@
 package com.example.diceless.domain.model
 
 import com.example.diceless.common.enums.PositionEnum
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
+@Serializable
 data class PlayerData(
     val playerPosition: PositionEnum,
     val name: String,
@@ -26,3 +28,17 @@ data class PlayerData(
         }
     }
 }
+
+// Mapper simples (pode ser extensão ou função)
+fun PlayerData.toEntity(id: String, backgroundProfile: ScryfallCard? = null) = PlayerEntity(
+    playerPosition = this.playerPosition,
+    id = id,
+    name = this.name,
+    backgroundProfileId = backgroundProfile?.name ?: "01"
+)
+
+fun PlayerEntity.toDomain() = PlayerData(
+    playerPosition = this.playerPosition,
+    name = this.name
+    // os outros campos (life, counters, etc.) são inicializados com valores default
+)

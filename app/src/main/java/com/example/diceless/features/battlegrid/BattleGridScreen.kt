@@ -57,7 +57,7 @@ import com.example.diceless.presentation.battlegrid.components.bottomsheet.conta
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SettingsContainer
 import com.example.diceless.presentation.battlegrid.components.button.ActionPill
 import com.example.diceless.presentation.battlegrid.components.draggable.MonarchDraggableComponent
-import com.example.diceless.presentation.battlegrid.components.pager.InnerHorizontalPager
+import com.example.diceless.features.common.components.pager.InnerHorizontalPager
 import com.example.diceless.presentation.battlegrid.components.pager.InnerVerticalPager
 import kotlinx.coroutines.launch
 
@@ -375,11 +375,11 @@ fun IndividualGridContent(
         Box {
             when (rotation) {
                 RotationEnum.NONE, RotationEnum.INVERTED -> {
-                    InnerHorizontalPager(isDamageLinked, playerData, rotation, onAction, onNavigation)
+                    InnerHorizontalPager(isDamageLinked, playerData, rotation, onAction)
                 }
 
                 RotationEnum.RIGHT, RotationEnum.LEFT -> {
-                    InnerVerticalPager(isDamageLinked, playerData, rotation, onAction, onNavigation)
+                    InnerVerticalPager(isDamageLinked, playerData, rotation, onAction)
                 }
             }
         }

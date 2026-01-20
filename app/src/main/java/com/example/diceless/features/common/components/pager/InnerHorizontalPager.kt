@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components.pager
+package com.example.diceless.features.common.components.pager
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -18,12 +18,11 @@ fun InnerHorizontalPager(
     isDamageLinked: Boolean,
     playerData: PlayerData,
     rotation: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ){
     when(rotation){
-        RotationEnum.NONE -> RegularHorizontalPagerContent(isDamageLinked, playerData, rotation, onAction, onNavigation)
-        else -> InvertedHorizontalPagerContent(isDamageLinked, playerData, rotation, onAction, onNavigation)
+        RotationEnum.NONE -> RegularHorizontalPagerContent(isDamageLinked, playerData, rotation, onAction)
+        else -> InvertedHorizontalPagerContent(isDamageLinked, playerData, rotation, onAction)
     }
 }
 
@@ -32,8 +31,7 @@ fun RegularHorizontalPagerContent(
     isDamageLinked: Boolean,
     playerData: PlayerData,
     rotation: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ){
     val horizontalPagerState = rememberPagerState(initialPage = 1, pageCount = {3})
     val verticalPagerState = rememberPagerState(initialPage = 1, pageCount = {2})
@@ -57,7 +55,7 @@ fun RegularHorizontalPagerContent(
                     }
                 }
             }
-            0 -> CountersGrid(playerData, rotation, onAction, onNavigation)
+            0 -> CountersGrid(playerData, rotation, onAction)
         }
     }
 }
@@ -67,8 +65,7 @@ fun InvertedHorizontalPagerContent(
     isDamageLinked: Boolean,
     playerData: PlayerData,
     rotation: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ){
     val horizontalPagerState = rememberPagerState(initialPage = 1, pageCount = {3})
     val verticalPagerState = rememberPagerState(initialPage = 0, pageCount = {2})
@@ -92,7 +89,7 @@ fun InvertedHorizontalPagerContent(
                     }
                 }
             }
-            1 -> CountersGrid(playerData, rotation, onAction, onNavigation)
+            1 -> CountersGrid(playerData, rotation, onAction)
         }
     }
 }

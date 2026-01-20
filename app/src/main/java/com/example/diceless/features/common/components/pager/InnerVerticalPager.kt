@@ -18,12 +18,11 @@ fun InnerVerticalPager(
     isDamageLinked: Boolean,
     playerData: PlayerData,
     rotation: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ) {
     when (rotation) {
-        RotationEnum.RIGHT -> VerticalRightPagerContent(isDamageLinked, playerData, rotation, onAction, onNavigation)
-        else -> VerticalLeftPagerContent(isDamageLinked,playerData, rotation, onAction, onNavigation)
+        RotationEnum.RIGHT -> VerticalRightPagerContent(isDamageLinked, playerData, rotation, onAction)
+        else -> VerticalLeftPagerContent(isDamageLinked,playerData, rotation, onAction)
     }
 }
 
@@ -32,8 +31,7 @@ fun VerticalRightPagerContent(
     isDamageLinked: Boolean,
     playerData: PlayerData,
     rotation: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ){
     val verticalPagerState = rememberPagerState(initialPage = 1, pageCount = {3})
     val horizontalPagerState = rememberPagerState(initialPage = 0, pageCount = {2})
@@ -55,7 +53,7 @@ fun VerticalRightPagerContent(
                     }
                 }
             }
-            1 -> CountersGrid(playerData, rotation, onAction, onNavigation)
+            1 -> CountersGrid(playerData, rotation, onAction)
         }
     }
 }
@@ -65,8 +63,7 @@ fun VerticalLeftPagerContent(
     isDamageLinked: Boolean,
     playerData: PlayerData,
     rotation: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ){
     val verticalPagerState = rememberPagerState(initialPage = 1, pageCount = {3})
     val horizontalPagerState = rememberPagerState(initialPage = 1, pageCount = {2})
@@ -76,7 +73,7 @@ fun VerticalLeftPagerContent(
         modifier = Modifier.fillMaxSize()
     ) { page ->
         when (page) {
-            0 -> CountersGrid(playerData, rotation, onAction, onNavigation)
+            0 -> CountersGrid(playerData, rotation, onAction)
             1 -> {
                 VerticalPager(
                     state = verticalPagerState,

@@ -1,6 +1,7 @@
 package com.example.diceless.features.cardsearch.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,17 +36,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.features.cardsearch.mvi.CardListState
+import com.example.diceless.features.cardsearch.mvi.CardSearchActions
 import com.example.diceless.features.cardsearch.viewmodel.CardSearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardSearchScreen(
-    viewModel: CardSearchViewModel = hiltViewModel()
+    viewModel: CardSearchViewModel = hiltViewModel(),
+    playerData: PlayerData
 ){
     var nomeCard by remember { mutableStateOf("") }
+    val onUiEvent = viewModel::onAction
 
     Scaffold(
         topBar = {
@@ -67,7 +73,9 @@ fun CardSearchScreen(
                 value = nomeCard,
                 onValueChange = {
                     nomeCard = it
-                    viewModel.querySearchForCards(nomeCard)
+                    onUiEvent(
+                        CardSearchActions.OnSearchQueryChanged(nomeCard)
+                    )
                 },
                 label = { Text("Nome do card") },
                 modifier = Modifier.fillMaxWidth(),
@@ -94,7 +102,7 @@ fun CardSearchScreen(
                         is CardListState.Success -> {
                             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                                 items(state.cards) { card ->
-                                    CardItem(card = card)
+                                    CardItem(playerData = playerData, card = card, event = onUiEvent)
                                 }
                             }
                         }
@@ -114,7 +122,7 @@ fun CardSearchScreen(
 }
 
 @Composable
-fun CardItem(card: ScryfallCard) {
+fun CardItem(playerData: PlayerData, card: ScryfallCard, event: (CardSearchActions) -> Unit) {
     val imageUrl = card.imageUris?.artCrop
         ?: card.cardFaces?.firstOrNull()?.imageUris?.large
 
@@ -131,7 +139,14 @@ fun CardItem(card: ScryfallCard) {
                 model = imageUrl,
                 contentDescription = card.name,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable(
+                        onClick = {
+                            event(
+                                CardSearchActions.OnImageSelect(playerData = playerData, backgroundProfile = card)
+                            )
+                        }
+                    ),
                 contentScale = ContentScale.Crop
             )
         } else {

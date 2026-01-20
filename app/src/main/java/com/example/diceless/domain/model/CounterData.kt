@@ -14,10 +14,13 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CounterData(
     val id: String,
-    var icon: ImageVector,
+    @Contextual var icon: ImageVector,
     var toggleValue: Boolean? = null,
     var value: Int? = null,
     var isSelected: Boolean = false,

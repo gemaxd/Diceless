@@ -4,7 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.diceless.common.viewmodel.BaseViewModel
+import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.ScryfallCard
+import com.example.diceless.domain.usecase.PlayerProfileUseCase
 import com.example.diceless.domain.usecase.SearchForCardsUseCase
 import com.example.diceless.features.cardsearch.mvi.CardListState
 import com.example.diceless.features.cardsearch.mvi.CardSearchActions
@@ -15,17 +19,32 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardSearchViewModel @Inject constructor(
-    private val searchCardUseCase: SearchForCardsUseCase
+    private val searchCardUseCase: SearchForCardsUseCase,
+    private val playerProfileUseCase: PlayerProfileUseCase
 ) : BaseViewModel<CardSearchActions, Unit, CardSearchState>() {
     override val initialState: CardSearchState
         get() = CardSearchState()
 
     override fun onAction(action: CardSearchActions) {
+        when (action) {
+            is CardSearchActions.OnImageSelect -> {
+                profileSave(action.playerData, action.backgroundProfile)
+            }
+            is CardSearchActions.OnSearchQueryChanged -> {
+                querySearchForCards(action.query)
+            }
+        }
 
     }
 
     var state by mutableStateOf<CardListState>(CardListState.Idle)
         private set
+
+    fun profileSave(player: PlayerData, backgroundProfile: ScryfallCard){
+        viewModelScope.launch {
+            playerProfileUseCase.invoke(player, backgroundProfile)
+        }
+    }
 
     fun querySearchForCards(query: String) {
         if (query.length >= 3 ){
