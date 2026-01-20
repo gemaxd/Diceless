@@ -26,12 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.NavKey
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.navigation.route.CardSearchRoute
 import com.example.diceless.presentation.battlegrid.components.button.CounterControlButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.navigation.LocalNavigator
