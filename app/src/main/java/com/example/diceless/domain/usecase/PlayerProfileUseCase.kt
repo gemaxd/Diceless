@@ -1,6 +1,6 @@
 package com.example.diceless.domain.usecase
 
-import com.example.diceless.data.PlayerProfileRepository
+import com.example.diceless.data.repository.PlayerProfileRepository
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import javax.inject.Inject

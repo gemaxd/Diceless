@@ -58,23 +58,21 @@ import com.example.diceless.presentation.battlegrid.components.bottomsheet.conta
 import com.example.diceless.presentation.battlegrid.components.button.ActionPill
 import com.example.diceless.presentation.battlegrid.components.draggable.MonarchDraggableComponent
 import com.example.diceless.features.common.components.pager.InnerHorizontalPager
-import com.example.diceless.presentation.battlegrid.components.pager.InnerVerticalPager
+import com.example.diceless.features.common.components.pager.InnerVerticalPager
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @Composable
 fun BattleGridScreen(
-    viewmodel: BattleGridViewModel = hiltViewModel(),
-    onNavigation: (route: String) -> Unit
+    viewmodel: BattleGridViewModel = hiltViewModel()
 ) {
     val state by viewmodel.state.collectAsState()
 
     BattleGridContent(
         uiState = state,
-        players = state.players,
+        players = state.activePlayers,
         selectedScheme = state.selectedScheme,
-        onAction = viewmodel::onAction,
-        onNavigation = onNavigation
+        onAction = viewmodel::onAction
     )
 }
 
@@ -84,8 +82,7 @@ fun BattleGridContent(
     uiState: BattleGridState,
     players: List<PlayerData>,
     selectedScheme: SchemeEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (route: String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ) {
     var expandedMiddleMenu by remember { mutableStateOf(false) }
 
@@ -198,11 +195,9 @@ fun BattleGridContent(
                         ) {
                             IndividualGridContent(
                                 isDamageLinked = uiState.linkCommanderDamageToLife,
-                                players = players,
                                 playerData = playerState,
                                 rotation = orient.rotation,
-                                onAction = onAction,
-                                onNavigation = onNavigation
+                                onAction = onAction
                             )
                         }
                     }
@@ -359,11 +354,9 @@ fun BattleGridContent(
 fun IndividualGridContent(
     modifier: Modifier = Modifier,
     isDamageLinked: Boolean,
-    players: List<PlayerData>,
     playerData: PlayerData,
     rotation: RotationEnum,
-    onAction: (BattleGridActions) -> Unit,
-    onNavigation: (String) -> Unit
+    onAction: (BattleGridActions) -> Unit
 ) {
     Card(
         modifier = modifier

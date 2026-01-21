@@ -1,7 +1,9 @@
 package com.example.diceless.domain.model
 
 import com.example.diceless.common.enums.PositionEnum
+import com.example.diceless.data.entity.PlayerEntity
 import kotlinx.serialization.Serializable
+import java.io.Serial
 import java.util.UUID
 
 @Serializable
@@ -11,7 +13,8 @@ data class PlayerData(
     var life: Int = 40,
     val baseLife: Int = 40,
     var counters: List<CounterData> = getDefaultCounterData(),
-    var commanderDamageReceived: MutableList<CommanderDamage> = mutableListOf()
+    var commanderDamageReceived: MutableList<CommanderDamage> = mutableListOf(),
+    val backgroundProfile: BackgroundProfileData? = BackgroundProfileData()
 ) {
     fun getCurrentLifeWithCommanderDamage() =
         life - commanderDamageReceived.sumOf { it.damage }
@@ -29,16 +32,9 @@ data class PlayerData(
     }
 }
 
-// Mapper simples (pode ser extensão ou função)
-fun PlayerData.toEntity(id: String, backgroundProfile: ScryfallCard? = null) = PlayerEntity(
-    playerPosition = this.playerPosition,
+fun PlayerData.toEntity(id: String) = PlayerEntity(
     id = id,
-    name = this.name,
-    backgroundProfileId = backgroundProfile?.name ?: "01"
-)
-
-fun PlayerEntity.toDomain() = PlayerData(
-    playerPosition = this.playerPosition,
-    name = this.name
-    // os outros campos (life, counters, etc.) são inicializados com valores default
+    playerPosition = playerPosition,
+    name = name,
+    backgroundProfileId = backgroundProfile?.cardName
 )

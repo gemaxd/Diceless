@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components
+package com.example.diceless.features.common.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -15,10 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.Coil
+import coil.compose.AsyncImage
+import coil.compose.EqualityDelegate
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
 import com.example.diceless.presentation.battlegrid.components.button.CounterPill
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 
@@ -38,6 +44,14 @@ fun LifeGrid(
                     .rotate(rotation.degrees)
                     .fillMaxSize(),
             ) {
+                AsyncImage(
+                    model = playerData.backgroundProfile?.imageUri,
+                    contentDescription = playerData.backgroundProfile?.cardName,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center
+                )
+
                 Box(
                     modifier = Modifier
                         .clickable(
@@ -69,7 +83,8 @@ fun LifeGrid(
                     text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontSize = MaterialTheme.typography.displayLarge.fontSize * 2
-                    )
+                    ),
+                    color = Color.White
                 )
 
                 if (playerData.counters.any { it.isSelected }){
@@ -95,6 +110,14 @@ fun LifeGrid(
                 modifier = Modifier
                     .fillMaxSize(),
             ) {
+                AsyncImage(
+                    model = playerData.backgroundProfile?.imageUri,
+                    contentDescription = playerData.backgroundProfile?.cardName,
+                    modifier = Modifier.fillMaxSize().rotate(RotationEnum.INVERTED.degrees),
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center
+                )
+
                 if (playerData.counters.any { it.isSelected }){
                     Row(
                         modifier = Modifier
@@ -145,7 +168,8 @@ fun LifeGrid(
                     text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontSize = MaterialTheme.typography.displayLarge.fontSize * 2
-                    )
+                    ),
+                    color = Color.White
                 )
             }
         }
@@ -223,7 +247,6 @@ fun LifeGrid(
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
-
         }
     }
 }

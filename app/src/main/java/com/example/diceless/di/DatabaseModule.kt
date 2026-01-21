@@ -2,6 +2,7 @@ package com.example.diceless.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.diceless.data.dao.BackgroundProfileDao
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.data.db.AppDatabase
 import dagger.Module
@@ -35,5 +36,9 @@ object DatabaseModule {
         return database.playerDao()
     }
 
-    // adicione outros DAOs aqui quando criar
+    @Provides
+    @Singleton
+    fun provideBackgroundProfileDao(database: AppDatabase): BackgroundProfileDao {
+        return database.backgroundDao()
+    }
 }

@@ -8,10 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.presentation.battlegrid.components.CommanderDamageGrid
 import com.example.diceless.features.common.components.CountersGrid
-import com.example.diceless.presentation.battlegrid.components.LifeGrid
+import com.example.diceless.features.common.components.LifeGrid
 
 @Composable
 fun InnerHorizontalPager(

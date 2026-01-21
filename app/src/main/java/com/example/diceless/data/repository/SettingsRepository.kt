@@ -1,14 +1,15 @@
-package com.example.diceless.data
+package com.example.diceless.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import androidx.core.content.edit
 
 @Singleton
 class SettingsRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     companion object {
         private const val PREFS_NAME = "magic_life_counter_prefs"
@@ -24,14 +25,14 @@ class SettingsRepository @Inject constructor(
     fun getAllowSelfCommanderDamage(): Boolean = prefs.getBoolean(KEY_ALLOW_SELF_DAMAGE, false)
 
     fun saveStartingLife(life: Int) {
-        prefs.edit().putInt(KEY_STARTING_LIFE, life).apply()
+        prefs.edit { putInt(KEY_STARTING_LIFE, life) }
     }
 
     fun saveLinkCommanderDamageToLife(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_LINK_COMMANDER_DAMAGE, enabled).apply()
+        prefs.edit { putBoolean(KEY_LINK_COMMANDER_DAMAGE, enabled) }
     }
 
     fun saveAllowSelfCommanderDamage(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_ALLOW_SELF_DAMAGE, enabled).apply()
+        prefs.edit { putBoolean(KEY_ALLOW_SELF_DAMAGE, enabled) }
     }
 }

@@ -6,8 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.diceless.common.viewmodel.BaseViewModel
+import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
+import com.example.diceless.domain.model.toBackgroundProfile
+import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
 import com.example.diceless.domain.usecase.PlayerProfileUseCase
 import com.example.diceless.domain.usecase.SearchForCardsUseCase
 import com.example.diceless.features.cardsearch.mvi.CardListState
@@ -20,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CardSearchViewModel @Inject constructor(
     private val searchCardUseCase: SearchForCardsUseCase,
-    private val playerProfileUseCase: PlayerProfileUseCase
+    private val insertPlayerWithBackground: InsertPlayerWithBackgroundUseCase
 ) : BaseViewModel<CardSearchActions, Unit, CardSearchState>() {
     override val initialState: CardSearchState
         get() = CardSearchState()
@@ -42,7 +45,7 @@ class CardSearchViewModel @Inject constructor(
 
     fun profileSave(player: PlayerData, backgroundProfile: ScryfallCard){
         viewModelScope.launch {
-            playerProfileUseCase.invoke(player, backgroundProfile)
+            insertPlayerWithBackground(player, backgroundProfile.toBackgroundProfile())
         }
     }
 

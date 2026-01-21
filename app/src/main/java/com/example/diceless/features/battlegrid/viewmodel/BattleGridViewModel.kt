@@ -3,33 +3,40 @@ package com.example.diceless.features.battlegrid.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.viewmodel.BaseViewModel
-import com.example.diceless.data.SettingsRepository
+import com.example.diceless.data.repository.SettingsRepository
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.getDefaultCounterData
+import com.example.diceless.domain.usecase.GetAllPlayersUseCase
+import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BattleGridViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val getAllPlayersUseCase: GetAllPlayersUseCase,
+    private val insertPlayerWithBackgroundUseCase: InsertPlayerWithBackgroundUseCase
 ) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
-
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
 
     override val initialState: BattleGridState
         get() = BattleGridState()
 
+    // 🔹 Init enxuto e previsível
     init {
-        loadSettingsFromPrefs() // Carrega configs do SharedPreferences
-        prepareBattleData()
+        loadSettingsFromPrefs()
+        initialLoadIfNeeded()
+        observePlayers()
     }
 
     override fun onAction(action: BattleGridActions) {
@@ -112,6 +119,65 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Initial load
+    // ---------------------------------------------------------------------------------------------
+
+    private var initialized = false
+
+    private fun initialLoadIfNeeded() {
+        if (initialized) return
+        initialized = true
+
+        viewModelScope.launch {
+            val players = getAllPlayersUseCase().first()
+
+            if (players.isEmpty()) {
+                (0 until 4).forEach { index ->
+                    insertPlayerWithBackgroundUseCase(
+                        player = PlayerData(
+                            name = "Player ${index + 1}",
+                            playerPosition = PositionEnum.getPosition(index)
+                        ),
+                        background = null
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observePlayers() {
+        viewModelScope.launch {
+            getAllPlayersUseCase().collect { playersFromDb ->
+
+                val players = playersFromDb
+                    .take(_state.value.selectedScheme.numbersOfPlayers)
+                    .map { player ->
+                        player.copy(
+                            life = _state.value.selectedStartingLife,
+                            baseLife = _state.value.selectedStartingLife,
+                            counters = getDefaultCounterData(),
+                            commanderDamageReceived = prepareCommanderDamage(
+                                player,
+                                playersFromDb,
+                                _state.value.selectedScheme.numbersOfPlayers
+                            )
+                        )
+                    }
+
+                _state.update { it.copy(
+                    activePlayers = players,
+                    totalPlayers = playersFromDb
+                ) }
+            }
+        }
+    }
+
+
+    // ---------------------------------------------------------------------------------------------
+    // Settings
+    // ---------------------------------------------------------------------------------------------
+
     private fun loadSettingsFromPrefs() {
         viewModelScope.launch {
             _state.value = _state.value.copy(
@@ -144,9 +210,14 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Game logic
+    // ---------------------------------------------------------------------------------------------
+
     private fun restartMatch() {
-        viewModelScope.launch {
-            val updatedPlayers = _state.value.players.map { player ->
+        val restartedPlayerList = _state.value.totalPlayers.take(_state.value.selectedScheme.numbersOfPlayers)
+
+        val updatedPlayers = restartedPlayerList.map { player ->
                 // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
                 player.copy(
                     life = _state.value.selectedStartingLife,
@@ -154,31 +225,31 @@ class BattleGridViewModel @Inject constructor(
                     counters = getDefaultCounterData(),
                     commanderDamageReceived = prepareCommanderDamage(
                         player = player,
-                        _state.value.players,
+                        restartedPlayerList,
                         _state.value.selectedScheme.numbersOfPlayers
                     )
                 )
             }
-            _state.value = _state.value.copy(players = updatedPlayers)
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
-    }
+
 
     fun onLifeChange(player: PlayerData, amount: Int) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.players.map {
+            val updatedPlayers = _state.value.activePlayers.map {
                 if (it.playerPosition == player.playerPosition) { // Usando uma chave única como a posição
                     it.copy(life = it.life + amount)
                 } else {
                     it
                 }
             }
-            _state.value = _state.value.copy(players = updatedPlayers)
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
     }
 
     private fun toggleCounterState(player: PlayerData, counterToToggle: CounterData) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.players.map { p ->
+            val updatedPlayers = _state.value.activePlayers.map { p ->
                 if (p.playerPosition == player.playerPosition) {
                     // Atualiza a lista de contadores para o jogador específico
                     val updatedCounters = p.counters.map { c ->
@@ -195,13 +266,13 @@ class BattleGridViewModel @Inject constructor(
                     p
                 }
             }
-            _state.value = _state.value.copy(players = updatedPlayers)
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
     }
 
     private fun selectCounter(player: PlayerData, counterToToggle: CounterData) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.players.map { p ->
+            val updatedPlayers = _state.value.activePlayers.map { p ->
                 if (p.playerPosition == player.playerPosition) {
                     // Atualiza a lista de contadores para o jogador específico
                     val updatedCounters = p.counters.map { c ->
@@ -216,7 +287,7 @@ class BattleGridViewModel @Inject constructor(
                     p
                 }
             }
-            _state.value = _state.value.copy(players = updatedPlayers)
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
     }
 
@@ -226,7 +297,7 @@ class BattleGridViewModel @Inject constructor(
         updateValue: Int
     ) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.players.map { p ->
+            val updatedPlayers = _state.value.activePlayers.map { p ->
                 if (p.playerPosition == player.playerPosition) {
                     // Atualiza a lista de contadores para o jogador específico
                     val updatedCounters = p.counters.map { c ->
@@ -243,7 +314,7 @@ class BattleGridViewModel @Inject constructor(
                     p
                 }
             }
-            _state.value = _state.value.copy(players = updatedPlayers)
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
     }
 
@@ -253,7 +324,7 @@ class BattleGridViewModel @Inject constructor(
         amount: Int
     ) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.players.map { player ->
+            val updatedPlayers = _state.value.activePlayers.map { player ->
                 if (player.name == receivingPlayer.name) {
                     val playerWithUpdatedDamage = player.copy(
                         commanderDamageReceived = player.commanderDamageReceived.map { damageEntry ->
@@ -274,28 +345,13 @@ class BattleGridViewModel @Inject constructor(
                     player
                 }
             }
-            _state.value = _state.value.copy(players = updatedPlayers)
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
     }
 
-    private fun prepareCommanderDamage(
-        player: PlayerData,
-        players: List<PlayerData>,
-        numberOfPlayers: Int
-    ): MutableList<CommanderDamage> {
-        val playersBasedOnScheme = players.take(numberOfPlayers)
-        var commanderDamage = mutableListOf<CommanderDamage>()
-
-        playersBasedOnScheme.map {
-            val opponents = playersBasedOnScheme.filter { it.name != player.name }
-
-            commanderDamage = opponents.map { opponent ->
-                CommanderDamage(name = opponent.name, damage = 0)
-            }.toMutableList()
-        }
-        return commanderDamage
-    }
-
+    // ---------------------------------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------------------------------
     private fun updateBattleGridState(properties: BattleGridState.() -> Unit) {
         viewModelScope.launch {
             val battleGridState = _state.value.copy().apply(properties)
@@ -305,45 +361,19 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
-    private fun prepareBattleData() {
-        val players = listOf(
-            PlayerData(
-                name = "Jogador 1",
-                life = _state.value.selectedStartingLife,
-                baseLife = _state.value.selectedStartingLife,
-                playerPosition = PositionEnum.PLAYER_ONE
-            ),
-            PlayerData(
-                name = "Jogador 2",
-                life = _state.value.selectedStartingLife,
-                baseLife = _state.value.selectedStartingLife,
-                playerPosition = PositionEnum.PLAYER_TWO
-            ),
-            PlayerData(
-                name = "Jogador 3",
-                life = _state.value.selectedStartingLife,
-                baseLife = _state.value.selectedStartingLife,
-                playerPosition = PositionEnum.PLAYER_THREE
-            ),
-            PlayerData(
-                name = "Jogador 4",
-                life = _state.value.selectedStartingLife,
-                baseLife = _state.value.selectedStartingLife,
-                playerPosition = PositionEnum.PLAYER_FOUR
-            )
-        )
 
-        val playersBasedOnScheme = players.take(uiState.value.selectedScheme.numbersOfPlayers)
-        val playersWithCommanderDamage = playersBasedOnScheme.map { currentPlayer ->
-            val damageTrackers =
-                prepareCommanderDamage(currentPlayer, players, uiState.value.selectedScheme.numbersOfPlayers)
+    private fun prepareCommanderDamage(
+        player: PlayerData,
+        players: List<PlayerData>,
+        numberOfPlayers: Int
+    ): MutableList<CommanderDamage> {
 
-            currentPlayer.copy(commanderDamageReceived = damageTrackers)
-        }
+        val opponents =
+            players.take(numberOfPlayers).filter { it.name != player.name }
 
-        _state.value = _state.value.copy(
-            players = playersWithCommanderDamage,
-            selectedScheme = uiState.value.selectedScheme
-        )
+        return opponents.map {
+            CommanderDamage(name = it.name, damage = 0)
+        }.toMutableList()
     }
 }
+

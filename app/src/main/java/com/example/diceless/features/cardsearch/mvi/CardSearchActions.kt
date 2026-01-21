@@ -1,6 +1,6 @@
 package com.example.diceless.features.cardsearch.mvi
 
-import com.example.diceless.domain.model.BackgroundProfileEntity
+import com.example.diceless.data.entity.BackgroundProfileEntity
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 

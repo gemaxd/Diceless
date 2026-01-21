@@ -40,9 +40,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
+import com.example.diceless.domain.model.toBackgroundProfile
 import com.example.diceless.features.cardsearch.mvi.CardListState
 import com.example.diceless.features.cardsearch.mvi.CardSearchActions
 import com.example.diceless.features.cardsearch.viewmodel.CardSearchViewModel
+import com.example.diceless.navigation.LocalNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -123,9 +125,10 @@ fun CardSearchScreen(
 
 @Composable
 fun CardItem(playerData: PlayerData, card: ScryfallCard, event: (CardSearchActions) -> Unit) {
+    val navigator = LocalNavigator.current
+
     val imageUrl = card.imageUris?.artCrop
         ?: card.cardFaces?.firstOrNull()?.imageUris?.large
-
 
     Row(
         modifier = Modifier
@@ -142,9 +145,13 @@ fun CardItem(playerData: PlayerData, card: ScryfallCard, event: (CardSearchActio
                     .clip(RoundedCornerShape(8.dp))
                     .clickable(
                         onClick = {
-                            event(
-                                CardSearchActions.OnImageSelect(playerData = playerData, backgroundProfile = card)
+                            val playerWithBg =  playerData.copy(
+                                backgroundProfile = card.toBackgroundProfile()
                             )
+                            event(
+                                CardSearchActions.OnImageSelect(playerData = playerWithBg, backgroundProfile = card)
+                            )
+                            navigator.pop()
                         }
                     ),
                 contentScale = ContentScale.Crop

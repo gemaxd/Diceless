@@ -50,7 +50,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 when(key) {
                     is Route.BattleGrid -> {
                         NavEntry(key) {
-                            BattleGridScreen(onNavigation = {})
+                            BattleGridScreen()
                         }
                     }
                     is Route.CardSearch -> {

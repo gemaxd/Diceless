@@ -28,8 +28,10 @@ import androidx.compose.ui.unit.sp
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
+import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 
 @Composable
@@ -217,6 +219,7 @@ fun CommanderDamageControlCell(
 @Composable
 fun PreviewCommanderDamageGridRIGHT() {
     val playerData = PlayerData(
+        backgroundProfile = BackgroundProfileData(),
         name = "Teste",
         playerPosition = PositionEnum.PLAYER_ONE,
         commanderDamageReceived = mutableListOf(
@@ -238,6 +241,7 @@ fun PreviewCommanderDamageGridRIGHT() {
 @Composable
 fun PreviewCommanderDamageGridLEFT() {
     val playerData = PlayerData(
+        backgroundProfile = BackgroundProfileData(),
         name = "Teste",
         playerPosition = PositionEnum.PLAYER_ONE,
         commanderDamageReceived = mutableListOf(
@@ -259,6 +263,7 @@ fun PreviewCommanderDamageGridLEFT() {
 @Composable
 fun PreviewCommanderDamageGridNONE() {
     val playerData = PlayerData(
+        backgroundProfile = BackgroundProfileData(),
         name = "Teste",
         playerPosition = PositionEnum.PLAYER_ONE,
         commanderDamageReceived = mutableListOf(
@@ -280,15 +285,16 @@ fun PreviewCommanderDamageGridNONE() {
 @Composable
 fun PreviewCommanderDamageGridINVERTED() {
     val playerData = PlayerData(
-        name = "Teste",
-        playerPosition = PositionEnum.PLAYER_ONE,
-        commanderDamageReceived = mutableListOf(
-            CommanderDamage(
-                name = "teste",
-                damage = 10
+            backgroundProfile = BackgroundProfileData(),
+            name = "Teste",
+            playerPosition = PositionEnum.PLAYER_ONE,
+            commanderDamageReceived = mutableListOf(
+                CommanderDamage(
+                    name = "teste",
+                    damage = 10
+                )
             )
         )
-    )
 
     CommanderDamageGrid(
         playerData = playerData,

@@ -1,6 +1,8 @@
-package com.example.diceless.data
+package com.example.diceless.data.repository
 
+import com.example.diceless.data.ScryfallApi
 import com.example.diceless.domain.model.ScryfallCard
+import retrofit2.HttpException
 import java.net.URLEncoder
 import javax.inject.Inject
 
@@ -30,7 +32,7 @@ class ScryFallRepositoryImpl @Inject constructor(
             cache[q] = response.data
             Result.success(response.data)
 
-        } catch (e: retrofit2.HttpException) {
+        } catch (e: HttpException) {
             if (e.code() == 400 || e.code() == 404) {
                 Result.failure(Exception("Nenhum resultado para '$q'"))
             } else {

@@ -1,4 +1,4 @@
-package com.example.diceless.data
+package com.example.diceless.data.repository
 
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.domain.model.PlayerData
@@ -14,7 +14,7 @@ class PlayerProfileRepositoryImpl (val playerDao: PlayerDao) : PlayerProfileRepo
 
     override suspend fun savePlayer(player: PlayerData, backgroundProfileId: ScryfallCard?) {
         val entity = player.toEntity(
-            UUID.randomUUID().toString(), backgroundProfile = backgroundProfileId)
+            UUID.randomUUID().toString())
         playerDao.upsertPlayer(entity)
     }
 

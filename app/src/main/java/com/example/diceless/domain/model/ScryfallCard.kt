@@ -33,3 +33,8 @@ data class ImageUris(
     val borderCrop: String?
 )
 
+fun ScryfallCard.toBackgroundProfile() : BackgroundProfileData =
+    BackgroundProfileData(
+        cardName = this.name,
+        imageUri = this.imageUris?.artCrop
+    )

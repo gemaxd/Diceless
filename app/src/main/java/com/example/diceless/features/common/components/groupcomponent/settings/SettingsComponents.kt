@@ -100,7 +100,7 @@ fun SettingsOptionFreeContent(
 fun PreviewSettingsContent() {
     SettingsContent(
         state = BattleGridState(
-            players = emptyList()
+            activePlayers = emptyList()
         ),
         onAction = {}
     )
