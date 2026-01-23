@@ -251,7 +251,17 @@ fun HorizontalCountersGridContent(
             horizontalArrangement = Arrangement.Center,
         ) {
             Button(
-                onClick = { navigator.navigate(Route.CardSearch(playerData = playerData)) },
+                onClick = { navigator.navigate(Route.CardSearch(
+                    playerData = playerData,
+                    onCardSelected = { selectedCard ->
+                        onAction(
+                            BattleGridActions.OnBackgroundSelected(
+                                player = playerData,
+                                card = selectedCard
+                            )
+                        )
+                    }
+                )) },
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(text = "Search image")
@@ -260,7 +270,19 @@ fun HorizontalCountersGridContent(
             Spacer(modifier = Modifier.padding(8.dp))
 
             Button(
-                onClick = { navigator.navigate(Route.CardSearch(playerData = playerData)) },
+                onClick = { navigator.navigate(
+                    Route.CardSearch(
+                        playerData = playerData,
+                        onCardSelected = { selectedCard ->
+                            onAction(
+                                BattleGridActions.OnBackgroundSelected(
+                                    player = playerData,
+                                    card = selectedCard
+                                )
+                            )
+                        }
+                    )
+                ) },
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(text = "Load Profile")

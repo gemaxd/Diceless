@@ -41,14 +41,20 @@ import coil.compose.AsyncImage
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.toBackgroundProfile
+import com.example.diceless.features.battlegrid.mvi.BattleGridActions
+import com.example.diceless.features.battlegrid.viewmodel.BattleGridViewModel
 import com.example.diceless.features.cardsearch.mvi.CardListState
 import com.example.diceless.features.cardsearch.mvi.CardSearchActions
 import com.example.diceless.features.cardsearch.viewmodel.CardSearchViewModel
 import com.example.diceless.navigation.LocalNavigator
+import com.example.diceless.navigation.RESULT_CARD_SELECTED
+import com.example.diceless.navigation.RESULT_PLAYER_USED
+import com.example.diceless.navigation.ResultStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardSearchScreen(
+    resultStore: ResultStore,
     viewModel: CardSearchViewModel = hiltViewModel(),
     playerData: PlayerData
 ){
@@ -104,7 +110,11 @@ fun CardSearchScreen(
                         is CardListState.Success -> {
                             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                                 items(state.cards) { card ->
-                                    CardItem(playerData = playerData, card = card, event = onUiEvent)
+                                    CardItem(
+                                        resultStore = resultStore,
+                                        playerData = playerData,
+                                        card = card
+                                    )
                                 }
                             }
                         }
@@ -124,7 +134,11 @@ fun CardSearchScreen(
 }
 
 @Composable
-fun CardItem(playerData: PlayerData, card: ScryfallCard, event: (CardSearchActions) -> Unit) {
+fun CardItem(
+    resultStore: ResultStore,
+    playerData: PlayerData,
+    card: ScryfallCard
+) {
     val navigator = LocalNavigator.current
 
     val imageUrl = card.imageUris?.artCrop
@@ -143,17 +157,11 @@ fun CardItem(playerData: PlayerData, card: ScryfallCard, event: (CardSearchActio
                 contentDescription = card.name,
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .clickable(
-                        onClick = {
-                            val playerWithBg =  playerData.copy(
-                                backgroundProfile = card.toBackgroundProfile()
-                            )
-                            event(
-                                CardSearchActions.OnImageSelect(playerData = playerWithBg, backgroundProfile = card)
-                            )
-                            navigator.pop()
-                        }
-                    ),
+                    .clickable {
+                        resultStore.setResult(RESULT_CARD_SELECTED, card)
+                        resultStore.setResult(RESULT_PLAYER_USED, playerData)
+                        navigator.pop()
+                    },
                 contentScale = ContentScale.Crop
             )
         } else {

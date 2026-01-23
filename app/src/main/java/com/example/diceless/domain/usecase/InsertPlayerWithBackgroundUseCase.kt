@@ -12,6 +12,6 @@ class InsertPlayerWithBackgroundUseCase @Inject constructor(
         player: PlayerData,
         background: BackgroundProfileData?
     ) {
-        repository.insertPlayerWithBackground(player, background)
+        repository.insertPlayerWithBackground(player.copy(backgroundProfile = background), background)
     }
 }

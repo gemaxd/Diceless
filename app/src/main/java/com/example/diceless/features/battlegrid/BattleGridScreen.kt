@@ -23,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,7 @@ import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
@@ -59,20 +61,41 @@ import com.example.diceless.presentation.battlegrid.components.button.ActionPill
 import com.example.diceless.presentation.battlegrid.components.draggable.MonarchDraggableComponent
 import com.example.diceless.features.common.components.pager.InnerHorizontalPager
 import com.example.diceless.features.common.components.pager.InnerVerticalPager
+import com.example.diceless.navigation.RESULT_CARD_SELECTED
+import com.example.diceless.navigation.RESULT_PLAYER_USED
+import com.example.diceless.navigation.ResultStore
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @Composable
 fun BattleGridScreen(
+    resultStore: ResultStore,
     viewmodel: BattleGridViewModel = hiltViewModel()
 ) {
     val state by viewmodel.state.collectAsState()
+    val onUiEvent = viewmodel::onAction
+
+    LaunchedEffect(resultStore) {
+        val card = resultStore.getResult<ScryfallCard>(RESULT_CARD_SELECTED)
+        val playerData = resultStore.getResult<PlayerData>(RESULT_PLAYER_USED)
+
+        playerData?.let { player ->
+            card?.let { selectedCard ->
+                onUiEvent(
+                    BattleGridActions.OnBackgroundSelected(
+                        player = player,
+                        card = selectedCard
+                    )
+                )
+            }
+        }
+    }
 
     BattleGridContent(
         uiState = state,
         players = state.activePlayers,
         selectedScheme = state.selectedScheme,
-        onAction = viewmodel::onAction
+        onAction = onUiEvent
     )
 }
 

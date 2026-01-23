@@ -1,18 +1,23 @@
 package com.example.diceless.features.battlegrid.viewmodel
 
+import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.repository.SettingsRepository
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.getDefaultCounterData
+import com.example.diceless.domain.model.toBackgroundProfile
 import com.example.diceless.domain.usecase.GetAllPlayersUseCase
 import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -41,6 +46,7 @@ class BattleGridViewModel @Inject constructor(
 
     override fun onAction(action: BattleGridActions) {
         when (action) {
+
             is BattleGridActions.OnLifeIncreased -> {
                 onLifeChange(player = action.player, amount = 1)
             }
@@ -116,6 +122,10 @@ class BattleGridViewModel @Inject constructor(
                 }
                 restartMatch()
             }
+
+            is BattleGridActions.OnBackgroundSelected -> {
+                updatePlayerBackground(action.player, action.card)
+            }
         }
     }
 
@@ -150,20 +160,32 @@ class BattleGridViewModel @Inject constructor(
         viewModelScope.launch {
             getAllPlayersUseCase().collect { playersFromDb ->
 
+                val playersLocalValues = _state.value.activePlayers.take(
+                    _state.value.selectedScheme.numbersOfPlayers
+                )
+
+                val localEmpty = playersLocalValues.isEmpty()
+
                 val players = playersFromDb
                     .take(_state.value.selectedScheme.numbersOfPlayers)
-                    .map { player ->
-                        player.copy(
-                            life = _state.value.selectedStartingLife,
-                            baseLife = _state.value.selectedStartingLife,
-                            counters = getDefaultCounterData(),
-                            commanderDamageReceived = prepareCommanderDamage(
-                                player,
-                                playersFromDb,
-                                _state.value.selectedScheme.numbersOfPlayers
-                            )
+                    .map { playerData ->
+
+                        val localPlayer = if (!localEmpty){
+                            playersLocalValues.first { localPlayer ->
+                                playerData.playerPosition == localPlayer.playerPosition
+                            }
+                        } else {
+                            playerData
+                        }
+
+                        playerData.copy(
+                            playerPosition = playerData.playerPosition,
+                            life = localPlayer.life,
+                            counters = localPlayer.counters,
+                            commanderDamageReceived = localPlayer.commanderDamageReceived
                         )
                     }
+
 
                 _state.update { it.copy(
                     activePlayers = players,
@@ -232,6 +254,30 @@ class BattleGridViewModel @Inject constructor(
             }
             _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
+
+    private fun updatePlayerBackground(
+        player: PlayerData,
+        card: ScryfallCard
+    ) {
+        viewModelScope.launch {
+            val updatedPlayers = _state.value.activePlayers.map {
+                if (it.playerPosition == player.playerPosition) { // Usando uma chave única como a posição
+                    it.copy(backgroundProfile = card.toBackgroundProfile())
+                } else {
+                    it
+                }
+            }
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+
+            delay(1000)
+
+            // 2️⃣ Persiste em paralelo
+            insertPlayerWithBackgroundUseCase(
+                player,
+                card.toBackgroundProfile()
+            )
+        }
+    }
 
 
     fun onLifeChange(player: PlayerData, amount: Int) {

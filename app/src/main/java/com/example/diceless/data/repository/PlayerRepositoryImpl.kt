@@ -37,7 +37,6 @@ class PlayerRepositoryImpl(
             ?.toDomain()
     }
 
-    @Transaction
     override suspend fun insertPlayerWithBackground(
         player: PlayerData,
         background: BackgroundProfileData?

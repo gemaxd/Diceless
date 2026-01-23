@@ -1,7 +1,9 @@
 package com.example.diceless.domain.model
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ScryfallCard(
     val name: String,
 
@@ -12,6 +14,7 @@ data class ScryfallCard(
     val cardFaces: List<CardFace>?
 )
 
+@Serializable
 data class CardFace(
     val name: String,
     @SerializedName("type_line") val typeLine: String?,
@@ -20,6 +23,7 @@ data class CardFace(
     val imageUris: ImageUris?
 )
 
+@Serializable
 data class ImageUris(
     val small: String?,
     val normal: String?,
