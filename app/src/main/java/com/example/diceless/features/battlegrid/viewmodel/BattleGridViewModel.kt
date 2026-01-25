@@ -1,8 +1,6 @@
 package com.example.diceless.features.battlegrid.viewmodel
 
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.repository.SettingsRepository
@@ -20,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,6 +32,8 @@ class BattleGridViewModel @Inject constructor(
 ) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
+
+    private var matchStarted = false
 
     override val initialState: BattleGridState
         get() = BattleGridState()
@@ -156,41 +157,64 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
+
+
     private fun observePlayers() {
         viewModelScope.launch {
             getAllPlayersUseCase().collect { playersFromDb ->
 
-                val playersLocalValues = _state.value.activePlayers.take(
-                    _state.value.selectedScheme.numbersOfPlayers
-                )
+                _state.update { current ->
 
-                val localEmpty = playersLocalValues.isEmpty()
+                    // 1️⃣ Bootstrap inicial
+                    if (!matchStarted && playersFromDb.isNotEmpty()) {
+                        matchStarted = true
 
-                val players = playersFromDb
-                    .take(_state.value.selectedScheme.numbersOfPlayers)
-                    .map { playerData ->
-
-                        val localPlayer = if (!localEmpty){
-                            playersLocalValues.first { localPlayer ->
-                                playerData.playerPosition == localPlayer.playerPosition
+                        val initialPlayers = playersFromDb
+                            .take(current.selectedScheme.numbersOfPlayers)
+                            .map { player ->
+                                player.copy(
+                                    life = current.selectedStartingLife,
+                                    baseLife = current.selectedStartingLife,
+                                    counters = getDefaultCounterData(),
+                                    commanderDamageReceived = prepareCommanderDamage(
+                                        player,
+                                        playersFromDb,
+                                        current.selectedScheme.numbersOfPlayers
+                                    )
+                                )
                             }
-                        } else {
-                            playerData
-                        }
 
-                        playerData.copy(
-                            playerPosition = playerData.playerPosition,
-                            life = localPlayer.life,
-                            counters = localPlayer.counters,
-                            commanderDamageReceived = localPlayer.commanderDamageReceived
+                        return@update current.copy(
+                            activePlayers = initialPlayers,
+                            totalPlayers = playersFromDb
                         )
                     }
 
+                    // 2️⃣ Sincronização normal (sem reset)
+                    if (current.activePlayers.isEmpty()) {
+                        return@update current.copy(
+                            totalPlayers = playersFromDb
+                        )
+                    }
 
-                _state.update { it.copy(
-                    activePlayers = players,
-                    totalPlayers = playersFromDb
-                ) }
+                    val syncedPlayers = current.activePlayers.map { local ->
+                        val persisted = playersFromDb.firstOrNull {
+                            it.playerPosition == local.playerPosition
+                        }
+
+                        persisted?.let {
+                            local.copy(
+                                name = it.name,
+                                backgroundProfile = it.backgroundProfile
+                            )
+                        } ?: local
+                    }
+
+                    current.copy(
+                        activePlayers = syncedPlayers,
+                        totalPlayers = playersFromDb
+                    )
+                }
             }
         }
     }
@@ -237,23 +261,24 @@ class BattleGridViewModel @Inject constructor(
     // ---------------------------------------------------------------------------------------------
 
     private fun restartMatch() {
-        val restartedPlayerList = _state.value.totalPlayers.take(_state.value.selectedScheme.numbersOfPlayers)
+        val restartedPlayerList =
+            _state.value.totalPlayers.take(_state.value.selectedScheme.numbersOfPlayers)
 
         val updatedPlayers = restartedPlayerList.map { player ->
-                // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
-                player.copy(
-                    life = _state.value.selectedStartingLife,
-                    baseLife = _state.value.selectedStartingLife,
-                    counters = getDefaultCounterData(),
-                    commanderDamageReceived = prepareCommanderDamage(
-                        player = player,
-                        restartedPlayerList,
-                        _state.value.selectedScheme.numbersOfPlayers
-                    )
+            // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
+            player.copy(
+                life = _state.value.selectedStartingLife,
+                baseLife = _state.value.selectedStartingLife,
+                counters = getDefaultCounterData(),
+                commanderDamageReceived = prepareCommanderDamage(
+                    player = player,
+                    restartedPlayerList,
+                    _state.value.selectedScheme.numbersOfPlayers
                 )
-            }
-            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+            )
         }
+        _state.value = _state.value.copy(activePlayers = updatedPlayers)
+    }
 
     private fun updatePlayerBackground(
         player: PlayerData,
