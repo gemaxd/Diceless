@@ -18,7 +18,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -145,10 +144,11 @@ class BattleGridViewModel @Inject constructor(
 
             if (players.isEmpty()) {
                 (0 until 4).forEach { index ->
+                    val playerNumber = index + 1
                     insertPlayerWithBackgroundUseCase(
                         player = PlayerData(
-                            name = "Player ${index + 1}",
-                            playerPosition = PositionEnum.getPosition(index)
+                            name = "Player $playerNumber",
+                            playerPosition = PositionEnum.getPosition(playerNumber)
                         ),
                         background = null
                     )
