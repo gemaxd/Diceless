@@ -2,16 +2,20 @@ package com.example.diceless.features.battlegrid.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
+import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.repository.SettingsRepository
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
+import com.example.diceless.domain.model.GameSchemeData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.getDefaultCounterData
 import com.example.diceless.domain.model.toBackgroundProfile
 import com.example.diceless.domain.usecase.GetAllPlayersUseCase
+import com.example.diceless.domain.usecase.GetGameSchemeUseCase
 import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
+import com.example.diceless.domain.usecase.SaveGameSchemeUseCase
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +31,9 @@ import javax.inject.Inject
 class BattleGridViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val getAllPlayersUseCase: GetAllPlayersUseCase,
-    private val insertPlayerWithBackgroundUseCase: InsertPlayerWithBackgroundUseCase
+    private val insertPlayerWithBackgroundUseCase: InsertPlayerWithBackgroundUseCase,
+    private val getGameSchemeUseCase: GetGameSchemeUseCase,
+    private val saveGameSchemeUseCase: SaveGameSchemeUseCase
 ) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
@@ -42,6 +48,7 @@ class BattleGridViewModel @Inject constructor(
         loadSettingsFromPrefs()
         initialLoadIfNeeded()
         observePlayers()
+        observeScheme()
     }
 
     override fun onAction(action: BattleGridActions) {
@@ -117,9 +124,7 @@ class BattleGridViewModel @Inject constructor(
             }
 
             is BattleGridActions.OnUpdateScheme -> {
-                updateBattleGridState {
-                    selectedScheme = action.schemeEnum
-                }
+                updateGameScheme(action.schemeEnum)
                 restartMatch()
             }
 
@@ -157,7 +162,24 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
+    private fun observeScheme() {
+        viewModelScope.launch {
+            getGameSchemeUseCase().collect { schemeFromDB ->
+                _state.update { current ->
+                    val activePlayers = current.totalPlayers.take(
+                        schemeFromDB?.schemeEnum?.numbersOfPlayers ?: GameSchemeData().schemeEnum.numbersOfPlayers
+                    )
 
+                    current.copy(
+                        activePlayers = activePlayers,
+                        selectedScheme = schemeFromDB?.schemeEnum ?: GameSchemeData().schemeEnum
+                    )
+                }
+                restartMatch()
+            }
+
+        }
+    }
 
     private fun observePlayers() {
         viewModelScope.launch {
@@ -300,6 +322,19 @@ class BattleGridViewModel @Inject constructor(
             insertPlayerWithBackgroundUseCase(
                 player,
                 card.toBackgroundProfile()
+            )
+        }
+    }
+
+    private fun updateGameScheme(
+        schemeEnum: SchemeEnum
+    ) {
+        viewModelScope.launch {
+            saveGameSchemeUseCase.invoke(
+                GameSchemeData(
+                    schemeEnum = schemeEnum,
+                    schemeName = schemeEnum.name
+                )
             )
         }
     }

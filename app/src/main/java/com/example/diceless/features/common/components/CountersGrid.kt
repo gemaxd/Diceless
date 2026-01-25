@@ -74,6 +74,8 @@ fun VerticalCountersGridContent(
     rotationEnum: RotationEnum,
     onAction: (BattleGridActions) -> Unit
 ) {
+    val navigator = LocalNavigator.current
+
     val selectedCounters = playerData.counters.filter { it.isSelected }
     val allCounters = playerData.counters
 
@@ -98,6 +100,23 @@ fun VerticalCountersGridContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Button(
+                onClick = { navigator.navigate(Route.CardSearch(
+                    playerData = playerData,
+                    onCardSelected = { selectedCard ->
+                        onAction(
+                            BattleGridActions.OnBackgroundSelected(
+                                player = playerData,
+                                card = selectedCard
+                            )
+                        )
+                    }
+                )) },
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(text = "Search image")
+            }
 
             if (rotationEnum == RotationEnum.RIGHT) {
                 selectedCounters.forEach { it ->

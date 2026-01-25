@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.Coil
@@ -176,6 +177,23 @@ fun LifeGrid(
 
         RotationEnum.RIGHT -> {
             Box(modifier = Modifier.fillMaxSize(),) {
+                AsyncImage(
+                    model = playerData.backgroundProfile?.imageUri,
+                    contentDescription = playerData.backgroundProfile?.cardName,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            translationX = -210f
+                            rotationZ = rotation.degrees
+                            if (rotation.degrees % 180 != 0f) {
+                                scaleX = 2.35f
+                                scaleY = 0.8f
+                            }
+                        },
+                    alignment = Alignment.TopStart
+                )
+
                 Box(
                     modifier = Modifier
                         .clickable(
@@ -206,7 +224,10 @@ fun LifeGrid(
                         .rotate(rotation.degrees)
                         .align(Alignment.Center),
                     text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = MaterialTheme.typography.displayLarge.fontSize * 1.5
+                    ),
+                    color = Color.White
                 )
 
             }
@@ -214,6 +235,23 @@ fun LifeGrid(
 
         RotationEnum.LEFT -> {
             Box(modifier = Modifier.fillMaxSize()) {
+                AsyncImage(
+                    model = playerData.backgroundProfile?.imageUri,
+                    contentDescription = playerData.backgroundProfile?.cardName,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            translationX = 215f
+                            rotationZ = rotation.degrees
+                            if (rotation.degrees % 180 != 0f) {
+                                scaleX = 2.35f
+                                scaleY = 0.8f
+                            }
+                        },
+                    alignment = Alignment.Center
+                )
+
                 Box(
                     modifier = Modifier
                         .clickable(
@@ -244,7 +282,10 @@ fun LifeGrid(
                         .rotate(rotation.degrees)
                         .align(Alignment.Center),
                     text = "${playerData.getCorrectLifeValue(isCmdDamageLinked)}",
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = MaterialTheme.typography.displayLarge.fontSize * 1.5
+                    ),
+                    color = Color.White
                 )
             }
         }

@@ -6,8 +6,11 @@ import com.example.diceless.data.repository.ScryFallRepository
 import com.example.diceless.data.repository.ScryFallRepositoryImpl
 import com.example.diceless.data.ScryfallApi
 import com.example.diceless.data.dao.BackgroundProfileDao
+import com.example.diceless.data.dao.GameSchemeDao
 import com.example.diceless.data.dao.PlayerDao
+import com.example.diceless.data.repository.GameSchemeRepositoryImpl
 import com.example.diceless.data.repository.PlayerRepositoryImpl
+import com.example.diceless.domain.repository.GameSchemeRepository
 import com.example.diceless.domain.repository.PlayerRepository
 import dagger.Module
 import dagger.Provides
@@ -35,4 +38,10 @@ object RepositoryModule {
         playerDao: PlayerDao,
         backgroundDao: BackgroundProfileDao
     ): PlayerRepository = PlayerRepositoryImpl(playerDao, backgroundDao)
+
+    @Provides
+    @Singleton
+    fun provideGameSchemeRepository(
+        gameSchemeDao: GameSchemeDao
+    ): GameSchemeRepository = GameSchemeRepositoryImpl( gameSchemeDao = gameSchemeDao)
 }
