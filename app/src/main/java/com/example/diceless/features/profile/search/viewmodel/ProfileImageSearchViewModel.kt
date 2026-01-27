@@ -4,11 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import coil.util.CoilUtils.result
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.toBackgroundProfile
 import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
+import com.example.diceless.domain.usecase.SearchForAllPrintsUseCase
 import com.example.diceless.domain.usecase.SearchForCardsUseCase
 import com.example.diceless.features.profile.search.mvi.ProfileImageSearchListState
 import com.example.diceless.features.profile.search.mvi.ProfileImageSearchActions
@@ -19,6 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileImageSearchViewModel @Inject constructor(
+    private val searchForAllPrintsUseCase: SearchForAllPrintsUseCase,
     private val searchCardUseCase: SearchForCardsUseCase,
     private val insertPlayerWithBackground: InsertPlayerWithBackgroundUseCase
 ) : BaseViewModel<ProfileImageSearchActions, Unit, ProfileImageSearchState>() {
@@ -32,6 +35,9 @@ class ProfileImageSearchViewModel @Inject constructor(
             }
             is ProfileImageSearchActions.OnSearchQueryChanged -> {
                 querySearchForCards(action.query)
+            }
+            is ProfileImageSearchActions.OnLoadAllPrints -> {
+                searchForAllPrints(action.printsSearchUri)
             }
         }
 
@@ -61,6 +67,16 @@ class ProfileImageSearchViewModel @Inject constructor(
                     onFailure = { ProfileImageSearchListState.Error(it.message ?: "Erro") }
                 )
             }
+        }
+    }
+
+    fun searchForAllPrints(printsSearchUri: String){
+        viewModelScope.launch {
+            val result = searchForAllPrintsUseCase.invoke(printsSearchUri)
+            state = result.fold(
+                onSuccess = { ProfileImageSearchListState.Success(it) },
+                onFailure = { ProfileImageSearchListState.Error(it.message ?: "Erro") }
+            )
         }
     }
 }

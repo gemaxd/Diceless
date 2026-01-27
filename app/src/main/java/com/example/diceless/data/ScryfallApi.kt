@@ -4,6 +4,7 @@ import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.extension.ScryfallSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface ScryfallApi {
 
@@ -14,6 +15,11 @@ interface ScryfallApi {
         @Query("order") order: String = "name",
         @Query("dir") dir: String = "auto",
         @Query("page") page: Int = 1
+    ): ScryfallSearchResponse
+
+    @GET
+    suspend fun getPrints(
+        @Url printsSearchUri: String
     ): ScryfallSearchResponse
 
 }

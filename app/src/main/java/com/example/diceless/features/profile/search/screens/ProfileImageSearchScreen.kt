@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +25,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,9 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.diceless.common.enums.PositionEnum
+import com.example.diceless.domain.model.CardFace
+import com.example.diceless.domain.model.ImageUris
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.toBackgroundProfile
@@ -59,72 +66,67 @@ fun ProfileImageSearchScreen(
     val onUiEvent = viewModel::onAction
 
     Scaffold(
-        topBar = {
-            Row {
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = "Procure sua carta"
-                )
-            }
-        },
-        bottomBar = {
-            OutlinedTextField(
-                value = nomeCard,
-                onValueChange = {
-                    nomeCard = it
-                    onUiEvent(
-                        ProfileImageSearchActions.OnSearchQueryChanged(nomeCard)
-                    )
-                },
-                label = { Text("Nome do card") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedPlaceholderColor = Color.Gray,
-                    focusedTextColor = Color.White,
-                    focusedPlaceholderColor = Color.Gray
-                )
-            )
-        },
         content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Black)
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                Box(modifier = Modifier.weight(1f)) {
-                    when (val state = viewModel.state) {
-                        is ProfileImageSearchListState.Loading -> {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                        }
-                        is ProfileImageSearchListState.Success -> {
-                            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                items(state.cards) { card ->
-                                    CardItem(
-                                        resultStore = resultStore,
-                                        playerData = playerData,
-                                        card = card
-                                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color.Black)
+                        .padding(paddingValues),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        when (val state = viewModel.state) {
+                            is ProfileImageSearchListState.Loading -> {
+                                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                            }
+                            is ProfileImageSearchListState.Success -> {
+                                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                                    items(state.cards) { card ->
+                                        CardItem(
+                                            resultStore = resultStore,
+                                            playerData = playerData,
+                                            card = card,
+                                            onUiEvent = onUiEvent
+                                        )
+                                    }
                                 }
                             }
+                            is ProfileImageSearchListState.Error -> {
+                                Text(
+                                    text = state.message,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
+                            else -> {}
                         }
-                        is ProfileImageSearchListState.Error -> {
-                            Text(
-                                text = state.message,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                        else -> {}
                     }
                 }
+
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 50.dp, start = 24.dp, end = 24.dp),
+                    value = nomeCard,
+                    onValueChange = {
+                        nomeCard = it
+                        onUiEvent(
+                            ProfileImageSearchActions.OnSearchQueryChanged(nomeCard)
+                        )
+                    },
+                    label = { Text("Nome do card") },
+                    colors = TextFieldDefaults.colors(
+                        unfocusedPlaceholderColor = Color.Gray,
+                        focusedTextColor = Color.White,
+                        focusedPlaceholderColor = Color.Gray,
+                        unfocusedContainerColor = Color.Black,
+                        focusedContainerColor = Color.Black,
+                    )
+                )
             }
         }
     )
@@ -134,19 +136,20 @@ fun ProfileImageSearchScreen(
 fun CardItem(
     resultStore: ResultStore,
     playerData: PlayerData,
-    card: ScryfallCard
+    card: ScryfallCard,
+    onUiEvent: (ProfileImageSearchActions) -> Unit
 ) {
     val navigator = LocalNavigator.current
 
     val imageUrl = card.imageUris?.artCrop
         ?: card.cardFaces?.firstOrNull()?.imageUris?.large
 
-    Row(
+    Column (
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (imageUrl != null) {
             AsyncImage(
@@ -161,6 +164,24 @@ fun CardItem(
                     },
                 contentScale = ContentScale.Crop
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = card.artistName,
+                    color = Color.White
+                )
+
+                Button(
+                    onClick = {
+                        onUiEvent(ProfileImageSearchActions.OnLoadAllPrints(card.printsSearchUri))
+                    }
+                ) {
+                    Text(text = "View all prints", color = Color.White)
+                }
+            }
+
         } else {
             Box(
                 modifier = Modifier
@@ -171,5 +192,4 @@ fun CardItem(
             }
         }
     }
-
 }

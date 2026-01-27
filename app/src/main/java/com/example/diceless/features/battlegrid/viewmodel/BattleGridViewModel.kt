@@ -10,9 +10,7 @@ import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.GameSchemeData
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.getDefaultCounterData
-import com.example.diceless.domain.model.toBackgroundProfile
 import com.example.diceless.domain.usecase.GetAllPlayersUseCase
 import com.example.diceless.domain.usecase.GetGameSchemeUseCase
 import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase

@@ -8,6 +8,7 @@ import javax.inject.Inject
 
 interface ScryFallRepository {
     suspend fun searchCards(query: String): Result<List<ScryfallCard>>
+    suspend fun searchForAllPrints(printsSearchUri: String): Result<List<ScryfallCard>>
 }
 
 class ScryFallRepositoryImpl @Inject constructor(
@@ -35,6 +36,27 @@ class ScryFallRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             if (e.code() == 400 || e.code() == 404) {
                 Result.failure(Exception("Nenhum resultado para '$q'"))
+            } else {
+                Result.failure(e)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun searchForAllPrints(printsSearchUri: String): Result<List<ScryfallCard>> {
+        return try {
+            val response = api.getPrints(printsSearchUri)
+
+            if (response.data.isEmpty()) {
+                return Result.failure(Exception("Nenhum card encontrado"))
+            }
+
+            Result.success(response.data)
+
+        } catch (e: HttpException) {
+            if (e.code() == 400 || e.code() == 404) {
+                Result.failure(Exception("Nenhum resultado"))
             } else {
                 Result.failure(e)
             }

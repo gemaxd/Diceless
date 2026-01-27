@@ -36,5 +36,5 @@ fun PlayerData.toEntity(id: String) = PlayerEntity(
     id = id,
     playerPosition = playerPosition,
     name = name,
-    backgroundProfileId = backgroundProfile?.cardName
+    backgroundProfileId = backgroundProfile?.imageUri
 )

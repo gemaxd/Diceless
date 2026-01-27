@@ -8,10 +8,16 @@ data class ScryfallCard(
     val name: String,
 
     @SerializedName("image_uris")
-    val imageUris: ImageUris?,
+    val imageUris: ImageUris,
 
     @SerializedName("card_faces")
-    val cardFaces: List<CardFace>?
+    val cardFaces: List<CardFace>?,
+
+    @SerializedName("artist")
+    val artistName: String,
+
+    @SerializedName("prints_search_uri")
+    val printsSearchUri: String = ""
 )
 
 @Serializable
@@ -31,7 +37,7 @@ data class ImageUris(
     val png: String?,
 
     @SerializedName("art_crop")
-    val artCrop: String?,
+    val artCrop: String = "",
 
     @SerializedName("border_crop")
     val borderCrop: String?
@@ -40,5 +46,5 @@ data class ImageUris(
 fun ScryfallCard.toBackgroundProfile() : BackgroundProfileData =
     BackgroundProfileData(
         cardName = this.name,
-        imageUri = this.imageUris?.artCrop
+        imageUri = this.imageUris.artCrop
     )

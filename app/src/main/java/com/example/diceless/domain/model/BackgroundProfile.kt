@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BackgroundProfileData(
     val cardName: String? = null,
-    val imageUri: String? = null,
+    val imageUri: String = "",
     val backgroundColor: String = "#BBB"
 )
 
