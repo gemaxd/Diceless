@@ -10,8 +10,10 @@ import com.example.diceless.data.dao.GameSchemeDao
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.data.repository.GameSchemeRepositoryImpl
 import com.example.diceless.data.repository.PlayerRepositoryImpl
+import com.example.diceless.data.repository.ProfileRepositoryImpl
 import com.example.diceless.domain.repository.GameSchemeRepository
 import com.example.diceless.domain.repository.PlayerRepository
+import com.example.diceless.domain.repository.ProfileRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,6 +33,11 @@ object RepositoryModule {
     @Singleton
     fun providePlayerProfileRepository(playerDao: PlayerDao): PlayerProfileRepository =
         PlayerProfileRepositoryImpl(playerDao)
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(backgroundDao: BackgroundProfileDao): ProfileRepository =
+        ProfileRepositoryImpl(backgroundDao)
 
     @Provides
     @Singleton

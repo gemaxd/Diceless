@@ -1,4 +1,4 @@
-package com.example.diceless.features.cardsearch.screens
+package com.example.diceless.features.profile.search.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,16 +36,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.toBackgroundProfile
-import com.example.diceless.features.battlegrid.mvi.BattleGridActions
-import com.example.diceless.features.battlegrid.viewmodel.BattleGridViewModel
-import com.example.diceless.features.cardsearch.mvi.CardListState
-import com.example.diceless.features.cardsearch.mvi.CardSearchActions
-import com.example.diceless.features.cardsearch.viewmodel.CardSearchViewModel
+import com.example.diceless.features.profile.search.mvi.ProfileImageSearchListState
+import com.example.diceless.features.profile.search.mvi.ProfileImageSearchActions
+import com.example.diceless.features.profile.search.viewmodel.ProfileImageSearchViewModel
 import com.example.diceless.navigation.LocalNavigator
 import com.example.diceless.navigation.RESULT_CARD_SELECTED
 import com.example.diceless.navigation.RESULT_PLAYER_USED
@@ -53,9 +50,9 @@ import com.example.diceless.navigation.ResultStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardSearchScreen(
+fun ProfileImageSearchScreen(
     resultStore: ResultStore,
-    viewModel: CardSearchViewModel = hiltViewModel(),
+    viewModel: ProfileImageSearchViewModel = hiltViewModel(),
     playerData: PlayerData
 ){
     var nomeCard by remember { mutableStateOf("") }
@@ -82,7 +79,7 @@ fun CardSearchScreen(
                 onValueChange = {
                     nomeCard = it
                     onUiEvent(
-                        CardSearchActions.OnSearchQueryChanged(nomeCard)
+                        ProfileImageSearchActions.OnSearchQueryChanged(nomeCard)
                     )
                 },
                 label = { Text("Nome do card") },
@@ -104,10 +101,10 @@ fun CardSearchScreen(
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     when (val state = viewModel.state) {
-                        is CardListState.Loading -> {
+                        is ProfileImageSearchListState.Loading -> {
                             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                         }
-                        is CardListState.Success -> {
+                        is ProfileImageSearchListState.Success -> {
                             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                                 items(state.cards) { card ->
                                     CardItem(
@@ -118,7 +115,7 @@ fun CardSearchScreen(
                                 }
                             }
                         }
-                        is CardListState.Error -> {
+                        is ProfileImageSearchListState.Error -> {
                             Text(
                                 text = state.message,
                                 color = MaterialTheme.colorScheme.error,
@@ -158,7 +155,7 @@ fun CardItem(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .clickable {
-                        resultStore.setResult(RESULT_CARD_SELECTED, card)
+                        resultStore.setResult(RESULT_CARD_SELECTED, card.toBackgroundProfile())
                         resultStore.setResult(RESULT_PLAYER_USED, playerData)
                         navigator.pop()
                     },

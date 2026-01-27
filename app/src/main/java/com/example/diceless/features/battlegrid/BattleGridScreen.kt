@@ -39,6 +39,7 @@ import com.example.diceless.common.enums.MenuItemEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.utils.getCorrectOrientation
+import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
@@ -76,7 +77,7 @@ fun BattleGridScreen(
     val onUiEvent = viewmodel::onAction
 
     LaunchedEffect(resultStore) {
-        val card = resultStore.getResult<ScryfallCard>(RESULT_CARD_SELECTED)
+        val card = resultStore.getResult<BackgroundProfileData>(RESULT_CARD_SELECTED)
         val playerData = resultStore.getResult<PlayerData>(RESULT_PLAYER_USED)
 
         playerData?.let { player ->

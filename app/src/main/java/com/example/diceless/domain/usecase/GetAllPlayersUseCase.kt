@@ -11,5 +11,4 @@ class GetAllPlayersUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<List<PlayerData>> =
         repository.getAllPlayers()
-
 }

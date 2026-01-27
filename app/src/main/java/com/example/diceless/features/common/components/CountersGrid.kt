@@ -101,24 +101,53 @@ fun VerticalCountersGridContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Button(
-                onClick = { navigator.navigate(Route.CardSearch(
-                    playerData = playerData,
-                    onCardSelected = { selectedCard ->
-                        onAction(
-                            BattleGridActions.OnBackgroundSelected(
-                                player = playerData,
-                                card = selectedCard
-                            )
-                        )
-                    }
-                )) },
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Text(text = "Search image")
-            }
-
             if (rotationEnum == RotationEnum.RIGHT) {
+                Button(
+                    modifier = Modifier.vertical().rotate(rotationEnum.degrees),
+                    onClick = { navigator.navigate(Route.ProfileImageSearch(
+                        playerData = playerData,
+                        onCardSelected = { selectedCard ->
+                            onAction(
+                                BattleGridActions.OnBackgroundSelected(
+                                    player = playerData,
+                                    card = selectedCard
+                                )
+                            )
+                        }
+                    )) },
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(text = "Search image")
+                }
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                Button(
+                    modifier = Modifier.vertical().rotate(rotationEnum.degrees),
+                    onClick = { navigator.navigate(Route.ProfileImageList(
+                        playerData = playerData,
+                        onProfileSelected = { selectedCard ->
+                            onAction(
+                                BattleGridActions.OnBackgroundSelected(
+                                    player = playerData,
+                                    card = selectedCard
+                                )
+                            )
+                        }
+                    )) },
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(text = "Load profile")
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        vertical = maxWidth / 5,
+                        horizontal = maxHeight / 10
+                    ),
+                    thickness = 2.dp
+                )
+
                 selectedCounters.forEach { it ->
                     VerticalCounterContent(
                         counter = it,
@@ -232,6 +261,52 @@ fun VerticalCountersGridContent(
                         onClick = { onAction(BattleGridActions.OnCounterToggled(playerData, it)) }
                     )
                 }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        vertical = maxWidth / 5,
+                        horizontal = maxHeight / 10
+                    ),
+                    thickness = 2.dp
+                )
+
+                Button(
+                    modifier = Modifier.vertical().rotate(rotationEnum.degrees),
+                    onClick = { navigator.navigate(Route.ProfileImageList(
+                        playerData = playerData,
+                        onProfileSelected = { selectedCard ->
+                            onAction(
+                                BattleGridActions.OnBackgroundSelected(
+                                    player = playerData,
+                                    card = selectedCard
+                                )
+                            )
+                        }
+                    )) },
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(text = "Load profile")
+                }
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                Button(
+                    modifier = Modifier.vertical().rotate(rotationEnum.degrees),
+                    onClick = { navigator.navigate(Route.ProfileImageSearch(
+                        playerData = playerData,
+                        onCardSelected = { selectedCard ->
+                            onAction(
+                                BattleGridActions.OnBackgroundSelected(
+                                    player = playerData,
+                                    card = selectedCard
+                                )
+                            )
+                        }
+                    )) },
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(text = "Search image")
+                }
             }
         }
     }
@@ -270,7 +345,7 @@ fun HorizontalCountersGridContent(
             horizontalArrangement = Arrangement.Center,
         ) {
             Button(
-                onClick = { navigator.navigate(Route.CardSearch(
+                onClick = { navigator.navigate(Route.ProfileImageSearch(
                     playerData = playerData,
                     onCardSelected = { selectedCard ->
                         onAction(
@@ -290,9 +365,9 @@ fun HorizontalCountersGridContent(
 
             Button(
                 onClick = { navigator.navigate(
-                    Route.CardSearch(
+                    Route.ProfileImageList(
                         playerData = playerData,
-                        onCardSelected = { selectedCard ->
+                        onProfileSelected = { selectedCard ->
                             onAction(
                                 BattleGridActions.OnBackgroundSelected(
                                     player = playerData,
@@ -308,13 +383,6 @@ fun HorizontalCountersGridContent(
             }
 
             Spacer(modifier = Modifier.padding(8.dp))
-
-            Button(
-                onClick = {},
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Text(text = "Save Profile")
-            }
 
             VerticalDivider(
                 modifier = Modifier.padding(

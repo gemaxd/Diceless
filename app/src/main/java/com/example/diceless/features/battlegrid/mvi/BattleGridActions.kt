@@ -1,6 +1,7 @@
 package com.example.diceless.features.battlegrid.mvi
 
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
@@ -23,5 +24,5 @@ sealed class BattleGridActions {
     data class OnLinkCommanderDamageToLifeChanged(val enabled: Boolean) : BattleGridActions()
     data object ToggleMonarchCounter: BattleGridActions()
     data class OnUpdateScheme(val schemeEnum: SchemeEnum) : BattleGridActions()
-    data class OnBackgroundSelected(val player: PlayerData, val card: ScryfallCard) : BattleGridActions()
+    data class OnBackgroundSelected(val player: PlayerData, val card: BackgroundProfileData) : BattleGridActions()
 }

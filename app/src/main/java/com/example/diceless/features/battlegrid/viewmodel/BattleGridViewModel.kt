@@ -5,6 +5,7 @@ import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.repository.SettingsRepository
+import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.GameSchemeData
@@ -304,12 +305,12 @@ class BattleGridViewModel @Inject constructor(
 
     private fun updatePlayerBackground(
         player: PlayerData,
-        card: ScryfallCard
+        card: BackgroundProfileData
     ) {
         viewModelScope.launch {
             val updatedPlayers = _state.value.activePlayers.map {
                 if (it.playerPosition == player.playerPosition) { // Usando uma chave única como a posição
-                    it.copy(backgroundProfile = card.toBackgroundProfile())
+                    it.copy(backgroundProfile = card)
                 } else {
                     it
                 }
@@ -321,7 +322,7 @@ class BattleGridViewModel @Inject constructor(
             // 2️⃣ Persiste em paralelo
             insertPlayerWithBackgroundUseCase(
                 player,
-                card.toBackgroundProfile()
+                card
             )
         }
     }
