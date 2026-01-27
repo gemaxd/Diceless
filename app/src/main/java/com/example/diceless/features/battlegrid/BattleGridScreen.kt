@@ -1,5 +1,6 @@
 package com.example.diceless.features.battlegrid
 
+import android.R.attr.padding
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -33,11 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.common.enums.MenuItemEnum
+import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.common.extensions.paddingBasedOnPosition
 import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.MenuItem
@@ -198,6 +202,8 @@ fun BattleGridContent(
     }
 
     BoxWithConstraints(
+        modifier = Modifier
+            .background(color = Color.Black),
         contentAlignment = Alignment.Center
     ) {
         val maxHeight = maxHeight
@@ -216,6 +222,7 @@ fun BattleGridContent(
                                 .align(orient.alignment.align)
                                 .fillMaxWidth(orient.proportion.width)
                                 .fillMaxHeight(orient.proportion.height),
+                            shape = RectangleShape
                         ) {
                             IndividualGridContent(
                                 isDamageLinked = uiState.linkCommanderDamageToLife,
@@ -385,7 +392,7 @@ fun IndividualGridContent(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .paddingBasedOnPosition(playerData.playerPosition, rotation)
             .background(Color(0xFFBBDEFB)),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
