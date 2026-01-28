@@ -1,20 +1,31 @@
 package com.example.diceless.features.profile.search.screens
 
+import android.R.attr.visible
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,10 +47,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.diceless.common.enums.PositionEnum
@@ -54,6 +71,7 @@ import com.example.diceless.navigation.LocalNavigator
 import com.example.diceless.navigation.RESULT_CARD_SELECTED
 import com.example.diceless.navigation.RESULT_PLAYER_USED
 import com.example.diceless.navigation.ResultStore
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,13 +103,29 @@ fun ProfileImageSearchScreen(
                             }
                             is ProfileImageSearchListState.Success -> {
                                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                    items(state.cards) { card ->
-                                        CardItem(
-                                            resultStore = resultStore,
-                                            playerData = playerData,
-                                            card = card,
-                                            onUiEvent = onUiEvent
-                                        )
+
+                                    itemsIndexed(
+                                       items = state.cards,
+                                        key = { _, card -> card.cardId }
+                                    ) {  _, card ->
+
+                                        var visible by remember { mutableStateOf(false) }
+
+                                        LaunchedEffect(card.cardId) {
+                                            visible = true
+                                        }
+
+                                        this@Column.AnimatedVisibility(
+                                            visible = visible,
+                                            enter = fadeIn() + slideInVertically { it / 3 }
+                                        ) {
+                                            CardItem(
+                                                resultStore = resultStore,
+                                                playerData = playerData,
+                                                card = card,
+                                                onUiEvent = onUiEvent
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -106,6 +140,21 @@ fun ProfileImageSearchScreen(
                         }
                     }
                 }
+
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0.8f to Color.Transparent,
+                                    1.0f to Color.Black
+                                ),
+                                startY = 0f,
+                                endY = Float.POSITIVE_INFINITY
+                            )
+                        )
+                )
 
                 TextField(
                     modifier = Modifier
@@ -125,6 +174,10 @@ fun ProfileImageSearchScreen(
                         focusedPlaceholderColor = Color.Gray,
                         unfocusedContainerColor = Color.Black,
                         focusedContainerColor = Color.Black,
+                    ),
+                    textStyle = TextStyle(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 )
             }
@@ -152,33 +205,83 @@ fun CardItem(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (imageUrl != null) {
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = card.name,
+            Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable {
-                        resultStore.setResult(RESULT_CARD_SELECTED, card.toBackgroundProfile())
-                        resultStore.setResult(RESULT_PLAYER_USED, playerData)
-                        navigator.pop()
-                    },
-                contentScale = ContentScale.Crop
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth()
+                    .fillMaxWidth()
+                    .padding(horizontal = 36.dp)
             ) {
+
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = card.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1.4f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            resultStore.setResult(RESULT_CARD_SELECTED, card.toBackgroundProfile())
+                            resultStore.setResult(RESULT_PLAYER_USED, playerData)
+                            navigator.pop()
+                        },
+                    contentScale = ContentScale.Crop
+                )
+
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Black.copy(alpha = 0.7f),
+                                    Color.Transparent,
+                                    Color.Black.copy(alpha = 0.7f)
+                                ),
+                                startY = 0f,
+                                endY = Float.POSITIVE_INFINITY
+                            )
+                        )
+                )
+
                 Text(
-                    text = card.artistName,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(all = 8.dp),
+                    text = card.name,
                     color = Color.White
                 )
 
-                Button(
-                    onClick = {
-                        onUiEvent(ProfileImageSearchActions.OnLoadAllPrints(card.printsSearchUri))
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(all = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "View all prints", color = Color.White)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Pincel",
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(
+                            text = card.artistName,
+                            color = Color.White
+                        )
+                    }
+
+
+                    Button(
+                        onClick = {
+                            onUiEvent(ProfileImageSearchActions.OnLoadAllPrints(card.printsSearchUri))
+                        }
+                    ) {
+                        Text(text = "View all prints", color = Color.White)
+                    }
                 }
             }
 
@@ -192,4 +295,34 @@ fun CardItem(
             }
         }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun OverlayPreview(){
+
+    Box(modifier = Modifier.size(64.dp)) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ){
+            Text(text = "conteudo")
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.5f),
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.5f)
+                        ),
+                        startY = 0f,
+                        endY = Float.POSITIVE_INFINITY
+                    )
+                )
+        )
+    }
+
 }

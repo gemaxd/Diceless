@@ -7,6 +7,9 @@ import kotlinx.serialization.Serializable
 data class ScryfallCard(
     val name: String,
 
+    @SerializedName("id")
+    val cardId: String,
+
     @SerializedName("image_uris")
     val imageUris: ImageUris,
 
