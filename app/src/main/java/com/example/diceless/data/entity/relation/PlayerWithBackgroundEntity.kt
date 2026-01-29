@@ -22,9 +22,3 @@ fun PlayerWithBackgroundEntity.toDomain() = PlayerWithBackgroundData(
     player = player.toDomain(),
     backgroundProfile = background?.toDomain()
 )
-
-fun PlayerWithBackgroundEntity.toPlayerData(): PlayerData {
-    return player.toDomain().copy(
-        backgroundProfile = background?.toDomain()
-    )
-}

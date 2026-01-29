@@ -61,9 +61,9 @@ fun LifeGrid(
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.Black.copy(alpha = 0.7f),
+                                    Color.Black.copy(alpha = 1f),
                                     Color.Transparent,
-                                    Color.Black.copy(alpha = 0.7f)
+                                    Color.Black.copy(alpha = 1f)
                                 ),
                                 startY = 0f,
                                 endY = Float.POSITIVE_INFINITY
@@ -218,7 +218,7 @@ fun LifeGrid(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            translationX = -210f
+                            translationX = -213f
                             rotationZ = rotation.degrees
                             if (rotation.degrees % 180 != 0f) {
                                 scaleX = 2.35f
@@ -292,7 +292,7 @@ fun LifeGrid(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            translationX = 215f
+                            translationX = 213f
                             rotationZ = rotation.degrees
                             if (rotation.degrees % 180 != 0f) {
                                 scaleX = 2.35f

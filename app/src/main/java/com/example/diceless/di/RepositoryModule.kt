@@ -7,11 +7,14 @@ import com.example.diceless.data.repository.ScryFallRepositoryImpl
 import com.example.diceless.data.ScryfallApi
 import com.example.diceless.data.dao.BackgroundProfileDao
 import com.example.diceless.data.dao.GameSchemeDao
+import com.example.diceless.data.dao.MatchDao
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.data.repository.GameSchemeRepositoryImpl
+import com.example.diceless.data.repository.MatchHistoryRepositoryImpl
 import com.example.diceless.data.repository.PlayerRepositoryImpl
 import com.example.diceless.data.repository.ProfileRepositoryImpl
 import com.example.diceless.domain.repository.GameSchemeRepository
+import com.example.diceless.domain.repository.MatchHistoryRepository
 import com.example.diceless.domain.repository.PlayerRepository
 import com.example.diceless.domain.repository.ProfileRepository
 import dagger.Module
@@ -51,4 +54,10 @@ object RepositoryModule {
     fun provideGameSchemeRepository(
         gameSchemeDao: GameSchemeDao
     ): GameSchemeRepository = GameSchemeRepositoryImpl( gameSchemeDao = gameSchemeDao)
+
+    @Provides
+    @Singleton
+    fun provideMatchHistoryRepository(
+        matchDao: MatchDao
+    ): MatchHistoryRepository = MatchHistoryRepositoryImpl( matchDao = matchDao)
 }

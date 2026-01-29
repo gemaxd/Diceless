@@ -222,7 +222,10 @@ fun BattleGridContent(
                                 .align(orient.alignment.align)
                                 .fillMaxWidth(orient.proportion.width)
                                 .fillMaxHeight(orient.proportion.height),
-                            shape = RectangleShape
+                            shape = RectangleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.Black
+                            )
                         ) {
                             IndividualGridContent(
                                 isDamageLinked = uiState.linkCommanderDamageToLife,
@@ -393,7 +396,7 @@ fun IndividualGridContent(
         modifier = modifier
             .fillMaxSize()
             .paddingBasedOnPosition(playerData.playerPosition, rotation)
-            .background(Color(0xFFBBDEFB)),
+            .background(Color.Transparent),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box {
