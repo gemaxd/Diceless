@@ -30,6 +30,7 @@ import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
+import com.example.diceless.domain.model.toImageVector
 import com.example.diceless.presentation.battlegrid.components.button.CounterControlButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.navigation.LocalNavigator
@@ -539,7 +540,7 @@ fun VerticalCounterContent(
             Icon(
                 modifier = Modifier.size(24.dp),
                 contentDescription = counter.id,
-                imageVector = counter.icon,
+                imageVector = counter.iconType.toImageVector(),
                 tint = if (counter.isSelected) Color.Black else Color.Gray
             )
         }
@@ -562,7 +563,7 @@ fun CounterContent(
         Icon(
             modifier = Modifier.size(24.dp),
             contentDescription = counter.id,
-            imageVector = counter.icon,
+            imageVector = counter.iconType.toImageVector(),
             tint = if (counter.isSelected) Color.Black else Color.Gray
         )
     }

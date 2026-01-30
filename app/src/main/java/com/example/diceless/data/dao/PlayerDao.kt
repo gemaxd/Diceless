@@ -23,6 +23,9 @@ abstract interface PlayerDao {
     @Query("UPDATE players SET backgroundProfileId = :imageUri WHERE id = :playerId")
     suspend fun updateBackgroundProfileId(playerId: String, imageUri: String?)
 
+    @Query("UPDATE players SET life = :actualLife WHERE id = :playerId")
+    suspend fun updatePlayerLife(playerId: String, actualLife: Int)
+
     // Se quiser deletar
     @Query("DELETE FROM players WHERE id = :id")
     suspend fun deletePlayer(id: String)

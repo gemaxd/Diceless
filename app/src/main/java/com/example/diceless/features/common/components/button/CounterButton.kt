@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.domain.model.CounterData
+import com.example.diceless.domain.model.CounterIconType
+import com.example.diceless.domain.model.toImageVector
 
 @Composable
 fun CounterControlButton(
@@ -62,7 +64,7 @@ fun CounterControlForm(
 
         Icon(
             modifier = Modifier.rotate(rotationEnum.degrees),
-            imageVector = counter.icon,
+            imageVector = counter.iconType.toImageVector(),
             contentDescription = null,
             tint = iconTint
         )
@@ -132,7 +134,7 @@ fun CounterToggleForm(
                     }
                 ) {
                     Icon(
-                        counter.icon,
+                        counter.iconType.toImageVector(),
                         contentDescription = null,
                         tint = counterColors.first
                     )
@@ -151,7 +153,7 @@ fun PreviewCounterControlButton(){
     CounterControlButton(
         counter = CounterData(
             id = "first",
-            icon = Icons.Filled.Face,
+            iconType = CounterIconType.FACE,
             value = 1
         ),
         onToggle = {},
@@ -167,7 +169,7 @@ fun PreviewCounterControlButtonInverted(){
         rotationEnum = RotationEnum.INVERTED,
         counter = CounterData(
             id = "first",
-            icon = Icons.Filled.Face,
+            iconType = CounterIconType.FACE,
             value = 1
         ),
         onToggle = {},
@@ -182,7 +184,7 @@ fun PreviewCounterToggleButton(){
     CounterControlButton(
         counter = CounterData(
             id = "first",
-            icon = Icons.Filled.Face,
+            iconType = CounterIconType.FACE,
             value = 1,
             toggleValue = false
         ),
@@ -199,7 +201,7 @@ fun PreviewCounterToggleButtonInverted(){
         rotationEnum = RotationEnum.INVERTED,
         counter = CounterData(
             id = "first",
-            icon = Icons.Filled.Face,
+            iconType = CounterIconType.FACE,
             value = 1,
             toggleValue = false
         ),

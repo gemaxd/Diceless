@@ -51,4 +51,12 @@ class PlayerRepositoryImpl(
             )
         )
     }
+
+    override suspend fun updatePlayer(player: PlayerData) {
+        playerDao.upsertPlayer(
+            player = player.toEntity(
+                id = player.playerPosition.name // ou UUID
+            )
+        )
+    }
 }

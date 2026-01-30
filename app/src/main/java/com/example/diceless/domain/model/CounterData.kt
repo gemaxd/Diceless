@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CounterData(
     val id: String,
-    @Contextual var icon: ImageVector,
+    val iconType: CounterIconType,
     var toggleValue: Boolean? = null,
     var value: Int? = null,
     var isSelected: Boolean = false,
@@ -29,17 +29,46 @@ data class CounterData(
     fun isToggle() = this.toggleValue != null
 }
 
+fun CounterIconType.toImageVector(): ImageVector =
+    when (this) {
+        CounterIconType.ACCOUNT_BOX -> Icons.Filled.AccountBox
+        CounterIconType.ADD -> Icons.Filled.Add
+        CounterIconType.ACCOUNT_CIRCLE -> Icons.Filled.AccountCircle
+        CounterIconType.CALL -> Icons.Filled.Call
+        CounterIconType.ADD_CIRCLE -> Icons.Filled.AddCircle
+        CounterIconType.ARROW_DROP_DOWN -> Icons.Filled.ArrowDropDown
+        CounterIconType.CREATE -> Icons.Filled.Create
+        CounterIconType.DONE -> Icons.Filled.Done
+        CounterIconType.DATE_RANGE -> Icons.Filled.DateRange
+        CounterIconType.BUILD -> Icons.Filled.Build
+        CounterIconType.FACE -> Icons.Filled.Face
+    }
+
+enum class CounterIconType {
+    ACCOUNT_BOX,
+    ADD,
+    ACCOUNT_CIRCLE,
+    CALL,
+    ADD_CIRCLE,
+    ARROW_DROP_DOWN,
+    CREATE,
+    DONE,
+    DATE_RANGE,
+    BUILD,
+    FACE
+}
+
 fun getDefaultCounterData() =
     mutableStateListOf(
-        CounterData(id = "first", icon = Icons.Filled.AccountBox, toggleValue = true, value = 1, isSelected = true),
-        CounterData(id = "second", icon = Icons.Filled.Add, value = 1),
-        CounterData(id = "third", icon = Icons.Filled.AccountCircle, toggleValue = true, value = 1),
-        CounterData(id = "forth", icon = Icons.Filled.Call, value = 1),
-        CounterData(id = "fifth", icon = Icons.Filled.AddCircle, toggleValue = true, value = 1),
-        CounterData(id = "sixth", icon = Icons.Filled.ArrowDropDown, value = 1),
-        CounterData(id = "seventh", icon = Icons.Filled.Create, toggleValue = true, value = 1),
-        CounterData(id = "eighth", icon = Icons.Filled.Done, value = 1),
-        CounterData(id = "nineth", icon = Icons.Filled.DateRange, toggleValue = true, value = 1),
-        CounterData(id = "tenth", icon = Icons.Filled.Build, value = 1),
-        CounterData(id = "eleventh", icon = Icons.Filled.Face, toggleValue = true, value = 1),
+        CounterData(id = "first", iconType = CounterIconType.ACCOUNT_BOX, toggleValue = true, value = 1, isSelected = true),
+        CounterData(id = "second", iconType = CounterIconType.ADD, value = 1),
+        CounterData(id = "third", iconType = CounterIconType.ACCOUNT_CIRCLE, toggleValue = true, value = 1),
+        CounterData(id = "forth", iconType = CounterIconType.CALL, value = 1),
+        CounterData(id = "fifth", iconType = CounterIconType.ADD_CIRCLE, toggleValue = true, value = 1),
+        CounterData(id = "sixth", iconType = CounterIconType.ARROW_DROP_DOWN, value = 1),
+        CounterData(id = "seventh", iconType = CounterIconType.CREATE, toggleValue = true, value = 1),
+        CounterData(id = "eighth", iconType = CounterIconType.DONE, value = 1),
+        CounterData(id = "nineth", iconType = CounterIconType.DATE_RANGE, toggleValue = true, value = 1),
+        CounterData(id = "tenth", iconType = CounterIconType.BUILD, value = 1),
+        CounterData(id = "eleventh", iconType = CounterIconType.FACE, toggleValue = true, value = 1),
     )

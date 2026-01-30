@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.diceless.domain.model.CounterData
+import com.example.diceless.domain.model.CounterIconType
+import com.example.diceless.domain.model.toImageVector
 
 @Composable
 fun CounterPill(counterData: CounterData){
@@ -39,7 +41,7 @@ fun CounterPill(counterData: CounterData){
                     .padding(2.dp)
                     .size(18.dp),
                 contentDescription = null,
-                imageVector = counterData.icon,
+                imageVector = counterData.iconType.toImageVector(),
                 tint = Color.Gray.copy(alpha = 0.5f)
             )
 
@@ -64,7 +66,7 @@ fun CounterPill(counterData: CounterData){
 fun CounterPillPreview(){
     CounterPill(
         counterData = CounterData(
-            icon = Icons.Default.Build,
+            iconType = CounterIconType.BUILD,
             id = "",
             value = 2
         )

@@ -12,4 +12,5 @@ interface PlayerRepository {
         player: PlayerData,
         background: BackgroundProfileData?
     )
+    suspend fun updatePlayer(player: PlayerData)
 }
