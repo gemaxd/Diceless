@@ -3,16 +3,15 @@ package com.example.diceless.data.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Upsert
 import com.example.diceless.data.entity.MatchDataEntity
-import com.example.diceless.data.entity.relation.MatchWithHistoryChanges
+import com.example.diceless.data.entity.relation.MatchWithHistoryChangesEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract interface MatchDao {
 
     @Query("SELECT * FROM match_data")
-    fun getAllHistories(): Flow<List<MatchWithHistoryChanges>>
+    fun getAllHistories(): Flow<List<MatchWithHistoryChangesEntity>>
 
     @Insert
     suspend fun insertMatch(match: MatchDataEntity): Long

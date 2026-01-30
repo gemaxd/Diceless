@@ -1,7 +1,7 @@
 package com.example.diceless.data.entity.typeconverters
 
 import androidx.room.TypeConverter
-import com.example.diceless.data.entity.MatchHistoryChangeSource
+import com.example.diceless.domain.model.MatchHistoryChangeSource
 
 class MatchHistoryConverters {
 

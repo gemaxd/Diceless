@@ -10,6 +10,8 @@ import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.GameSchemeData
 import com.example.diceless.domain.model.MatchData
+import com.example.diceless.domain.model.MatchHistoryChangeSource
+import com.example.diceless.domain.model.MatchHistoryRegistry
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.getDefaultCounterData
 import com.example.diceless.domain.usecase.EndCurrentOpenMatchUseCase
@@ -17,6 +19,7 @@ import com.example.diceless.domain.usecase.GetAllPlayersUseCase
 import com.example.diceless.domain.usecase.GetCurrentOpenMatchUseCase
 import com.example.diceless.domain.usecase.GetGameSchemeUseCase
 import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
+import com.example.diceless.domain.usecase.RegisterMatchHistoryUseCase
 import com.example.diceless.domain.usecase.RegisterMatchUseCase
 import com.example.diceless.domain.usecase.SaveGameSchemeUseCase
 import com.example.diceless.domain.usecase.UpdateMatchUseCase
@@ -43,7 +46,8 @@ class BattleGridViewModel @Inject constructor(
     private val updateMatchUseCase: UpdateMatchUseCase,
     private val fetchCurrentOpenMatchUseCase: GetCurrentOpenMatchUseCase,
     private val endCurrentOpenMatchUseCase: EndCurrentOpenMatchUseCase,
-    private val updatePlayerUseCase: UpdatePlayerUseCase
+    private val updatePlayerUseCase: UpdatePlayerUseCase,
+    private val registerMatchHistoryUseCase: RegisterMatchHistoryUseCase
 ) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
@@ -419,11 +423,22 @@ class BattleGridViewModel @Inject constructor(
                     it
                 }
             }
+
+            registerMatchHistory(
+                MatchHistoryRegistry(
+                    matchId = _state.value.matchData.id,
+                    playerId = player.playerPosition.name,
+                    delta = amount,
+                    lifeBefore = player.life,
+                    lifeAfter = player.life + amount,
+                    timestamp = System.currentTimeMillis(),
+                    source = if (amount > 0 ) MatchHistoryChangeSource.HEAL else MatchHistoryChangeSource.DAMAGE
+                )
+            )
+
             _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
     }
-
-
 
     private fun toggleCounterState(player: PlayerData, counterToToggle: CounterData) {
         viewModelScope.launch {
@@ -592,5 +607,12 @@ class BattleGridViewModel @Inject constructor(
             )
         }
     }
+
+    private fun registerMatchHistory(matchHistoryRegistry: MatchHistoryRegistry) {
+        viewModelScope.launch {
+            registerMatchHistoryUseCase.invoke(matchHistoryRegistry = matchHistoryRegistry)
+        }
+    }
+
 }
 

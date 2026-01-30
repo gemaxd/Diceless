@@ -8,12 +8,15 @@ import com.example.diceless.data.ScryfallApi
 import com.example.diceless.data.dao.BackgroundProfileDao
 import com.example.diceless.data.dao.GameSchemeDao
 import com.example.diceless.data.dao.MatchDao
+import com.example.diceless.data.dao.MatchHistoryDao
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.data.repository.GameSchemeRepositoryImpl
+import com.example.diceless.data.repository.MatchDataRepositoryImpl
 import com.example.diceless.data.repository.MatchHistoryRepositoryImpl
 import com.example.diceless.data.repository.PlayerRepositoryImpl
 import com.example.diceless.data.repository.ProfileRepositoryImpl
 import com.example.diceless.domain.repository.GameSchemeRepository
+import com.example.diceless.domain.repository.MatchDataRepository
 import com.example.diceless.domain.repository.MatchHistoryRepository
 import com.example.diceless.domain.repository.PlayerRepository
 import com.example.diceless.domain.repository.ProfileRepository
@@ -57,7 +60,14 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideMatchHistoryRepository(
+    fun provideMatchDataRepository(
         matchDao: MatchDao
-    ): MatchHistoryRepository = MatchHistoryRepositoryImpl( matchDao = matchDao)
+    ): MatchDataRepository = MatchDataRepositoryImpl( matchDao = matchDao)
+
+    @Provides
+    @Singleton
+    fun provideMatchHistoryRepository(
+        matchHistoryDao: MatchHistoryDao
+    ): MatchHistoryRepository = MatchHistoryRepositoryImpl(matchHistoryDao = matchHistoryDao)
+
 }

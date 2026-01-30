@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.diceless.domain.model.MatchHistoryChangeSource
+import com.example.diceless.domain.model.MatchHistoryRegistry
 
 @Entity(
     tableName = "match_history",
@@ -44,11 +46,15 @@ data class MatchHistoryEntity(
     // usado se for commander damage
 )
 
-enum class MatchHistoryChangeSource {
-    DAMAGE,
-    HEAL,
-    COMMANDER_DAMAGE,
-    POISON,
-    MONARCH,
-    OTHER
-}
+fun MatchHistoryEntity.toDomain() = MatchHistoryRegistry(
+    id = id,
+    matchId = matchId,
+    playerId = playerId,
+    delta = delta,
+    lifeBefore = lifeBefore,
+    lifeAfter = lifeAfter,
+    timestamp = timestamp,
+    source = source,
+    commanderSourcePlayerId = commanderSourcePlayerId
+)
+

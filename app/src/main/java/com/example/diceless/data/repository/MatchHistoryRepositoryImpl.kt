@@ -1,33 +1,14 @@
 package com.example.diceless.data.repository
 
-import com.example.diceless.data.dao.MatchDao
-import com.example.diceless.data.entity.MatchDataEntity
+import com.example.diceless.data.dao.MatchHistoryDao
+import com.example.diceless.data.entity.MatchHistoryEntity
 import com.example.diceless.domain.repository.MatchHistoryRepository
 import javax.inject.Inject
 
 class MatchHistoryRepositoryImpl @Inject constructor(
-    val matchDao: MatchDao
+    private val matchHistoryDao: MatchHistoryDao
 ): MatchHistoryRepository {
-    override suspend fun fetchCurrentOpenMatch(): Long? {
-        return matchDao.fetchCurrentMatch()
+    override suspend fun insertHistoryChange(historyRegistry: MatchHistoryEntity) {
+        matchHistoryDao.insertHistoryChange(historyRegistry = historyRegistry)
     }
-
-    override suspend fun registerMatchData(matchDataEntity: MatchDataEntity): Long {
-        return matchDao.insertMatch(matchDataEntity)
-    }
-
-    override suspend fun updateMatchDataPlayerQuantity(
-        playerQuantity: Int,
-        matchId: Long
-    ) {
-        matchDao.updateMatchPlayerQuantity(playerQuantity = playerQuantity, matchId = matchId)
-    }
-
-    override suspend fun endCurrentMatch(
-        finishedAt: Long,
-        matchId: Long
-    ) {
-        matchDao.endCurrentMatch(finishedAt, matchId)
-    }
-
 }
