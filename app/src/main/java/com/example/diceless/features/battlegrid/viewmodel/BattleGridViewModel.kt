@@ -219,12 +219,12 @@ class BattleGridViewModel @Inject constructor(
 
     private fun fetchCurrentOpenMatch(){
         viewModelScope.launch {
-            val currentOpenMatchId = fetchCurrentOpenMatchUseCase()
-            if (currentOpenMatchId == null){
+            val currentOpenMatch = fetchCurrentOpenMatchUseCase()
+            if (currentOpenMatch == null){
                 registerMatch()
             } else {
                 val currentMatch = MatchData(
-                    id = currentOpenMatchId,
+                    id = currentOpenMatch.id,
                     playersCount = _state.value.activePlayers.size
                 )
 

@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.diceless.data.dao.BackgroundProfileDao
 import com.example.diceless.data.dao.GameSchemeDao
 import com.example.diceless.data.dao.MatchDao
+import com.example.diceless.data.dao.MatchHistoryDao
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.data.db.AppDatabase
 import dagger.Module
@@ -52,7 +53,13 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideMatchHistoryDao(database: AppDatabase): MatchDao {
+    fun provideMatchDataDao(database: AppDatabase): MatchDao {
         return database.matchDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMatchHistoryDao(database: AppDatabase): MatchHistoryDao {
+        return database.matchHistoryDao()
     }
 }

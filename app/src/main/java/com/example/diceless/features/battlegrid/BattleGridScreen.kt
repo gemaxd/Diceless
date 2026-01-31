@@ -1,6 +1,5 @@
 package com.example.diceless.features.battlegrid
 
-import android.R.attr.padding
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -38,7 +37,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.common.enums.MenuItemEnum
-import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.extensions.paddingBasedOnPosition
@@ -46,7 +44,6 @@ import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
@@ -58,7 +55,7 @@ import com.example.diceless.presentation.battlegrid.components.bottomsheet.Histo
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.RestartIndicators
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.SchemeIndicators
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.SettingsIndicators
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.HistoryContainer
+import com.example.diceless.features.common.components.bottomsheet.containers.HistoryContainer
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.RestartContainer
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SchemeContainer
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SettingsContainer
@@ -66,6 +63,7 @@ import com.example.diceless.presentation.battlegrid.components.button.ActionPill
 import com.example.diceless.presentation.battlegrid.components.draggable.MonarchDraggableComponent
 import com.example.diceless.features.common.components.pager.InnerHorizontalPager
 import com.example.diceless.features.common.components.pager.InnerVerticalPager
+import com.example.diceless.features.history.components.MatchHistoryScreen
 import com.example.diceless.navigation.RESULT_CARD_SELECTED
 import com.example.diceless.navigation.RESULT_PLAYER_USED
 import com.example.diceless.navigation.ResultStore
@@ -154,7 +152,7 @@ fun BattleGridContent(
             sheetState = historyModalSheetState,
             onDismiss = { showHistoryBottomSheet = false },
             content = {
-                HistoryContainer()
+                MatchHistoryScreen()
             },
             indicators = {
                 HistoryIndicators()
