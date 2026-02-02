@@ -14,12 +14,13 @@ fun GenericBottomSheet(
     sheetState: SheetState,
     onDismiss: () -> Unit,
     content: @Composable (dismiss: () -> Unit) -> Unit,
-    indicators: @Composable () -> Unit = {}
+    indicators: @Composable () -> Unit = {},
+    containerColor: Color = Color.White
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = Color.White,
+        containerColor = containerColor,
         tonalElevation = 8.dp,
         dragHandle = {}
     ) {

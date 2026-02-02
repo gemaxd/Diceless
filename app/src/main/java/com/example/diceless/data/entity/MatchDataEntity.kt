@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey
 data class MatchDataEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
-    val createdAt: Long, // timestamp (System.currentTimeMillis)
-    val finishedAt: Long? = null, // null enquanto a partida estiver ativa
-    val durationMillis: Long? = null, // calculado ao finalizar
-    val playersCount: Int
+    val createdAt: Long,
+    val finishedAt: Long? = null,
+    val durationMillis: Long? = null,
+    val players: String,
+    val startingLife: Int
 )

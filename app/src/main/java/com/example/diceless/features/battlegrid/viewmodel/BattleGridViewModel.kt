@@ -3,6 +3,7 @@ package com.example.diceless.features.battlegrid.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.common.extensions.toHistoryPlayerBasicDataList
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.repository.SettingsRepository
 import com.example.diceless.domain.model.BackgroundProfileData
@@ -139,7 +140,6 @@ class BattleGridViewModel @Inject constructor(
 
             is BattleGridActions.OnUpdateScheme -> {
                 updateGameScheme(action.schemeEnum)
-                updateMatchData(action.schemeEnum.numbersOfPlayers)
                 restartMatch()
             }
 
@@ -203,15 +203,18 @@ class BattleGridViewModel @Inject constructor(
 
     private fun registerMatch() {
         viewModelScope.launch {
-            val currentMatchId = registerMatchUseCase(MatchData(playersCount = _state.value.selectedScheme.numbersOfPlayers))
-            val currentMatch = MatchData(
-                id = currentMatchId,
-                playersCount = _state.value.activePlayers.size
+            var newMatchData = MatchData(
+                players = _state.value.activePlayers.toHistoryPlayerBasicDataList(),
+                startingLife = _state.value.selectedStartingLife
             )
+
+            val currentMatchId = registerMatchUseCase(newMatchData)
+
+            newMatchData = newMatchData.copy(id = currentMatchId)
 
             _state.update { current ->
                 current.copy(
-                    matchData = currentMatch
+                    matchData = newMatchData
                 )
             }
         }
@@ -225,7 +228,7 @@ class BattleGridViewModel @Inject constructor(
             } else {
                 val currentMatch = MatchData(
                     id = currentOpenMatch.id,
-                    playersCount = _state.value.activePlayers.size
+                    players = _state.value.activePlayers.toHistoryPlayerBasicDataList()
                 )
 
                 _state.update { current ->
@@ -237,12 +240,16 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
-    private fun updateMatchData(quantity: Int){
+    private fun updateMatchData(matchData: MatchData){
         viewModelScope.launch {
-            updateMatchUseCase(
-                _state.value.matchData.copy(
-                    playersCount = quantity
+            _state.update { current ->
+                current.copy(
+                    matchData = matchData
                 )
+            }
+
+            updateMatchUseCase(
+                _state.value.matchData
             )
         }
     }
@@ -294,12 +301,21 @@ class BattleGridViewModel @Inject constructor(
                         } ?: local
                     }
 
+                    updateMatchData(
+                        matchData = _state.value.matchData.copy(
+                            players = syncedPlayers.toHistoryPlayerBasicDataList()
+                        )
+                    )
+
                     current.copy(
                         activePlayers = syncedPlayers,
                         totalPlayers = playersFromDb
                     )
+
+
                 }
             }
+
         }
     }
 
@@ -370,6 +386,12 @@ class BattleGridViewModel @Inject constructor(
                 updatePlayerUseCase(it)
             }
 
+            updateMatchData(
+                matchData = _state.value.matchData.copy(
+                    players = updatedPlayers.toHistoryPlayerBasicDataList()
+                )
+            )
+
             _state.value = _state.value.copy(activePlayers = updatedPlayers)
         }
     }
@@ -387,8 +409,6 @@ class BattleGridViewModel @Inject constructor(
                 }
             }
             _state.value = _state.value.copy(activePlayers = updatedPlayers)
-
-            delay(1000)
 
             // 2️⃣ Persiste em paralelo
             insertPlayerWithBackgroundUseCase(

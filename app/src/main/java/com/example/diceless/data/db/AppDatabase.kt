@@ -13,6 +13,7 @@ import com.example.diceless.data.entity.GameSchemeEntity
 import com.example.diceless.data.entity.MatchDataEntity
 import com.example.diceless.data.entity.MatchHistoryEntity
 import com.example.diceless.data.entity.PlayerEntity
+import com.example.diceless.data.entity.typeconverters.MatchDataConverters
 import com.example.diceless.data.entity.typeconverters.MatchHistoryConverters
 import com.example.diceless.data.entity.typeconverters.PlayerConverters
 
@@ -30,7 +31,8 @@ import com.example.diceless.data.entity.typeconverters.PlayerConverters
 
 @TypeConverters(
     PlayerConverters::class,
-    MatchHistoryConverters::class
+    MatchHistoryConverters::class,
+    MatchDataConverters::class
 )
 
 abstract class AppDatabase : RoomDatabase() {

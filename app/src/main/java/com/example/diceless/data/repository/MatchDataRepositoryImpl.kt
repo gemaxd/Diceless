@@ -2,6 +2,7 @@ package com.example.diceless.data.repository
 
 import com.example.diceless.data.dao.MatchDao
 import com.example.diceless.data.entity.MatchDataEntity
+import com.example.diceless.domain.HistoryPlayerBasicData
 import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.repository.MatchDataRepository
 import javax.inject.Inject
@@ -18,10 +19,10 @@ class MatchDataRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateMatchDataPlayerQuantity(
-        playerQuantity: Int,
+        players: String,
         matchId: Long
     ) {
-        matchDao.updateMatchPlayerQuantity(playerQuantity = playerQuantity, matchId = matchId)
+        matchDao.updateMatchPlayerQuantity(players = players, matchId = matchId)
     }
 
     override suspend fun endCurrentMatch(

@@ -10,7 +10,7 @@ import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.MatchHistoryRegistry
 
 @Composable
-fun MatchHistoryList(matchData: MatchData?, histories: List<MatchHistoryRegistry>){
+fun MatchHistoryContent(matchData: MatchData?, histories: List<MatchHistoryRegistry>){
     LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
         matchData?.let {
             stickyHeader {

@@ -3,6 +3,7 @@ package com.example.diceless.features.history.components
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.features.history.mvi.MatchHistoryActions
 import com.example.diceless.features.history.ui.MatchHistoryViewModel
@@ -11,7 +12,7 @@ import com.example.diceless.features.history.ui.MatchHistoryViewModel
 fun MatchHistoryScreen(
     matchHistoryViewModel: MatchHistoryViewModel = hiltViewModel()
 ) {
-    val state = matchHistoryViewModel.state.collectAsState()
+    val state by matchHistoryViewModel.state.collectAsState()
     val onUiEvent = matchHistoryViewModel::onAction
 
     LaunchedEffect(Unit) {
@@ -19,14 +20,14 @@ fun MatchHistoryScreen(
     }
 
     when {
-        state.value.isLoading -> {
+        state.isLoading -> {
             MatchHistorySkeleton()
         }
 
-        state.value.matchData != null -> {
-            MatchHistoryList(
-                matchData = state.value.matchData,
-                histories = state.value.histories
+        state.matchData != null -> {
+            MatchHistoryContent(
+                matchData = state.matchData,
+                histories = state.histories
             )
         }
     }

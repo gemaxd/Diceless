@@ -156,7 +156,8 @@ fun BattleGridContent(
             },
             indicators = {
                 HistoryIndicators()
-            }
+            },
+            containerColor = Color.Black
         )
     }
 
