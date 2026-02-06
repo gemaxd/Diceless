@@ -1,5 +1,6 @@
 package com.example.diceless.features.history.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.diceless.domain.HistoryPlayerBasicData
@@ -24,7 +27,7 @@ import com.example.diceless.domain.model.MatchHistoryChangeSource
 import com.example.diceless.domain.model.MatchHistoryRegistry
 
 @Composable
-fun MatchHistoryCell(matchData: MatchData, matchHistoryRegistry: MatchHistoryRegistry){
+fun MatchHistoryChanges(matchData: MatchData, matchHistoryRegistry: MatchHistoryRegistry){
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -34,42 +37,46 @@ fun MatchHistoryCell(matchData: MatchData, matchHistoryRegistry: MatchHistoryReg
             ) {
                 val deltaSignal = if (matchHistoryRegistry.delta > 0) "+" else ""
                 val containerColor = if (matchHistoryRegistry.source == MatchHistoryChangeSource.DAMAGE) Color.Red else Color.Blue
-                val textColor = if (matchHistoryRegistry.source == MatchHistoryChangeSource.DAMAGE) Color.Red else Color.Green
                 if(player.playerPosition.name == matchHistoryRegistry.playerId){
                     Card(
                         modifier = Modifier.padding(4.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = containerColor.copy(alpha = 0.3f)
-                        ),
-                        shape = RoundedCornerShape(percent = 10)
+                        shape = RoundedCornerShape(10.dp)
                     ) {
-                        Box(modifier = Modifier.fillMaxWidth()){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colorStops = arrayOf(
+                                            Pair(0f, containerColor.copy(alpha = 0.4f)),
+                                            Pair(0.25f, containerColor.copy(alpha = 0.8f)),
+                                            Pair(0.5f,containerColor.copy(alpha = 1f)),
+                                            Pair(0.75f,containerColor.copy(alpha = 0.8f)),
+                                            Pair(1f,containerColor.copy(alpha = 0.4f))
+                                        ),
+                                        startY = 0f,
+                                        endY = Float.POSITIVE_INFINITY
+                                    )
+                                )
+                        ){
                             Text(
-                                modifier = Modifier.align(Alignment.CenterStart).padding(start = 12.dp),
+                                modifier = Modifier.fillMaxWidth().padding(6.dp),
                                 text = "$deltaSignal${matchHistoryRegistry.delta}",
-                                textAlign = TextAlign.End,
-                                fontSize = 16.sp,
-                                color = textColor
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp),
-                                text = "${matchHistoryRegistry.lifeAfter}",
                                 textAlign = TextAlign.Center,
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Black
+                                fontSize = 20.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Black,
+                                letterSpacing = (-1).sp
                             )
                         }
                     }
-
                 } else {
                     Card(
                         modifier = Modifier.padding(4.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.Gray.copy(alpha = 0.3f)
                         ),
-                        shape = RoundedCornerShape(percent = 10)
+                        shape = RoundedCornerShape(10.dp)
                     ) {
                         Text(
                             modifier = Modifier
@@ -88,9 +95,9 @@ fun MatchHistoryCell(matchData: MatchData, matchHistoryRegistry: MatchHistoryReg
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewMatchHistoryCell(){
+fun PreviewMatchHistoryChanges(){
     Column() {
-        MatchHistoryCell(
+        MatchHistoryChanges(
             matchData = MatchData(
                 id = 1,
                 players = listOf(

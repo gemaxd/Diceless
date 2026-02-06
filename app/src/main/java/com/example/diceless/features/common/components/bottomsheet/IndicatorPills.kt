@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components.bottomsheet
+package com.example.diceless.features.common.components.bottomsheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -24,9 +24,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.diceless.presentation.battlegrid.components.bottomsheet.RestartIndicators
 
 @Composable
 fun IndicatorPill(
+    textColor: Color = Color.LightGray,
+    iconColor: Color = Color.LightGray,
     text: String,
     icon: ImageVector
 ) {
@@ -46,14 +49,16 @@ fun IndicatorPill(
             Icon(
                 modifier = Modifier.size(16.dp),
                 imageVector = icon,
-                contentDescription = "Warning"
+                contentDescription = "Warning",
+                tint = iconColor
             )
 
             Spacer(modifier = Modifier.padding(horizontal = 4.dp))
 
             Text(
                 text = text,
-                fontSize = 10.sp
+                fontSize = 10.sp,
+                color = textColor
             )
         }
     }

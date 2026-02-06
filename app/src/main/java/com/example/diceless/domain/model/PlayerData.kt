@@ -32,6 +32,10 @@ data class PlayerData(
             currentLife
         }
     }
+
+    fun isDefeated() : Boolean {
+        return life <= 0
+    }
 }
 
 fun PlayerData.toEntity(id: String) = PlayerEntity(

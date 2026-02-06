@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components.bottomsheet
+package com.example.diceless.features.common.components.bottomsheet
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet

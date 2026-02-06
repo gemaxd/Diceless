@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,14 +33,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.diceless.R
 import com.example.diceless.common.enums.MenuItemEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.extensions.paddingBasedOnPosition
+import com.example.diceless.common.extensions.vertical
 import com.example.diceless.common.utils.getCorrectOrientation
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.MenuItem
@@ -50,12 +62,11 @@ import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import com.example.diceless.features.battlegrid.viewmodel.BattleGridViewModel
 import com.example.diceless.presentation.battlegrid.components.MiddleMenu
 import com.example.diceless.presentation.battlegrid.components.MiddleMenuSolo
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.GenericBottomSheet
+import com.example.diceless.features.common.components.bottomsheet.GenericBottomSheet
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.HistoryIndicators
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.RestartIndicators
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.SchemeIndicators
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.SettingsIndicators
-import com.example.diceless.features.common.components.bottomsheet.containers.HistoryContainer
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.RestartContainer
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SchemeContainer
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SettingsContainer
@@ -68,6 +79,7 @@ import com.example.diceless.navigation.RESULT_CARD_SELECTED
 import com.example.diceless.navigation.RESULT_PLAYER_USED
 import com.example.diceless.navigation.ResultStore
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @ExperimentalMaterial3Api
 @Composable
@@ -126,6 +138,10 @@ fun BattleGridContent(
 
     val scope = rememberCoroutineScope()
 
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.fireworks)
+    )
+
     if (showRestartDialog){
         GenericBottomSheet(
             sheetState = restartModalSheetState,
@@ -156,8 +172,7 @@ fun BattleGridContent(
             },
             indicators = {
                 HistoryIndicators()
-            },
-            containerColor = Color.Black
+            }
         )
     }
 
@@ -226,12 +241,43 @@ fun BattleGridContent(
                                 containerColor = Color.Black
                             )
                         ) {
-                            IndividualGridContent(
-                                isDamageLinked = uiState.linkCommanderDamageToLife,
-                                playerData = playerState,
-                                rotation = orient.rotation,
-                                onAction = onAction
-                            )
+                            if (playerState.isDefeated()){
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    LottieAnimation(
+                                        composition = composition,
+                                        iterations = LottieConstants.IterateForever,
+                                        modifier = Modifier
+                                            .rotate(orient.rotation.degrees)
+                                            .vertical()
+                                            .fillMaxSize(),
+                                        contentScale = ContentScale.FillWidth
+                                    )
+
+                                    Text(
+                                        modifier = Modifier
+                                            .rotate(orient.rotation.degrees)
+                                            .vertical()
+                                            .align(Alignment.Center),
+                                        text = "Victory".uppercase(Locale.ROOT),
+                                        fontSize = 45.sp,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center,
+                                        letterSpacing = (-1.5).sp
+                                    )
+                                }
+
+                            } else {
+                                IndividualGridContent(
+                                    isDamageLinked = uiState.linkCommanderDamageToLife,
+                                    playerData = playerState,
+                                    rotation = orient.rotation,
+                                    onAction = onAction
+                                )
+                            }
                         }
                     }
                 }

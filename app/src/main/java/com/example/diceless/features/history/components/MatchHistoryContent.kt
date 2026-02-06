@@ -17,7 +17,8 @@ fun MatchHistoryContent(matchData: MatchData?, histories: List<MatchHistoryRegis
                 MatchHistoryHeader(matchData = matchData)
             }
             items(items = histories){ history ->
-                MatchHistoryCell(matchData = matchData, matchHistoryRegistry = history)
+                MatchHistoryChanges(matchData = matchData, matchHistoryRegistry = history)
+                MatchHistoryRow(matchData = matchData, matchHistoryRegistry = history)
             }
         }
     }

@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,69 +32,114 @@ import com.example.diceless.domain.model.MatchData
 
 @Composable
 fun MatchHistoryHeader(matchData: MatchData){
-    Column(modifier = Modifier.fillMaxWidth().background(Color.Black)) {
+    Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
         Column (
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom
         ) {
+            Spacer(modifier = Modifier.height(8.dp))
+
             Column {
                 Text(
                     text = "Game Name",
                     fontSize = 12.sp,
-                    color = Color.White
+                    color = Color.LightGray
                 )
 
                 Text(
                     text = "Game #${matchData.id}",
                     fontWeight = FontWeight.Black,
                     fontSize = 24.sp,
-                    color = Color.White
+                    color = Color.Black
                 )
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
 
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Players",
+                        textAlign = TextAlign.End,
+                        color = Color.LightGray
+                    )
 
+                    Text(
+                        text = "#${matchData.players.size}",
+                        fontWeight = FontWeight.Black,
+                        fontSize = 18.sp,
+                        color = Color.Black
+                    )
+                }
 
-            Text(
-                text = "Started at:",
-                textAlign = TextAlign.End,
-                color = Color.White
-            )
+                Column {
+                    Text(
+                        text = "Started at:",
+                        textAlign = TextAlign.End,
+                        color = Color.LightGray
+                    )
 
-            Text(
-                text = matchData.createdAt.toFormattedDate(),
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight.Medium,
-                color = Color.White
-            )
+                    Text(
+                        text = matchData.createdAt.toFormattedDate(),
+                        textAlign = TextAlign.End,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black
+                    )
+                }
+
+                Column {
+                    Text(
+                        text = "Started at:",
+                        textAlign = TextAlign.End,
+                        color = Color.LightGray
+                    )
+
+                    Text(
+                        text = matchData.createdAt.toFormattedDate(),
+                        textAlign = TextAlign.End,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black
+                    )
+                }
+            }
         }
 
 
         Spacer(modifier = Modifier.size(12.dp))
 
-        Row(modifier = Modifier.fillMaxWidth().background(Color.Gray)) {
-
+        Row(modifier = Modifier.fillMaxWidth()) {
             matchData.players.forEach { player ->
-                Box(
-                    modifier = Modifier.weight(1f)
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(4.dp),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    AsyncImage(
-                        model = player.backgroundImageUri,
-                        contentDescription = player.backgroundImageUri,
-                        modifier = Modifier.matchParentSize(),
-                        contentScale = ContentScale.Crop,
-                        alignment = Alignment.Center
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        AsyncImage(
+                            model = player.backgroundImageUri,
+                            contentDescription = player.backgroundImageUri,
+                            modifier = Modifier.matchParentSize(),
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center
+                        )
 
-                    Text(
-                        modifier = Modifier.padding(4.dp),
-                        text = "P${player.playerPosition.pos}",
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 22.sp,
-                        textAlign = TextAlign.Center
-                    )
+                        Text(
+                            modifier = Modifier.padding(4.dp),
+                            text = "P${player.playerPosition.pos}",
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 22.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         }

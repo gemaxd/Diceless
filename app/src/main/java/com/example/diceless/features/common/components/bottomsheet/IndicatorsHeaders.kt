@@ -8,6 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.diceless.features.common.components.bottomsheet.HistoryIndicatorPill
+import com.example.diceless.features.common.components.bottomsheet.InfoIndicatorPill
+import com.example.diceless.features.common.components.bottomsheet.LifeValuesIndicatorPill
+import com.example.diceless.features.common.components.bottomsheet.RestartIndicatorPill
+import com.example.diceless.features.common.components.bottomsheet.SettingsIndicatorPill
+import com.example.diceless.features.common.components.bottomsheet.UserIndicatorPill
 
 @Composable
 fun RestartIndicators(){
@@ -23,7 +29,9 @@ fun RestartIndicators(){
 }
 
 @Composable
-fun HistoryIndicators(){
+fun HistoryIndicators(
+
+){
     Row(
         modifier = Modifier.padding(16.dp)
             .fillMaxWidth(),

@@ -5,6 +5,8 @@ import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.PlayerData
 
 data class BattleGridState(
+    val matchFinished: Boolean = false,
+    val winnerId: String? = null,
     val activePlayers: List<PlayerData> = emptyList(),
     val totalPlayers: List<PlayerData> = emptyList(),
     var selectedScheme: SchemeEnum = SchemeEnum.SOLO,

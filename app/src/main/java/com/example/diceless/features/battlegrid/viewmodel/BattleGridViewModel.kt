@@ -10,9 +10,11 @@ import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.GameSchemeData
+import com.example.diceless.domain.model.LifeChangeEvent
 import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.MatchHistoryChangeSource
 import com.example.diceless.domain.model.MatchHistoryRegistry
+import com.example.diceless.domain.model.PendingLifeChange
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.getDefaultCounterData
 import com.example.diceless.domain.usecase.EndCurrentOpenMatchUseCase
@@ -28,10 +30,13 @@ import com.example.diceless.domain.usecase.UpdatePlayerUseCase
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -52,18 +57,23 @@ class BattleGridViewModel @Inject constructor(
 ) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
+
+    private val lifeChangeEvents =
+        MutableSharedFlow<LifeChangeEvent>(extraBufferCapacity = 100)
+    private val pendingLifeChanges =
+        mutableMapOf<String, PendingLifeChange>()
     private var initialDataIsLoaded = false
     private var matchIsStarted = false
 
     override val initialState: BattleGridState
         get() = BattleGridState()
 
-    // 🔹 Init enxuto e previsível
     init {
         loadSettingsFromPrefs()
         initialLoadIfNeeded()
         observePlayers()
         observeScheme()
+        observeLifeDebounce()
     }
 
     override fun onAction(action: BattleGridActions) {
@@ -444,19 +454,13 @@ class BattleGridViewModel @Inject constructor(
                 }
             }
 
-            registerMatchHistory(
-                MatchHistoryRegistry(
-                    matchId = _state.value.matchData.id,
-                    playerId = player.playerPosition.name,
-                    delta = amount,
-                    lifeBefore = player.life,
-                    lifeAfter = player.life + amount,
-                    timestamp = System.currentTimeMillis(),
-                    source = if (amount > 0 ) MatchHistoryChangeSource.HEAL else MatchHistoryChangeSource.DAMAGE
-                )
+            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+
+            lifeChangeEvents.emit(
+                LifeChangeEvent(player = player, delta = amount)
             )
 
-            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+            checkMatchEnd()
         }
     }
 
@@ -631,6 +635,89 @@ class BattleGridViewModel @Inject constructor(
     private fun registerMatchHistory(matchHistoryRegistry: MatchHistoryRegistry) {
         viewModelScope.launch {
             registerMatchHistoryUseCase.invoke(matchHistoryRegistry = matchHistoryRegistry)
+        }
+    }
+
+    private fun accumulateLifeChange(event: LifeChangeEvent) {
+
+        val playerKey = event.player.playerPosition.name
+
+        val current = pendingLifeChanges[playerKey]
+
+        if (current == null) {
+            // Primeira mudança do ciclo
+            pendingLifeChanges[playerKey] = PendingLifeChange(
+                totalDelta = event.delta,
+                lifeBefore = event.player.life,
+                lifeAfter = event.player.life + event.delta
+            )
+        } else {
+            // Já existe, acumula
+            pendingLifeChanges[playerKey] = current.copy(
+                totalDelta = current.totalDelta + event.delta,
+                lifeAfter = current.lifeAfter + event.delta
+            )
+        }
+    }
+
+    private suspend fun flushLifeChangesToHistory() {
+
+        pendingLifeChanges.forEach { (playerId, change) ->
+
+            if (change.totalDelta == 0) return@forEach
+
+            registerMatchHistory(
+                MatchHistoryRegistry(
+                    matchId = _state.value.matchData.id,
+                    playerId = playerId,
+                    delta = change.totalDelta,
+                    lifeBefore = change.lifeBefore,
+                    lifeAfter = change.lifeAfter,
+                    timestamp = System.currentTimeMillis(),
+                    source = if (change.totalDelta > 0)
+                        MatchHistoryChangeSource.HEAL
+                    else
+                        MatchHistoryChangeSource.DAMAGE
+                )
+            )
+        }
+
+        pendingLifeChanges.clear()
+    }
+
+    private fun checkMatchEnd() {
+        val alive = _state.value.activePlayers.filter { it.life > 0 }
+
+        if (alive.size == 1) {
+            _state.value = _state.value.copy(
+                matchFinished = true,
+                winnerId = alive.first().playerPosition.name
+            )
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        viewModelScope.launch {
+            flushLifeChangesToHistory()
+        }
+    }
+
+    //------------------------------------
+    // Observers
+    //------------------------------------
+    @OptIn(FlowPreview::class)
+    private fun observeLifeDebounce() {
+        viewModelScope.launch {
+            lifeChangeEvents
+                .onEach { event ->
+                    accumulateLifeChange(event)
+                }
+                .debounce(700) // espera o usuário parar de clicar
+                .collect {
+                    flushLifeChangesToHistory()
+                }
         }
     }
 
