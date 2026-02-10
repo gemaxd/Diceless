@@ -402,7 +402,18 @@ class BattleGridViewModel @Inject constructor(
                 )
             )
 
-            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+            _state.value = _state.value.copy(
+                matchFinished = false,
+                winnerId = null,
+                activePlayers = updatedPlayers
+            )
+
+            endCurrentOpenMatchUseCase.invoke(
+                matchId = _state.value.matchData.id,
+                finishedAt = System.currentTimeMillis()
+            )
+
+            fetchCurrentOpenMatch()
         }
     }
 

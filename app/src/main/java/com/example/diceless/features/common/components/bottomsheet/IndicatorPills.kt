@@ -21,10 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.RestartIndicators
+import com.example.diceless.R
 
 @Composable
 fun IndicatorPill(
@@ -111,6 +112,17 @@ fun UserIndicatorPill() {
         icon = Icons.Default.AccountCircle
     )
 }
+
+@Composable
+fun DiceRollIndicatorPill() {
+    val dice = ImageVector.vectorResource(id = R.drawable.d6_icon)
+
+    IndicatorPill(
+        text = "ROLAGEM",
+        icon = dice
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable

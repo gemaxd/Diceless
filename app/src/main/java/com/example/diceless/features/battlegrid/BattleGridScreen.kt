@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,24 +59,26 @@ import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import com.example.diceless.features.battlegrid.viewmodel.BattleGridViewModel
-import com.example.diceless.presentation.battlegrid.components.MiddleMenu
-import com.example.diceless.presentation.battlegrid.components.MiddleMenuSolo
+import com.example.diceless.features.bottombelt.options.diceroll.presentation.DiceRollScreen
+import com.example.diceless.features.common.components.bottomsheet.DiceRollIndicators
 import com.example.diceless.features.common.components.bottomsheet.GenericBottomSheet
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.HistoryIndicators
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.RestartIndicators
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.SchemeIndicators
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.SettingsIndicators
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.RestartContainer
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SchemeContainer
-import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SettingsContainer
-import com.example.diceless.presentation.battlegrid.components.button.ActionPill
-import com.example.diceless.presentation.battlegrid.components.draggable.MonarchDraggableComponent
+import com.example.diceless.features.common.components.bottomsheet.HistoryIndicators
+import com.example.diceless.features.common.components.bottomsheet.RestartIndicators
+import com.example.diceless.features.common.components.bottomsheet.SchemeIndicators
+import com.example.diceless.features.common.components.bottomsheet.SettingsIndicators
 import com.example.diceless.features.common.components.pager.InnerHorizontalPager
 import com.example.diceless.features.common.components.pager.InnerVerticalPager
 import com.example.diceless.features.history.components.MatchHistoryScreen
 import com.example.diceless.navigation.RESULT_CARD_SELECTED
 import com.example.diceless.navigation.RESULT_PLAYER_USED
 import com.example.diceless.navigation.ResultStore
+import com.example.diceless.presentation.battlegrid.components.MiddleMenu
+import com.example.diceless.presentation.battlegrid.components.MiddleMenuSolo
+import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.RestartContainer
+import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SchemeContainer
+import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SettingsContainer
+import com.example.diceless.presentation.battlegrid.components.button.ActionPill
+import com.example.diceless.presentation.battlegrid.components.draggable.MonarchDraggableComponent
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -136,6 +137,9 @@ fun BattleGridContent(
     var showRestartDialog by remember { mutableStateOf(false) }
     val restartModalSheetState = rememberModalBottomSheetState()
 
+    var showDiceRollDialog by remember { mutableStateOf(false) }
+    val diceRollModalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     val scope = rememberCoroutineScope()
 
     val composition by rememberLottieComposition(
@@ -159,6 +163,19 @@ fun BattleGridContent(
             },
             indicators = {
                 RestartIndicators()
+            }
+        )
+    }
+
+    if (showDiceRollDialog){
+        GenericBottomSheet(
+            sheetState = diceRollModalSheetState,
+            onDismiss = { showDiceRollDialog = false },
+            content = {
+                DiceRollScreen()
+            },
+            indicators = {
+                DiceRollIndicators()
             }
         )
     }
@@ -241,42 +258,63 @@ fun BattleGridContent(
                                 containerColor = Color.Black
                             )
                         ) {
-                            if (playerState.isDefeated()){
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    LottieAnimation(
-                                        composition = composition,
-                                        iterations = LottieConstants.IterateForever,
+                            when {
+                                playerState.playerPosition.name == uiState.winnerId -> {
+                                    Box(
                                         modifier = Modifier
-                                            .rotate(orient.rotation.degrees)
-                                            .vertical()
                                             .fillMaxSize(),
-                                        contentScale = ContentScale.FillWidth
-                                    )
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        LottieAnimation(
+                                            composition = composition,
+                                            iterations = LottieConstants.IterateForever,
+                                            modifier = Modifier
+                                                .rotate(orient.rotation.degrees)
+                                                .vertical()
+                                                .fillMaxSize(),
+                                            contentScale = ContentScale.FillWidth
+                                        )
 
-                                    Text(
+                                        Text(
+                                            modifier = Modifier
+                                                .rotate(orient.rotation.degrees)
+                                                .vertical()
+                                                .align(Alignment.Center),
+                                            text = "Victory".uppercase(Locale.ROOT),
+                                            fontSize = 45.sp,
+                                            color = Color.White,
+                                            textAlign = TextAlign.Center,
+                                            letterSpacing = (-1.5).sp
+                                        )
+                                    }
+                                }
+                                playerState.isDefeated() -> {
+                                    Box(
                                         modifier = Modifier
-                                            .rotate(orient.rotation.degrees)
-                                            .vertical()
-                                            .align(Alignment.Center),
-                                        text = "Victory".uppercase(Locale.ROOT),
-                                        fontSize = 45.sp,
-                                        color = Color.White,
-                                        textAlign = TextAlign.Center,
-                                        letterSpacing = (-1.5).sp
+                                            .fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            modifier = Modifier
+                                                .rotate(orient.rotation.degrees)
+                                                .vertical()
+                                                .align(Alignment.Center),
+                                            text = "Defeated".uppercase(Locale.ROOT),
+                                            fontSize = 45.sp,
+                                            color = Color.White,
+                                            textAlign = TextAlign.Center,
+                                            letterSpacing = (-1.5).sp
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    IndividualGridContent(
+                                        isDamageLinked = uiState.linkCommanderDamageToLife,
+                                        playerData = playerState,
+                                        rotation = orient.rotation,
+                                        onAction = onAction
                                     )
                                 }
-
-                            } else {
-                                IndividualGridContent(
-                                    isDamageLinked = uiState.linkCommanderDamageToLife,
-                                    playerData = playerState,
-                                    rotation = orient.rotation,
-                                    onAction = onAction
-                                )
                             }
                         }
                     }
@@ -420,6 +458,14 @@ fun BattleGridContent(
                 ActionPill(
                     onClick = {
                         onAction.invoke(BattleGridActions.ToggleMonarchCounter)
+                    },
+                    text = "Monarch",
+                    icon = Icons.Default.Search
+                )
+
+                ActionPill(
+                    onClick = {
+                        showDiceRollDialog = true
                     },
                     text = "Monarch",
                     icon = Icons.Default.Search

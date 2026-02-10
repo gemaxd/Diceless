@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components.bottomsheet
+package com.example.diceless.features.common.components.bottomsheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,12 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.diceless.features.common.components.bottomsheet.HistoryIndicatorPill
-import com.example.diceless.features.common.components.bottomsheet.InfoIndicatorPill
-import com.example.diceless.features.common.components.bottomsheet.LifeValuesIndicatorPill
-import com.example.diceless.features.common.components.bottomsheet.RestartIndicatorPill
-import com.example.diceless.features.common.components.bottomsheet.SettingsIndicatorPill
-import com.example.diceless.features.common.components.bottomsheet.UserIndicatorPill
 
 @Composable
 fun RestartIndicators(){
@@ -64,5 +58,16 @@ fun SchemeIndicators(){
         UserIndicatorPill()
         Spacer(modifier = Modifier.padding(horizontal = 4.dp))
         InfoIndicatorPill()
+    }
+}
+
+@Composable
+fun DiceRollIndicators(){
+    Row(
+        modifier = Modifier.padding(16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        DiceRollIndicatorPill()
     }
 }
