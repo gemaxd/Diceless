@@ -13,7 +13,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.example.diceless.features.battlegrid.BattleGridScreen
+import com.example.diceless.features.battlegrid.presentation.BattleGridScreen
 import com.example.diceless.features.profile.list.presentation.screen.ProfileImageListScreen
 import com.example.diceless.features.profile.search.screens.ProfileImageSearchScreen
 import kotlinx.serialization.modules.SerializersModule

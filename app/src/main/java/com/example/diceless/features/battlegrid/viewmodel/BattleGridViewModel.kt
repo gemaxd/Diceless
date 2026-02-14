@@ -405,7 +405,8 @@ class BattleGridViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 matchFinished = false,
                 winnerId = null,
-                activePlayers = updatedPlayers
+                activePlayers = updatedPlayers,
+                selectedScheme = _state.value.selectedScheme
             )
 
             endCurrentOpenMatchUseCase.invoke(

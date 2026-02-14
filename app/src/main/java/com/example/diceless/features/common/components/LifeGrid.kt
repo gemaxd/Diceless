@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -210,7 +211,11 @@ fun LifeGrid(
         }
 
         RotationEnum.RIGHT -> {
-            Box(modifier = Modifier.fillMaxSize(),) {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
+                val maxWidth = maxWidth
+                val maxHeight = maxHeight
+
                 AsyncImage(
                     model = playerData.backgroundProfile?.imageUri,
                     contentDescription = playerData.backgroundProfile?.cardName,
@@ -218,7 +223,7 @@ fun LifeGrid(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            translationX = -213f
+                            translationX = - (maxHeight / 3).value
                             rotationZ = rotation.degrees
                             if (rotation.degrees % 180 != 0f) {
                                 scaleX = 2.35f
@@ -284,7 +289,11 @@ fun LifeGrid(
         }
 
         RotationEnum.LEFT -> {
-            Box(modifier = Modifier.fillMaxSize()) {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
+                val maxWidth = maxWidth
+                val maxHeight = maxHeight
+
                 AsyncImage(
                     model = playerData.backgroundProfile?.imageUri,
                     contentDescription = playerData.backgroundProfile?.cardName,
@@ -292,7 +301,7 @@ fun LifeGrid(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            translationX = 213f
+                            translationX = (maxHeight / 3).value
                             rotationZ = rotation.degrees
                             if (rotation.degrees % 180 != 0f) {
                                 scaleX = 2.35f

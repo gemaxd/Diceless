@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components.bottomsheet.containers
+package com.example.diceless.features.common.components.bottomsheet.containers
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,7 +25,7 @@ import com.example.diceless.features.battlegrid.viewmodel.BattleGridViewModel
 @Composable
 fun RestartContainer(
     viewModel: BattleGridViewModel = hiltViewModel(),
-    onDismiss: () -> Unit = {}
+    onDismiss: () -> Unit
 ){
     val onAction = viewModel::onAction
 

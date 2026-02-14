@@ -1,4 +1,4 @@
-package com.example.diceless.presentation.battlegrid.components.bottomsheet.containers
+package com.example.diceless.features.common.components.bottomsheet.containers
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -11,19 +11,28 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.features.battlegrid.mvi.BattleGridActions
+import com.example.diceless.features.battlegrid.viewmodel.BattleGridViewModel
 import com.example.diceless.presentation.battlegrid.components.groupcomponent.scheme.SchemeView
 
 @Composable
 fun SchemeContainer(
-    selectedScheme: SchemeEnum = SchemeEnum.SOLO,
-    onSelectScheme: (SchemeEnum) -> Unit
+    viewModel: BattleGridViewModel = hiltViewModel(),
+    onDismiss: () -> Unit
 ){
+    val uiState by viewModel.uiState.collectAsState()
+    val selectedScheme = uiState.selectedScheme
+    val onAction = viewModel::onAction
+
     Column(
         modifier = Modifier
             .padding(32.dp)
@@ -52,7 +61,8 @@ fun SchemeContainer(
                     selectedScheme = selectedScheme,
                     schemeEnum = SchemeEnum.SOLO,
                     onSelectScheme = { scheme ->
-                        onSelectScheme(scheme)
+                        onAction(BattleGridActions.OnUpdateScheme(scheme))
+                        onDismiss.invoke()
                     }
                 )
             }
@@ -62,7 +72,8 @@ fun SchemeContainer(
                     selectedScheme = selectedScheme,
                     schemeEnum =SchemeEnum.VERSUS_OPPOSITE,
                     onSelectScheme = { scheme ->
-                        onSelectScheme(scheme)
+                        onAction(BattleGridActions.OnUpdateScheme(scheme))
+                        onDismiss.invoke()
                     }
                 )
             }
@@ -72,7 +83,8 @@ fun SchemeContainer(
                     selectedScheme = selectedScheme,
                     schemeEnum =SchemeEnum.TRIPLE_STANDARD,
                     onSelectScheme = { scheme ->
-                        onSelectScheme(scheme)
+                        onAction(BattleGridActions.OnUpdateScheme(scheme))
+                        onDismiss.invoke()
                     }
                 )
             }
@@ -82,7 +94,8 @@ fun SchemeContainer(
                     selectedScheme = selectedScheme,
                     schemeEnum =SchemeEnum.QUADRA_STANDARD,
                     onSelectScheme = { scheme ->
-                        onSelectScheme(scheme)
+                        onAction(BattleGridActions.OnUpdateScheme(scheme))
+                        onDismiss.invoke()
                     }
                 )
             }
@@ -93,5 +106,7 @@ fun SchemeContainer(
 @Composable
 @Preview(showBackground = true)
 fun PreviewSchemeContainer() {
-    SchemeContainer(onSelectScheme = {})
+    SchemeContainer(
+        onDismiss = {}
+    )
 }
