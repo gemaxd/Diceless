@@ -58,10 +58,8 @@ class BattleGridViewModel @Inject constructor(
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
 
-    private val lifeChangeEvents =
-        MutableSharedFlow<LifeChangeEvent>(extraBufferCapacity = 100)
-    private val pendingLifeChanges =
-        mutableMapOf<String, PendingLifeChange>()
+    private val lifeChangeEvents = MutableSharedFlow<LifeChangeEvent>(extraBufferCapacity = 100)
+    private val pendingLifeChanges = mutableMapOf<String, PendingLifeChange>()
     private var initialDataIsLoaded = false
     private var matchIsStarted = false
 
@@ -672,7 +670,7 @@ class BattleGridViewModel @Inject constructor(
         }
     }
 
-    private suspend fun flushLifeChangesToHistory() {
+    private fun flushLifeChangesToHistory() {
 
         pendingLifeChanges.forEach { (playerId, change) ->
 
@@ -698,13 +696,15 @@ class BattleGridViewModel @Inject constructor(
     }
 
     private fun checkMatchEnd() {
-        val alive = _state.value.activePlayers.filter { it.life > 0 }
+        if (_state.value.activePlayers.size > 1){
+            val alive = _state.value.activePlayers.filter { it.life > 0 }
 
-        if (alive.size == 1) {
-            _state.value = _state.value.copy(
-                matchFinished = true,
-                winnerId = alive.first().playerPosition.name
-            )
+            if (alive.size == 1) {
+                _state.value = _state.value.copy(
+                    matchFinished = true,
+                    winnerId = alive.first().playerPosition.name
+                )
+            }
         }
     }
 

@@ -14,6 +14,10 @@ class MatchDataRepositoryImpl @Inject constructor(
         return matchDao.fetchCurrentMatch()
     }
 
+    override suspend fun fetchMatchById(matchId: Long): MatchData? {
+        return matchDao.fetchMatchById(matchId = matchId)
+    }
+
     override suspend fun registerMatchData(matchDataEntity: MatchDataEntity): Long {
         return matchDao.insertMatch(matchDataEntity)
     }

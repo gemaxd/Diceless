@@ -14,8 +14,11 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.diceless.features.battlegrid.presentation.BattleGridScreen
+import com.example.diceless.features.history.ui.HistoryDetailScreen
+import com.example.diceless.features.history.ui.HistoryScreen
 import com.example.diceless.features.profile.list.presentation.screen.ProfileImageListScreen
 import com.example.diceless.features.profile.search.screens.ProfileImageSearchScreen
+import com.example.diceless.features.startarea.presentation.StartingAreaScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
@@ -26,14 +29,17 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
         configuration = SavedStateConfiguration {
             serializersModule = SerializersModule {
                 polymorphic(NavKey::class) {
+                    subclass(Route.StartingArea::class, Route.StartingArea.serializer())
                     subclass(Route.BattleGrid::class, Route.BattleGrid.serializer())
+                    subclass(Route.HistoryArea::class, Route.HistoryArea.serializer())
+                    subclass(Route.HistoryDetail::class, Route.HistoryDetail.serializer())
                     subclass(Route.ProfileImageSearch::class, Route.ProfileImageSearch.serializer())
                     subclass(Route.ProfileImageList::class, Route.ProfileImageList.serializer())
                 }
             }
 
         },
-         Route.BattleGrid
+         Route.StartingArea
     )
 
     val navigator = remember {
@@ -53,10 +59,29 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             ),
             entryProvider = { key ->
                 when(key) {
+                    is Route.StartingArea -> {
+                        NavEntry(key) {
+                            StartingAreaScreen(
+                                resultStore = resultStore
+                            )
+                        }
+                    }
                     is Route.BattleGrid -> {
                         NavEntry(key) {
                             BattleGridScreen(
                                 resultStore = resultStore
+                            )
+                        }
+                    }
+                    is Route.HistoryArea -> {
+                        NavEntry(key) {
+                            HistoryScreen()
+                        }
+                    }
+                    is Route.HistoryDetail -> {
+                        NavEntry(key) {
+                            HistoryDetailScreen(
+                                matchId = key.matchId
                             )
                         }
                     }

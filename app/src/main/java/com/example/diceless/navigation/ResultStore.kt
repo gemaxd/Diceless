@@ -7,6 +7,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 
 const val RESULT_CARD_SELECTED = "card_selected"
 const val RESULT_PLAYER_USED = "player_used"
+const val RESULT_SELECTED_MATCH = "selected_match"
+
 
 @Stable
 class ResultStore {

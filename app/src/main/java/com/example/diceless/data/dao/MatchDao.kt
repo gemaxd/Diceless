@@ -26,4 +26,7 @@ abstract interface MatchDao {
 
     @Query("UPDATE match_data SET finishedAt = :finishedAt WHERE id = :matchId")
     suspend fun endCurrentMatch(finishedAt: Long, matchId: Long)
+
+    @Query("SELECT * FROM match_data WHERE id = :matchId LIMIT 1")
+    suspend fun fetchMatchById(matchId: Long): MatchData?
 }

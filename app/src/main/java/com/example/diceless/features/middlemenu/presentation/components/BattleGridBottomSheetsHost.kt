@@ -12,7 +12,7 @@ import com.example.diceless.features.common.components.bottomsheet.SchemeIndicat
 import com.example.diceless.features.common.components.bottomsheet.SettingsIndicators
 import com.example.diceless.features.common.components.bottomsheet.containers.RestartContainer
 import com.example.diceless.features.common.components.bottomsheet.containers.SchemeContainer
-import com.example.diceless.features.history.components.MatchHistoryScreen
+import com.example.diceless.features.history.components.MatchHistoryContainer
 import com.example.diceless.features.middlemenu.mvi.BattleGridSheetState
 import com.example.diceless.presentation.battlegrid.components.bottomsheet.containers.SettingsContainer
 
@@ -31,7 +31,7 @@ fun BattleGridBottomSheetsHost(
             GenericBottomSheet(
                 sheetState = modalSheetState,
                 onDismiss = onDismiss,
-                content = { MatchHistoryScreen() },
+                content = { MatchHistoryContainer() },
                 indicators = { HistoryIndicators() }
             )
         }
