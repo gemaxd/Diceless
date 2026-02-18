@@ -14,7 +14,17 @@ fun MatchHistoryContent(matchData: MatchData?, histories: List<MatchHistoryRegis
     LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
         matchData?.let {
             stickyHeader {
-                MatchHistoryHeader(matchData = matchData)
+                MatchHistoryHeader(
+                    header = {
+                        HistoryHeading(matchData = matchData)
+                    },
+                    details = {
+                        HistoryDetails(matchData = matchData)
+                    },
+                    append = {
+                        HistoryPlayersHeader(matchData = matchData)
+                    }
+                )
             }
             items(items = histories){ history ->
                 MatchHistoryChanges(matchData = matchData, matchHistoryRegistry = history)

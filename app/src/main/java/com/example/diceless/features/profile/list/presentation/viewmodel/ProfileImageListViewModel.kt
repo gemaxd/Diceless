@@ -70,7 +70,8 @@ class ProfileImageListViewModel @Inject constructor(
 
             state = result.fold(
                 onSuccess = { ProfileListState.Success(it) },
-                onFailure = { ProfileListState.Error(it.message ?: "Erro") }
+                onFailure = {
+                    ProfileListState.Error(it.message ?: "Erro") }
             )
         }
     }

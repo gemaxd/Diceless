@@ -16,6 +16,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diceless.common.extensions.toFormattedDate
+import com.example.diceless.features.history.components.HistoryDetailButton
+import com.example.diceless.features.history.components.HistoryDetails
+import com.example.diceless.features.history.components.HistoryHeading
+import com.example.diceless.features.history.components.MatchHistoryHeader
 import com.example.diceless.features.history.mvi.MatchHistoryActions
 import com.example.diceless.features.history.mvi.MatchHistoryState
 import com.example.diceless.navigation.LocalNavigator
@@ -53,33 +57,22 @@ fun HistoryContent(
 
         LazyColumn {
             items(state.matchList) { match ->
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "Histórico")
-                            Text(text = match.id.toString())
-                            Button(
-                                onClick = {
-                                    navigator.navigate(Route.HistoryDetail(match.id))
-                                }
-                            ) {
-                                Text(text = "Detalhes")
+                MatchHistoryHeader(
+                    header = {
+                        HistoryHeading(matchData = match)
+                    },
+                    details = {
+                        HistoryDetails(matchData = match)
+                    },
+                    append = {
+                        HistoryDetailButton(
+                            text = "Detalhes",
+                            onActionClick = {
+                                navigator.navigate(Route.HistoryDetail(match.id))
                             }
-                        }
-
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "Data de inicio")
-                            Text(text = match.createdAt.toFormattedDate())
-                        }
+                        )
                     }
-
-                }
+                )
             }
         }
     }

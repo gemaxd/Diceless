@@ -1,7 +1,5 @@
 package com.example.diceless.features.history.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,139 +23,291 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.extensions.toFormattedDate
 import com.example.diceless.domain.HistoryPlayerBasicData
 import com.example.diceless.domain.model.MatchData
 
 @Composable
-fun MatchHistoryHeader(matchData: MatchData){
-    Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
-        Column (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom
-        ) {
+fun MatchHistoryHeader(
+    header: (@Composable () -> Unit)? = null,
+    details: (@Composable () -> Unit)? = null,
+    append: (@Composable () -> Unit)? = null
+){
+    Column {
+        header?.let {
             Spacer(modifier = Modifier.height(8.dp))
-
-            Column {
-                Text(
-                    text = "Game Name",
-                    fontSize = 12.sp,
-                    color = Color.LightGray
-                )
-
-                Text(
-                    text = "Game #${matchData.id}",
-                    fontWeight = FontWeight.Black,
-                    fontSize = 24.sp,
-                    color = Color.Black
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "Players",
-                        textAlign = TextAlign.End,
-                        color = Color.LightGray
-                    )
-
-                    Text(
-                        text = "#${matchData.players.size}",
-                        fontWeight = FontWeight.Black,
-                        fontSize = 18.sp,
-                        color = Color.Black
-                    )
-                }
-
-                Column {
-                    Text(
-                        text = "Started at:",
-                        textAlign = TextAlign.End,
-                        color = Color.LightGray
-                    )
-
-                    Text(
-                        text = matchData.createdAt.toFormattedDate(),
-                        textAlign = TextAlign.End,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black
-                    )
-                }
-
-                Column {
-                    Text(
-                        text = "Started at:",
-                        textAlign = TextAlign.End,
-                        color = Color.LightGray
-                    )
-
-                    Text(
-                        text = matchData.createdAt.toFormattedDate(),
-                        textAlign = TextAlign.End,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black
-                    )
-                }
-            }
+            header.invoke()
         }
 
+        details?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            details.invoke()
+        }
 
-        Spacer(modifier = Modifier.size(12.dp))
+        append?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            append.invoke()
+        }
+    }
+}
 
-        Row(modifier = Modifier.fillMaxWidth()) {
-            matchData.players.forEach { player ->
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(4.dp),
-                    shape = RoundedCornerShape(10.dp)
+@Composable
+fun HistoryHeading(matchData: MatchData){
+    Column {
+        Text(
+            text = "Game Name",
+            fontSize = 12.sp,
+            color = Color.LightGray
+        )
+
+        Text(
+            text = "Game #${matchData.id}",
+            fontWeight = FontWeight.Black,
+            fontSize = 24.sp,
+            color = Color.Black
+        )
+    }
+}
+
+@Composable
+fun HistoryDetails(matchData: MatchData) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = "Players",
+                textAlign = TextAlign.End,
+                color = Color.LightGray
+            )
+
+            Text(
+                text = "#${matchData.players.size}",
+                fontWeight = FontWeight.Black,
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+        }
+
+        Column {
+            Text(
+                text = "Started at:",
+                textAlign = TextAlign.End,
+                color = Color.LightGray
+            )
+
+            Text(
+                text = matchData.createdAt.toFormattedDate(),
+                textAlign = TextAlign.End,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black
+            )
+        }
+
+        Column {
+            Text(
+                text = "Started at:",
+                textAlign = TextAlign.End,
+                color = Color.LightGray
+            )
+
+            Text(
+                text = matchData.createdAt.toFormattedDate(),
+                textAlign = TextAlign.End,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black
+            )
+        }
+    }
+}
+
+@Composable
+fun HistoryPlayersHeader(matchData: MatchData){
+    Row(modifier = Modifier.fillMaxWidth()) {
+        matchData.players.forEach { player ->
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        AsyncImage(
-                            model = player.backgroundImageUri,
-                            contentDescription = player.backgroundImageUri,
-                            modifier = Modifier.matchParentSize(),
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.Center
-                        )
+                    AsyncImage(
+                        model = player.backgroundImageUri,
+                        contentDescription = player.backgroundImageUri,
+                        modifier = Modifier.matchParentSize(),
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center
+                    )
 
-                        Text(
-                            modifier = Modifier.padding(4.dp),
-                            text = "P${player.playerPosition.pos}",
-                            color = Color.White,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    Text(
+                        modifier = Modifier.padding(4.dp),
+                        text = "P${player.playerPosition.pos}",
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
     }
 }
 
+@Composable
+fun HistoryDetailButton(
+    text: String,
+    onActionClick: () -> Unit
+) {
+    Button(
+        onClick = { onActionClick.invoke() }
+    ) {
+        Text(text = text)
+    }
+}
+
+
+//@Composable
+//fun MatchHistoryHeader(matchData: MatchData){
+//    Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
+//        Column (
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalAlignment = Alignment.Start,
+//            verticalArrangement = Arrangement.Bottom
+//        ) {
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Column {
+//                Text(
+//                    text = "Game Name",
+//                    fontSize = 12.sp,
+//                    color = Color.LightGray
+//                )
+//
+//                Text(
+//                    text = "Game #${matchData.id}",
+//                    fontWeight = FontWeight.Black,
+//                    fontSize = 24.sp,
+//                    color = Color.Black
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Column {
+//                    Text(
+//                        text = "Players",
+//                        textAlign = TextAlign.End,
+//                        color = Color.LightGray
+//                    )
+//
+//                    Text(
+//                        text = "#${matchData.players.size}",
+//                        fontWeight = FontWeight.Black,
+//                        fontSize = 18.sp,
+//                        color = Color.Black
+//                    )
+//                }
+//
+//                Column {
+//                    Text(
+//                        text = "Started at:",
+//                        textAlign = TextAlign.End,
+//                        color = Color.LightGray
+//                    )
+//
+//                    Text(
+//                        text = matchData.createdAt.toFormattedDate(),
+//                        textAlign = TextAlign.End,
+//                        fontWeight = FontWeight.Medium,
+//                        color = Color.Black
+//                    )
+//                }
+//
+//                Column {
+//                    Text(
+//                        text = "Started at:",
+//                        textAlign = TextAlign.End,
+//                        color = Color.LightGray
+//                    )
+//
+//                    Text(
+//                        text = matchData.createdAt.toFormattedDate(),
+//                        textAlign = TextAlign.End,
+//                        fontWeight = FontWeight.Medium,
+//                        color = Color.Black
+//                    )
+//                }
+//            }
+//        }
+//
+//        Spacer(modifier = Modifier.size(12.dp))
+//
+//        Row(modifier = Modifier.fillMaxWidth()) {
+//            matchData.players.forEach { player ->
+//                Card(
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(4.dp),
+//                    shape = RoundedCornerShape(10.dp)
+//                ) {
+//                    Box(
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        AsyncImage(
+//                            model = player.backgroundImageUri,
+//                            contentDescription = player.backgroundImageUri,
+//                            modifier = Modifier.matchParentSize(),
+//                            contentScale = ContentScale.Crop,
+//                            alignment = Alignment.Center
+//                        )
+//
+//                        Text(
+//                            modifier = Modifier.padding(4.dp),
+//                            text = "P${player.playerPosition.pos}",
+//                            color = Color.White,
+//                            fontWeight = FontWeight.Medium,
+//                            fontSize = 22.sp,
+//                            textAlign = TextAlign.Center
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewMatchHistoryHeader(){
-    MatchHistoryHeader(
-        matchData = MatchData(
-            id = 1,
-            players = listOf(
-                HistoryPlayerBasicData(name = "Player 1", backgroundImageUri = ""),
-                HistoryPlayerBasicData(name = "Player 2", backgroundImageUri = ""),
-                HistoryPlayerBasicData(name = "Player 3", backgroundImageUri = ""),
-                HistoryPlayerBasicData(name = "Player 4", backgroundImageUri = "")
-            )
+    val matchData = MatchData(
+        id = 1,
+        players = listOf(
+            HistoryPlayerBasicData(name = "Player 1", backgroundImageUri = ""),
+            HistoryPlayerBasicData(name = "Player 2", backgroundImageUri = ""),
+            HistoryPlayerBasicData(name = "Player 3", backgroundImageUri = ""),
+            HistoryPlayerBasicData(name = "Player 4", backgroundImageUri = "")
         )
+    )
+
+    MatchHistoryHeader(
+        header = {
+            HistoryHeading(matchData)
+        },
+        details = {
+            HistoryDetails(matchData)
+        },
+        append = {
+            HistoryPlayersHeader(matchData)
+        }
     )
 }
