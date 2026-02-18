@@ -1,5 +1,6 @@
 package com.example.diceless.data.repository
 
+import android.util.Log
 import com.example.diceless.data.ScryfallApi
 import com.example.diceless.domain.model.ScryfallCard
 import retrofit2.HttpException
@@ -35,6 +36,8 @@ class ScryFallRepositoryImpl @Inject constructor(
 
         } catch (e: HttpException) {
             if (e.code() == 400 || e.code() == 404) {
+                val error = e.response()?.errorBody()?.string()
+                Log.e("SCRYFALL", "Erro: $error")
                 Result.failure(Exception("Nenhum resultado para '$q'"))
             } else {
                 Result.failure(e)
