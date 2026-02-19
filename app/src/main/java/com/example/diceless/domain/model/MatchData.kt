@@ -9,12 +9,14 @@ data class MatchData(
     val id: Long = 0,
     val players: List<HistoryPlayerBasicData> = emptyList(),
     val createdAt: Long = System.currentTimeMillis(),
+    val finishedAt: Long? = null,
     val startingLife: Int = 40
 )
 
 fun MatchData.toEntity(): MatchDataEntity =
     MatchDataEntity(
         createdAt = createdAt,
+        finishedAt = finishedAt,
         players = Json.encodeToString(players),
         startingLife = startingLife
     )

@@ -20,6 +20,7 @@ fun MatchDataEntity.toDomain(): MatchData =
     MatchData(
         id = id,
         createdAt = createdAt,
+        finishedAt = finishedAt,
         players = Json.decodeFromString(players),
         startingLife = startingLife
     )

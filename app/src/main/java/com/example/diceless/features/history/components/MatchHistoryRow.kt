@@ -52,7 +52,6 @@ fun MatchHistoryRow(matchData: MatchData, matchHistoryRegistry: MatchHistoryRegi
                             )
                         }
                     }
-
                 } else {
                     Card(
                         modifier = Modifier.padding(4.dp),

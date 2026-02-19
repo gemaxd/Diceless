@@ -10,13 +10,17 @@ import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.MatchHistoryRegistry
 
 @Composable
-fun MatchHistoryContent(matchData: MatchData?, histories: List<MatchHistoryRegistry>){
-    LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
+fun MatchHistoryContent(
+    modifier: Modifier = Modifier,
+    matchData: MatchData?,
+    histories: List<MatchHistoryRegistry>
+){
+    LazyColumn(modifier = modifier.padding(horizontal = 8.dp)) {
         matchData?.let {
             stickyHeader {
                 MatchHistoryHeader(
                     header = {
-                        HistoryHeading(matchData = matchData)
+                        HistoryGameNameCell(matchData = matchData)
                     },
                     details = {
                         HistoryDetails(matchData = matchData)

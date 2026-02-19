@@ -29,11 +29,12 @@ import com.example.diceless.domain.model.MatchData
 
 @Composable
 fun MatchHistoryHeader(
+    modifier: Modifier = Modifier,
     header: (@Composable () -> Unit)? = null,
     details: (@Composable () -> Unit)? = null,
     append: (@Composable () -> Unit)? = null
 ){
-    Column {
+    Column(modifier = modifier) {
         header?.let {
             Spacer(modifier = Modifier.height(8.dp))
             header.invoke()
@@ -51,23 +52,7 @@ fun MatchHistoryHeader(
     }
 }
 
-@Composable
-fun HistoryHeading(matchData: MatchData){
-    Column {
-        Text(
-            text = "Game Name",
-            fontSize = 12.sp,
-            color = Color.LightGray
-        )
 
-        Text(
-            text = "Game #${matchData.id}",
-            fontWeight = FontWeight.Black,
-            fontSize = 24.sp,
-            color = Color.Black
-        )
-    }
-}
 
 @Composable
 fun HistoryDetails(matchData: MatchData) {
@@ -80,7 +65,7 @@ fun HistoryDetails(matchData: MatchData) {
             Text(
                 text = "Players",
                 textAlign = TextAlign.End,
-                color = Color.LightGray
+                color = Color.Gray
             )
 
             Text(
@@ -95,7 +80,7 @@ fun HistoryDetails(matchData: MatchData) {
             Text(
                 text = "Started at:",
                 textAlign = TextAlign.End,
-                color = Color.LightGray
+                color = Color.Gray
             )
 
             Text(
@@ -110,7 +95,7 @@ fun HistoryDetails(matchData: MatchData) {
             Text(
                 text = "Started at:",
                 textAlign = TextAlign.End,
-                color = Color.LightGray
+                color = Color.Gray
             )
 
             Text(
@@ -163,128 +148,18 @@ fun HistoryDetailButton(
     text: String,
     onActionClick: () -> Unit
 ) {
-    Button(
-        onClick = { onActionClick.invoke() }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
     ) {
-        Text(text = text)
+        Button(
+            shape = RoundedCornerShape(10),
+            onClick = { onActionClick.invoke() }
+        ) {
+            Text(text = text)
+        }
     }
 }
-
-
-//@Composable
-//fun MatchHistoryHeader(matchData: MatchData){
-//    Column(modifier = Modifier.fillMaxWidth().background(Color.White)) {
-//        Column (
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalAlignment = Alignment.Start,
-//            verticalArrangement = Arrangement.Bottom
-//        ) {
-//            Spacer(modifier = Modifier.height(8.dp))
-//
-//            Column {
-//                Text(
-//                    text = "Game Name",
-//                    fontSize = 12.sp,
-//                    color = Color.LightGray
-//                )
-//
-//                Text(
-//                    text = "Game #${matchData.id}",
-//                    fontWeight = FontWeight.Black,
-//                    fontSize = 24.sp,
-//                    color = Color.Black
-//                )
-//            }
-//
-//            Spacer(modifier = Modifier.height(8.dp))
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Column {
-//                    Text(
-//                        text = "Players",
-//                        textAlign = TextAlign.End,
-//                        color = Color.LightGray
-//                    )
-//
-//                    Text(
-//                        text = "#${matchData.players.size}",
-//                        fontWeight = FontWeight.Black,
-//                        fontSize = 18.sp,
-//                        color = Color.Black
-//                    )
-//                }
-//
-//                Column {
-//                    Text(
-//                        text = "Started at:",
-//                        textAlign = TextAlign.End,
-//                        color = Color.LightGray
-//                    )
-//
-//                    Text(
-//                        text = matchData.createdAt.toFormattedDate(),
-//                        textAlign = TextAlign.End,
-//                        fontWeight = FontWeight.Medium,
-//                        color = Color.Black
-//                    )
-//                }
-//
-//                Column {
-//                    Text(
-//                        text = "Started at:",
-//                        textAlign = TextAlign.End,
-//                        color = Color.LightGray
-//                    )
-//
-//                    Text(
-//                        text = matchData.createdAt.toFormattedDate(),
-//                        textAlign = TextAlign.End,
-//                        fontWeight = FontWeight.Medium,
-//                        color = Color.Black
-//                    )
-//                }
-//            }
-//        }
-//
-//        Spacer(modifier = Modifier.size(12.dp))
-//
-//        Row(modifier = Modifier.fillMaxWidth()) {
-//            matchData.players.forEach { player ->
-//                Card(
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .padding(4.dp),
-//                    shape = RoundedCornerShape(10.dp)
-//                ) {
-//                    Box(
-//                        modifier = Modifier.fillMaxWidth()
-//                    ) {
-//                        AsyncImage(
-//                            model = player.backgroundImageUri,
-//                            contentDescription = player.backgroundImageUri,
-//                            modifier = Modifier.matchParentSize(),
-//                            contentScale = ContentScale.Crop,
-//                            alignment = Alignment.Center
-//                        )
-//
-//                        Text(
-//                            modifier = Modifier.padding(4.dp),
-//                            text = "P${player.playerPosition.pos}",
-//                            color = Color.White,
-//                            fontWeight = FontWeight.Medium,
-//                            fontSize = 22.sp,
-//                            textAlign = TextAlign.Center
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable
@@ -301,7 +176,7 @@ fun PreviewMatchHistoryHeader(){
 
     MatchHistoryHeader(
         header = {
-            HistoryHeading(matchData)
+            HistoryGameNameCell(matchData = matchData)
         },
         details = {
             HistoryDetails(matchData)

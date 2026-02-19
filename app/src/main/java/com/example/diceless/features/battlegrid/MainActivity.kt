@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NavigationRoot(modifier = Modifier.statusBarsPadding())
+            NavigationRoot()
         }
     }
 }
