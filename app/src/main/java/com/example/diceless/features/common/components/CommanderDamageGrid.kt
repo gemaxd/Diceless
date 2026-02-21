@@ -1,6 +1,5 @@
-package com.example.diceless.presentation.battlegrid.components
+package com.example.diceless.features.common.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +29,6 @@ import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 
 @Composable
@@ -42,8 +39,7 @@ fun CommanderDamageGrid(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.Cyan),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(

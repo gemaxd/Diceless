@@ -23,7 +23,7 @@ object DiceLessTextStyle {
     val LogoText = TextStyle(
         fontFamily = BarlowFont,
         fontWeight = FontWeight.Bold,
-        fontSize = 32.sp,
+        fontSize = 45.sp,
         letterSpacing = (-0.25).sp
     )
 
