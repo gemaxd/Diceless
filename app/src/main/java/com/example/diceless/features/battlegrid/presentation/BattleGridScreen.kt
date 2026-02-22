@@ -5,7 +5,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,6 +32,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,12 +89,16 @@ fun BattleGridScreen(
         }
     }
 
-    BattleGridContent(
-        uiState = state,
-        players = state.activePlayers,
-        selectedScheme = state.selectedScheme,
-        onAction = onUiEvent
-    )
+    if (state.preparingPlayers) {
+        BattleGridLoading()
+    } else {
+        BattleGridContent(
+            uiState = state,
+            players = state.activePlayers,
+            selectedScheme = state.selectedScheme,
+            onAction = onUiEvent
+        )
+    }
 }
 
 @ExperimentalMaterial3Api
@@ -111,7 +118,6 @@ fun BattleGridContent(
 
     BoxWithConstraints(
         modifier = Modifier
-            .background(color = Color.Black)
             .statusBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
@@ -131,10 +137,7 @@ fun BattleGridContent(
                                 .align(orient.alignment.align)
                                 .fillMaxWidth(orient.proportion.width)
                                 .fillMaxHeight(orient.proportion.height),
-                            shape = RectangleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color.Black
-                            )
+                            shape = RectangleShape
                         ) {
                             when {
                                 playerState.playerPosition.name == uiState.winnerId -> {
@@ -253,8 +256,7 @@ fun IndividualGridContent(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .paddingBasedOnPosition(playerData.playerPosition, rotation)
-            .background(Color.Transparent),
+            .paddingBasedOnPosition(playerData.playerPosition, rotation),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box {
@@ -268,5 +270,25 @@ fun IndividualGridContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BattleGridLoading(){
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        Image(
+            painter = painterResource(
+                id = if (isSystemInDarkTheme()) {
+                    R.drawable.diceless_dark_icon
+                } else {
+                    R.drawable.diceless_light_icon
+                }
+            ),
+            contentDescription = null,
+            modifier = Modifier
+        )
     }
 }

@@ -24,7 +24,9 @@ class GameSchemeRepositoryImpl(
     override suspend fun getGameScheme(): Flow<GameSchemeData?> {
         return gameSchemeDao
             .getGameScheme()
-            .map { schemeEntity -> schemeEntity?.toDomain() }
+            .map {
+                schemeEntity -> schemeEntity?.toDomain()
+            }
     }
 
     override suspend fun saveGameScheme(gameSchemeData: GameSchemeData) {

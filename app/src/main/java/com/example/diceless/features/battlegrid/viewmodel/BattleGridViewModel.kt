@@ -148,7 +148,6 @@ class BattleGridViewModel @Inject constructor(
 
             is BattleGridActions.OnUpdateScheme -> {
                 updateGameScheme(action.schemeEnum)
-                restartMatch()
             }
 
             is BattleGridActions.OnBackgroundSelected -> {
@@ -199,12 +198,13 @@ class BattleGridViewModel @Inject constructor(
                             selectedScheme = schemeFromDB?.schemeEnum ?: GameSchemeData().schemeEnum
                         )
                     }
-                    restartMatch()
 
-                    if(!matchIsStarted){
-                        matchIsStarted = true
-                        fetchCurrentOpenMatch()
-                    }
+                restartMatch()
+
+                if(!matchIsStarted){
+                    matchIsStarted = true
+                    fetchCurrentOpenMatch()
+                }
             }
         }
     }
@@ -264,6 +264,10 @@ class BattleGridViewModel @Inject constructor(
 
     private fun observePlayers() {
         viewModelScope.launch {
+            _state.value = _state.value.copy(
+                preparingPlayers = true
+            )
+
             getAllPlayersUseCase().collect { playersFromDb ->
 
                 _state.update { current ->
@@ -285,7 +289,8 @@ class BattleGridViewModel @Inject constructor(
 
                         return@update current.copy(
                             activePlayers = initialPlayers,
-                            totalPlayers = playersFromDb
+                            totalPlayers = playersFromDb,
+                            preparingPlayers = false
                         )
                     }
 
@@ -317,13 +322,11 @@ class BattleGridViewModel @Inject constructor(
 
                     current.copy(
                         activePlayers = syncedPlayers,
-                        totalPlayers = playersFromDb
+                        totalPlayers = playersFromDb,
+                        preparingPlayers = false
                     )
-
-
                 }
             }
-
         }
     }
 
@@ -373,6 +376,10 @@ class BattleGridViewModel @Inject constructor(
 
     private fun restartMatch() {
         viewModelScope.launch {
+            _state.value = _state.value.copy(
+                preparingPlayers = true
+            )
+
             val restartedPlayerList =
                 _state.value.totalPlayers.take(_state.value.selectedScheme.numbersOfPlayers)
 
@@ -404,7 +411,8 @@ class BattleGridViewModel @Inject constructor(
                 matchFinished = false,
                 winnerId = null,
                 activePlayers = updatedPlayers,
-                selectedScheme = _state.value.selectedScheme
+                selectedScheme = _state.value.selectedScheme,
+                preparingPlayers = false
             )
 
             endCurrentOpenMatchUseCase.invoke(

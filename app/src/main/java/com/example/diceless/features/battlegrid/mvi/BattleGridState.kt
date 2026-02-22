@@ -14,5 +14,6 @@ data class BattleGridState(
     val matchData: MatchData = MatchData(),
     val allowSelfCommanderDamage: Boolean = false,
     val linkCommanderDamageToLife: Boolean = false,
-    var showMonarchSymbol: Boolean = false
+    var showMonarchSymbol: Boolean = false,
+    val preparingPlayers: Boolean = false
 )

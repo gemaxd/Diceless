@@ -211,25 +211,15 @@ fun LifeGrid(
         }
 
         RotationEnum.RIGHT -> {
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-
-                val maxWidth = maxWidth
-                val maxHeight = maxHeight
-
+            Box(modifier = Modifier.fillMaxSize()) {
                 AsyncImage(
                     model = playerData.backgroundProfile?.imageUri,
                     contentDescription = playerData.backgroundProfile?.cardName,
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = - (maxHeight / 3).value
-                            rotationZ = rotation.degrees
-                            if (rotation.degrees % 180 != 0f) {
-                                scaleX = 2.35f
-                                scaleY = 0.8f
-                            }
-                        },
+                        .vertical()
+                        .rotate(rotation.degrees),
                     alignment = Alignment.TopStart
                 )
 
@@ -289,26 +279,16 @@ fun LifeGrid(
         }
 
         RotationEnum.LEFT -> {
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-
-                val maxWidth = maxWidth
-                val maxHeight = maxHeight
-
+            Box(modifier = Modifier.fillMaxSize()) {
                 AsyncImage(
                     model = playerData.backgroundProfile?.imageUri,
                     contentDescription = playerData.backgroundProfile?.cardName,
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = (maxHeight / 3).value
-                            rotationZ = rotation.degrees
-                            if (rotation.degrees % 180 != 0f) {
-                                scaleX = 2.35f
-                                scaleY = 0.8f
-                            }
-                        },
-                    alignment = Alignment.Center
+                        .vertical()
+                        .rotate(rotation.degrees),
+                    alignment = Alignment.TopStart
                 )
 
                 Box(
