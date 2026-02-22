@@ -1,5 +1,6 @@
 package com.example.diceless.features.battlegrid.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.SchemeEnum
@@ -66,16 +67,11 @@ class BattleGridViewModel @Inject constructor(
     override val initialState: BattleGridState
         get() = BattleGridState()
 
-    init {
-        loadSettingsFromPrefs()
-        initialLoadIfNeeded()
-        observePlayers()
-        observeScheme()
-        observeLifeDebounce()
-    }
-
     override fun onAction(action: BattleGridActions) {
         when (action) {
+            BattleGridActions.OnInit -> {
+                onInitData()
+            }
 
             is BattleGridActions.OnLifeIncreased -> {
                 onLifeChange(player = action.player, amount = 1)
@@ -159,6 +155,59 @@ class BattleGridViewModel @Inject constructor(
     // ---------------------------------------------------------------------------------------------
     // Initial load
     // ---------------------------------------------------------------------------------------------
+
+    private fun onInitData(){
+        initialLoadIfNeeded()
+        loadSettingsFromPrefs()
+        fetchCurrentOpenMatch()
+        initialPlayerLoad()
+        initializeSchemeData()
+        observeLifeDebounce()
+    }
+
+    private fun initializeSchemeData(){
+        viewModelScope.launch {
+            getGameSchemeUseCase()
+                .collect { schemeFromDB ->
+                    _state.update { current ->
+                        val activePlayers = current.totalPlayers.take(
+                            schemeFromDB?.schemeEnum?.numbersOfPlayers
+                                ?: GameSchemeData().schemeEnum.numbersOfPlayers
+                        )
+
+                        current.copy(
+                            activePlayers = activePlayers,
+                            selectedScheme = schemeFromDB?.schemeEnum ?: GameSchemeData().schemeEnum
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun initialPlayerLoad() {
+        viewModelScope.launch {
+            getAllPlayersUseCase().collect { playersFromDb ->
+                _state.update { current ->
+                    val initialPlayers = playersFromDb
+                        .take(current.selectedScheme.numbersOfPlayers)
+                        .map { player ->
+                            player.copy(
+                                life = player.life,
+                                baseLife = player.baseLife,
+                                counters = player.counters,
+                                commanderDamageReceived = player.commanderDamageReceived
+                            )
+                        }
+
+                    return@update current.copy(
+                        activePlayers = initialPlayers,
+                        totalPlayers = playersFromDb,
+                        preparingPlayers = false
+                    )
+                }
+            }
+        }
+    }
 
     private var initialized = false
 
@@ -380,8 +429,7 @@ class BattleGridViewModel @Inject constructor(
                 preparingPlayers = true
             )
 
-            val restartedPlayerList =
-                _state.value.totalPlayers.take(_state.value.selectedScheme.numbersOfPlayers)
+            val restartedPlayerList = _state.value.totalPlayers
 
             val updatedPlayers = restartedPlayerList.map { player ->
                 // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
@@ -401,16 +449,18 @@ class BattleGridViewModel @Inject constructor(
                 updatePlayerUseCase(it)
             }
 
+            val takenPlayers = updatedPlayers.take(_state.value.selectedScheme.numbersOfPlayers)
+
             updateMatchData(
                 matchData = _state.value.matchData.copy(
-                    players = updatedPlayers.toHistoryPlayerBasicDataList()
+                    players = takenPlayers.toHistoryPlayerBasicDataList()
                 )
             )
 
             _state.value = _state.value.copy(
                 matchFinished = false,
                 winnerId = null,
-                activePlayers = updatedPlayers,
+                activePlayers = takenPlayers,
                 selectedScheme = _state.value.selectedScheme,
                 preparingPlayers = false
             )
@@ -657,9 +707,7 @@ class BattleGridViewModel @Inject constructor(
     }
 
     private fun accumulateLifeChange(event: LifeChangeEvent) {
-
         val playerKey = event.player.playerPosition.name
-
         val current = pendingLifeChanges[playerKey]
 
         if (current == null) {
@@ -679,10 +727,9 @@ class BattleGridViewModel @Inject constructor(
     }
 
     private fun flushLifeChangesToHistory() {
-
         pendingLifeChanges.forEach { (playerId, change) ->
-
             if (change.totalDelta == 0) return@forEach
+            Log.d("MatchData - ID", "${_state.value.matchData.id}")
 
             registerMatchHistory(
                 MatchHistoryRegistry(

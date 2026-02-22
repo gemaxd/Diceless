@@ -89,6 +89,10 @@ fun BattleGridScreen(
         }
     }
 
+    LaunchedEffect(true) {
+        onUiEvent(BattleGridActions.OnInit)
+    }
+
     if (state.preparingPlayers) {
         BattleGridLoading()
     } else {

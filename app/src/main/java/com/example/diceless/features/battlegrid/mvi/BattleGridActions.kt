@@ -7,6 +7,7 @@ import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 
 sealed class BattleGridActions {
+    data object OnInit: BattleGridActions()
     data class OnLifeIncreased(val player: PlayerData) : BattleGridActions()
     data class OnLifeDecreased(val player: PlayerData) : BattleGridActions()
     data class OnCounterSelected(val player: PlayerData, val counter: CounterData) : BattleGridActions()
