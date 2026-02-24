@@ -93,15 +93,17 @@ fun BattleGridScreen(
         onUiEvent(BattleGridActions.OnInit)
     }
 
-    if (state.preparingPlayers) {
+    if (state.activePlayers.isEmpty() || state.selectedScheme == null) {
         BattleGridLoading()
     } else {
-        BattleGridContent(
-            uiState = state,
-            players = state.activePlayers,
-            selectedScheme = state.selectedScheme,
-            onAction = onUiEvent
-        )
+        state.selectedScheme?.let { scheme ->
+            BattleGridContent(
+                uiState = state,
+                players = state.activePlayers,
+                selectedScheme = scheme,
+                onAction = onUiEvent
+            )
+        }
     }
 }
 

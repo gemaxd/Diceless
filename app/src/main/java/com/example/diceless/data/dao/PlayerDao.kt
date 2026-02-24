@@ -20,6 +20,9 @@ abstract interface PlayerDao {
     @Upsert
     suspend fun upsertPlayer(player: PlayerEntity)
 
+    @Upsert
+    suspend fun upsertPlayers(players: List<PlayerEntity>)
+
     @Query("UPDATE players SET backgroundProfileId = :imageUri WHERE id = :playerId")
     suspend fun updateBackgroundProfileId(playerId: String, imageUri: String?)
 

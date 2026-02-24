@@ -14,7 +14,11 @@ data class GameSchemeEntity(
     val gameScheme: SchemeEnum
 )
 
-fun GameSchemeEntity.toDomain() = GameSchemeData(
-    schemeName = this.schemeName,
-    schemeEnum = this.gameScheme
-)
+fun GameSchemeEntity?.toDomain() : GameSchemeData? {
+    return this?.let {
+        GameSchemeData(
+            schemeName = this.schemeName,
+            schemeEnum = this.gameScheme
+        )
+    }
+}

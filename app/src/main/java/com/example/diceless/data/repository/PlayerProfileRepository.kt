@@ -14,8 +14,7 @@ interface PlayerProfileRepository {
 class PlayerProfileRepositoryImpl (val playerDao: PlayerDao) : PlayerProfileRepository {
 
     override suspend fun savePlayer(player: PlayerData, backgroundProfileId: BackgroundProfileData?) {
-        val entity = player.toEntity(
-            UUID.randomUUID().toString())
+        val entity = player.toEntity(player.name)
         playerDao.upsertPlayer(entity)
     }
 

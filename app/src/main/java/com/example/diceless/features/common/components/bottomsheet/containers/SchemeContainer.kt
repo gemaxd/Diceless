@@ -30,7 +30,7 @@ fun SchemeContainer(
     onDismiss: () -> Unit
 ){
     val uiState by viewModel.uiState.collectAsState()
-    val selectedScheme = uiState.selectedScheme
+    val selectedScheme = uiState.selectedScheme ?: SchemeEnum.SOLO
     val onAction = viewModel::onAction
 
     Column(

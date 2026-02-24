@@ -1,5 +1,7 @@
 package com.example.diceless.features.history.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +30,7 @@ import coil.compose.AsyncImage
 import com.example.diceless.common.extensions.toFormattedDate
 import com.example.diceless.domain.HistoryPlayerBasicData
 import com.example.diceless.domain.model.MatchData
+import com.example.diceless.features.common.theme.DicelessTheme
 
 @Composable
 fun MatchHistoryHeader(
@@ -61,50 +66,11 @@ fun HistoryDetails(matchData: MatchData) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
-            Text(
-                text = "Players",
-                textAlign = TextAlign.End,
-                color = Color.Gray
-            )
+        HistoryPlayerQuantityCell(matchData = matchData)
 
-            Text(
-                text = "#${matchData.players.size}",
-                fontWeight = FontWeight.Black,
-                fontSize = 18.sp,
-                color = Color.Black
-            )
-        }
+        HistoryStartedAtCell(matchData = matchData)
 
-        Column {
-            Text(
-                text = "Started at:",
-                textAlign = TextAlign.End,
-                color = Color.Gray
-            )
-
-            Text(
-                text = matchData.createdAt.toFormattedDate(),
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
-            )
-        }
-
-        Column {
-            Text(
-                text = "Started at:",
-                textAlign = TextAlign.End,
-                color = Color.Gray
-            )
-
-            Text(
-                text = matchData.createdAt.toFormattedDate(),
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
-            )
-        }
+        HistoryFinishedAtCell(matchData = matchData)
     }
 }
 
@@ -143,24 +109,6 @@ fun HistoryPlayersHeader(matchData: MatchData){
     }
 }
 
-@Composable
-fun HistoryDetailButton(
-    text: String,
-    onActionClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        Button(
-            shape = RoundedCornerShape(10),
-            onClick = { onActionClick.invoke() }
-        ) {
-            Text(text = text)
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewMatchHistoryHeader(){
@@ -175,6 +123,8 @@ fun PreviewMatchHistoryHeader(){
     )
 
     MatchHistoryHeader(
+        modifier = Modifier
+            .background(color = colorScheme.background),
         header = {
             HistoryGameNameCell(matchData = matchData)
         },

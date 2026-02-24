@@ -86,7 +86,7 @@ fun HistoryScreen(
                         modifier = Modifier.size(48.dp),
                         contentDescription = "",
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        tint = androidx.compose.ui.graphics.Color.Transparent
+                        tint = Color.Transparent
                     )
                 }
             )

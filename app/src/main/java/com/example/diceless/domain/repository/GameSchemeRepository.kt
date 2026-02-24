@@ -8,6 +8,6 @@ import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
 import kotlinx.coroutines.flow.Flow
 
 interface GameSchemeRepository {
-    suspend fun getGameScheme(): Flow<GameSchemeData?>
+    suspend fun getGameScheme(): GameSchemeData?
     suspend fun saveGameScheme(gameSchemeData: GameSchemeData)
 }

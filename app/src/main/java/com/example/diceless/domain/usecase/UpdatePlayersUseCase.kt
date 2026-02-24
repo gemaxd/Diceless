@@ -4,10 +4,10 @@ import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.repository.PlayerRepository
 import javax.inject.Inject
 
-class UpdatePlayerUseCase @Inject constructor(
+class UpdatePlayersUseCase @Inject constructor(
     private val repository: PlayerRepository
 ){
-    suspend operator fun invoke(players: PlayerData) {
-        repository.updatePlayer(players = players)
+    suspend operator fun invoke(players: List<PlayerData>) {
+        repository.updatePlayers(players = players)
     }
 }

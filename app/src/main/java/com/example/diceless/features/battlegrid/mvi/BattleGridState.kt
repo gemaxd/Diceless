@@ -9,11 +9,10 @@ data class BattleGridState(
     val winnerId: String? = null,
     val activePlayers: List<PlayerData> = emptyList(),
     val totalPlayers: List<PlayerData> = emptyList(),
-    var selectedScheme: SchemeEnum = SchemeEnum.SOLO,
+    var selectedScheme: SchemeEnum? = null,
     val selectedStartingLife: Int = 40,
     val matchData: MatchData = MatchData(),
     val allowSelfCommanderDamage: Boolean = false,
     val linkCommanderDamageToLife: Boolean = false,
-    var showMonarchSymbol: Boolean = false,
-    val preparingPlayers: Boolean = false
+    var showMonarchSymbol: Boolean = false
 )

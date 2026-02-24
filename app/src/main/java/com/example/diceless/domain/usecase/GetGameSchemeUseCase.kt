@@ -12,6 +12,6 @@ import javax.inject.Inject
 class GetGameSchemeUseCase @Inject constructor(
     private val repository: GameSchemeRepository
 ) {
-    suspend operator fun invoke(): Flow<GameSchemeData?> =
+    suspend operator fun invoke(): GameSchemeData? =
         repository.getGameScheme()
 }

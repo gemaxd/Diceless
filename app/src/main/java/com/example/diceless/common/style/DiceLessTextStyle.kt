@@ -6,6 +6,20 @@ import androidx.compose.ui.unit.sp
 import com.example.diceless.features.common.theme.BarlowFont
 
 object DiceLessTextStyle {
+    val CellLabel = TextStyle(
+        fontFamily = BarlowFont,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        letterSpacing = (-0.5).sp
+    )
+
+    val CellValue = TextStyle(
+        fontFamily = BarlowFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        letterSpacing = (-0.5).sp
+    )
+
     val ButtonText = TextStyle(
         fontFamily = BarlowFont,
         fontWeight = FontWeight.Bold,

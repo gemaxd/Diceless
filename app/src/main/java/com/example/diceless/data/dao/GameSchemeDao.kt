@@ -16,5 +16,5 @@ interface GameSchemeDao {
     suspend fun upsertGameScheme(scheme: GameSchemeEntity)
 
     @Query("SELECT * FROM game_scheme LIMIT 1")
-    fun getGameScheme(): Flow<GameSchemeEntity?>
+    suspend fun getGameScheme(): GameSchemeEntity?
 }

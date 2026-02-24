@@ -1,6 +1,5 @@
 package com.example.diceless.data.repository
 
-import androidx.room.Transaction
 import com.example.diceless.data.dao.BackgroundProfileDao
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.data.entity.relation.toDomain
@@ -12,6 +11,7 @@ import com.example.diceless.domain.model.toEntity
 import com.example.diceless.domain.repository.PlayerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlin.collections.map
 
 class PlayerRepositoryImpl(
     private val playerDao: PlayerDao,
@@ -47,16 +47,20 @@ class PlayerRepositoryImpl(
 
         playerDao.upsertPlayer(
             player.toEntity(
-                id = player.playerPosition.name // ou UUID
+                id = player.playerPosition.name
             )
+        )
+    }
+
+    override suspend fun updatePlayers(players: List<PlayerData>) {
+        playerDao.upsertPlayers(
+            players = players.map { it.toEntity(it.playerPosition.name) }
         )
     }
 
     override suspend fun updatePlayer(player: PlayerData) {
         playerDao.upsertPlayer(
-            player = player.toEntity(
-                id = player.playerPosition.name // ou UUID
-            )
+            player = player.toEntity(player.playerPosition.name)
         )
     }
 }
