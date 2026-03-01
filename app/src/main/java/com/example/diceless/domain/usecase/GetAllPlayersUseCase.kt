@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetAllPlayersUseCase @Inject constructor(
     private val repository: PlayerRepository
 ) {
-    operator fun invoke(): Flow<List<PlayerData>> =
+    suspend operator fun invoke(): List<PlayerData> =
         repository.getAllPlayers()
 }

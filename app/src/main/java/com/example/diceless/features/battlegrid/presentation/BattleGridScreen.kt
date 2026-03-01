@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -47,6 +46,7 @@ import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.extensions.paddingBasedOnPosition
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.common.utils.getCorrectOrientation
+import com.example.diceless.domain.match.reducer.MatchState
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
@@ -71,6 +71,8 @@ fun BattleGridScreen(
     viewmodel: BattleGridViewModel = hiltViewModel()
 ) {
     val state by viewmodel.state.collectAsState()
+    val matchState by viewmodel.matchState.collectAsState()
+
     val onUiEvent = viewmodel::onAction
 
     LaunchedEffect(resultStore) {
@@ -93,13 +95,14 @@ fun BattleGridScreen(
         onUiEvent(BattleGridActions.OnInit)
     }
 
-    if (state.activePlayers.isEmpty() || state.selectedScheme == null) {
+    if (matchState.players.isEmpty()) {
         BattleGridLoading()
     } else {
-        state.selectedScheme?.let { scheme ->
+        matchState.scheme?.let { scheme ->
             BattleGridContent(
+                matchState = matchState,
                 uiState = state,
-                players = state.activePlayers,
+                players = matchState.players,
                 selectedScheme = scheme,
                 onAction = onUiEvent
             )
@@ -110,6 +113,7 @@ fun BattleGridScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun BattleGridContent(
+    matchState: MatchState,
     uiState: BattleGridState,
     players: List<PlayerData>,
     selectedScheme: SchemeEnum,
@@ -146,7 +150,7 @@ fun BattleGridContent(
                             shape = RectangleShape
                         ) {
                             when {
-                                playerState.playerPosition.name == uiState.winnerId -> {
+                                playerState.playerPosition.name == matchState.winnerId -> {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize(),
@@ -211,7 +215,7 @@ fun BattleGridContent(
 
         AnimatedVisibility(
             modifier = Modifier.align(alignment = Alignment.TopCenter),
-            visible = uiState.showMonarchSymbol,
+            visible = matchState.showMonarchSymbol,
             enter = fadeIn(
                 animationSpec = tween(
                     durationMillis = 500

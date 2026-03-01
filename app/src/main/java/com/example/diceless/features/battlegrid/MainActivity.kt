@@ -10,6 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.diceless.features.AppViewModel
 import com.example.diceless.features.common.theme.DiceLessButtonColors
 import com.example.diceless.features.common.theme.DicelessTheme
 import com.example.diceless.navigation.NavigationRoot
@@ -24,6 +26,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            val appViewModel: AppViewModel = hiltViewModel()
+
             DicelessTheme {
                 Surface {
                     NavigationRoot()

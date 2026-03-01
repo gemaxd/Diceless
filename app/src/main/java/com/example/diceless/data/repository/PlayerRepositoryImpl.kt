@@ -17,15 +17,13 @@ class PlayerRepositoryImpl(
     private val playerDao: PlayerDao,
     private val backgroundDao: BackgroundProfileDao
 ) : PlayerRepository {
-    override fun getAllPlayers(): Flow<List<PlayerData>> {
+    override suspend fun getAllPlayers(): List<PlayerData> {
         return playerDao
             .getAllPlayers()
-            .map { list ->
-                list.map { entity ->
+            .map { entity ->
                     entity.player.toDomain().copy(
                         backgroundProfile = entity.background?.toDomain()
                     )
-                }
             }
     }
 
@@ -63,4 +61,14 @@ class PlayerRepositoryImpl(
             player = player.toEntity(player.playerPosition.name)
         )
     }
+
+    override suspend fun getPlayerSnapShot(): List<PlayerData> {
+        return playerDao.getPlayersSnapshot().map { playerEntity -> playerEntity.toDomain() }
+    }
+
+    override suspend fun insertPlayers(players: List<PlayerData>) {
+        playerDao.insertPlayers(players = players.map { playerData -> playerData.toEntity(playerData.playerPosition.name) })
+    }
+
+
 }

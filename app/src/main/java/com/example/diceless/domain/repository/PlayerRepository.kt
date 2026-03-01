@@ -6,7 +6,7 @@ import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
-    fun getAllPlayers(): Flow<List<PlayerData>>
+    suspend fun getAllPlayers(): List<PlayerData>
     suspend fun getPlayerWithBackground(playerId: String): PlayerWithBackgroundData?
     suspend fun insertPlayerWithBackground(
         player: PlayerData,
@@ -14,4 +14,6 @@ interface PlayerRepository {
     )
     suspend fun updatePlayers(players: List<PlayerData>)
     suspend fun updatePlayer(players: PlayerData)
+    suspend fun getPlayerSnapShot(): List<PlayerData>
+    suspend fun insertPlayers(players: List<PlayerData>)
 }

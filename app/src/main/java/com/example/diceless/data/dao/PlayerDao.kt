@@ -1,6 +1,7 @@
 package com.example.diceless.data.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 abstract interface PlayerDao {
 
     @Query("SELECT * FROM players")
-    fun getAllPlayers(): Flow<List<PlayerWithBackgroundEntity>>
+    suspend fun getAllPlayers(): List<PlayerWithBackgroundEntity>
 
     @Query("SELECT * FROM players WHERE id = :id")
     fun getPlayerById(id: String): Flow<PlayerEntity?>
@@ -38,4 +39,10 @@ abstract interface PlayerDao {
     suspend fun getPlayerWithBackground(
         playerId: String
     ): PlayerWithBackgroundEntity?
+
+    @Query("SELECT * FROM players")
+    suspend fun getPlayersSnapshot(): List<PlayerEntity>
+
+    @Insert
+    suspend fun insertPlayers(players: List<PlayerEntity>)
 }
