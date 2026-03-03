@@ -2,6 +2,7 @@ package com.example.diceless.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.diceless.data.entity.typeconverters.AppJson
 import com.example.diceless.domain.model.MatchData
 import kotlinx.serialization.json.Json
 
@@ -13,7 +14,8 @@ data class MatchDataEntity(
     val finishedAt: Long? = null,
     val durationMillis: Long? = null,
     val players: String,
-    val startingLife: Int
+    val startingLife: Int,
+    val gameScheme: String
 )
 
 fun MatchDataEntity.toDomain(): MatchData =
@@ -21,6 +23,7 @@ fun MatchDataEntity.toDomain(): MatchData =
         id = id,
         createdAt = createdAt,
         finishedAt = finishedAt,
-        players = Json.decodeFromString(players),
-        startingLife = startingLife
+        players = AppJson.decodeFromString(players),
+        startingLife = startingLife,
+        gameScheme = AppJson.decodeFromString(gameScheme)
     )

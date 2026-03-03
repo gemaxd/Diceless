@@ -2,36 +2,21 @@ package com.example.diceless.features.battlegrid.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.diceless.common.enums.SchemeEnum
-import com.example.diceless.common.extensions.toHistoryPlayerBasicDataList
 import com.example.diceless.common.viewmodel.BaseViewModel
-import com.example.diceless.core.utils.prepareCommanderDamage
 import com.example.diceless.data.repository.SettingsRepository
 import com.example.diceless.domain.match.reducer.MatchAction
 import com.example.diceless.domain.match.reducer.MatchState
 import com.example.diceless.domain.match.reducer.MatchStore
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CounterData
-import com.example.diceless.domain.model.GameSchemeData
 import com.example.diceless.domain.model.LifeChangeEvent
-import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.MatchHistoryChangeSource
 import com.example.diceless.domain.model.MatchHistoryRegistry
 import com.example.diceless.domain.model.PendingLifeChange
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.domain.model.getDefaultCounterData
-import com.example.diceless.domain.usecase.EndCurrentOpenMatchUseCase
-import com.example.diceless.domain.usecase.GetAllPlayersUseCase
-import com.example.diceless.domain.usecase.GetCurrentOpenMatchUseCase
-import com.example.diceless.domain.usecase.GetGameSchemeUseCase
-import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
 import com.example.diceless.domain.usecase.RegisterMatchHistoryUseCase
-import com.example.diceless.domain.usecase.RegisterMatchUseCase
-import com.example.diceless.domain.usecase.SaveGameSchemeUseCase
-import com.example.diceless.domain.usecase.UpdateMatchUseCase
 import com.example.diceless.domain.usecase.UpdatePlayerUseCase
-import com.example.diceless.domain.usecase.UpdatePlayersUseCase
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,20 +26,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BattleGridViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val getAllPlayersUseCase: GetAllPlayersUseCase,
-    private val registerMatchUseCase: RegisterMatchUseCase,
-    private val updateMatchUseCase: UpdateMatchUseCase,
-    private val fetchCurrentOpenMatchUseCase: GetCurrentOpenMatchUseCase,
-    private val endCurrentOpenMatchUseCase: EndCurrentOpenMatchUseCase,
     private val updatePlayerUseCase: UpdatePlayerUseCase,
-    private val updatePlayersUseCase: UpdatePlayersUseCase,
     private val registerMatchHistoryUseCase: RegisterMatchHistoryUseCase,
     private val matchStore: MatchStore
 ) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
@@ -65,8 +43,6 @@ class BattleGridViewModel @Inject constructor(
 
     private val lifeChangeEvents = MutableSharedFlow<LifeChangeEvent>(extraBufferCapacity = 100)
     private val pendingLifeChanges = mutableMapOf<String, PendingLifeChange>()
-    private var initialDataIsLoaded = false
-    private var matchIsStarted = false
 
     override val initialState: BattleGridState
         get() = BattleGridState()
@@ -147,10 +123,10 @@ class BattleGridViewModel @Inject constructor(
 
             is BattleGridActions.OnUpdateScheme -> {
                 viewModelScope.launch {
-                    matchStore.dispatch(MatchAction.ChangeScheme(action.schemeEnum))
+                    matchStore.dispatch(MatchAction.OnChangeScheme(action.schemeEnum))
                 }
 
-                updateGameScheme(action.schemeEnum)
+                //updateGameScheme(action.schemeEnum)
             }
 
             is BattleGridActions.OnBackgroundSelected -> {
@@ -164,136 +140,14 @@ class BattleGridViewModel @Inject constructor(
     // ---------------------------------------------------------------------------------------------
 
     private fun onInitData(){
-        initializeSchemeData()
+        initializeMatchData()
         loadSettingsFromPrefs()
-        fetchCurrentOpenMatch()
-        initialPlayerLoad()
-        observeLifeDebounce()
     }
 
-    private fun initializeSchemeData(){
-        viewModelScope.launch {
-            matchStore.dispatch(MatchAction.InitializeMatch)
-        }
-    }
-
-    private fun initialPlayerLoad() {
+    private fun initializeMatchData(){
         viewModelScope.launch {
             matchStore.dispatch(MatchAction.OnInitialPlayerLoad)
-
-//            getAllPlayersUseCase().collect { playersFromDb ->
-//                _state.update { current ->
-//                    // 1️⃣ Bootstrap inicial
-//                    if (!initialDataIsLoaded && playersFromDb.isNotEmpty()) {
-//                        initialDataIsLoaded = true
-//
-//                        matchState.value.scheme?.let { selectedScheme ->
-//                            val initialPlayers = playersFromDb
-//                                .take(selectedScheme.numbersOfPlayers)
-//                                .map { player ->
-//                                    player.copy(
-//                                        life = player.life,
-//                                        baseLife = player.baseLife,
-//                                        counters = player.counters,
-//                                        commanderDamageReceived = player.commanderDamageReceived
-//                                    )
-//                                }
-//
-//                            return@update current.copy(
-//                                activePlayers = initialPlayers,
-//                                totalPlayers = playersFromDb
-//                            )
-//                        }
-//                    }
-//
-//                    // 2️⃣ Sincronização normal (sem reset)
-//                    if (current.activePlayers.isEmpty()) {
-//                        return@update current.copy(
-//                            totalPlayers = playersFromDb
-//                        )
-//                    }
-//
-//                    val syncedPlayers = current.activePlayers.map { local ->
-//                        val persisted = playersFromDb.firstOrNull {
-//                            it.playerPosition == local.playerPosition
-//                        }
-//
-//                        persisted?.let {
-//                            local.copy(
-//                                name = it.name,
-//                                backgroundProfile = it.backgroundProfile
-//                            )
-//                        } ?: local
-//                    }
-//
-//                    updateMatchData(
-//                        matchData = _state.value.matchData.copy(
-//                            players = syncedPlayers.toHistoryPlayerBasicDataList()
-//                        )
-//                    )
-//
-//                    current.copy(
-//                        activePlayers = syncedPlayers,
-//                        totalPlayers = playersFromDb
-//                    )
-//                }
-//                matchIsStarted = true
-//            }
-        }
-    }
-
-    private var initialized = false
-
-    private fun registerMatch() {
-        viewModelScope.launch {
-            var newMatchData = MatchData(
-                players = _state.value.activePlayers.toHistoryPlayerBasicDataList(),
-                startingLife = _state.value.selectedStartingLife
-            )
-
-            val currentMatchId = registerMatchUseCase(newMatchData)
-
-            newMatchData = newMatchData.copy(id = currentMatchId)
-
-            _state.update { current ->
-                current.copy(
-                    matchData = newMatchData
-                )
-            }
-        }
-    }
-
-    private fun fetchCurrentOpenMatch(){
-        viewModelScope.launch {
-            val currentOpenMatch = fetchCurrentOpenMatchUseCase()
-            if (currentOpenMatch == null){
-                registerMatch()
-            } else {
-                val currentMatch = MatchData(
-                    id = currentOpenMatch.id,
-                    players = _state.value.activePlayers.toHistoryPlayerBasicDataList()
-                )
-
-                _state.update { current ->
-                    current.copy(
-                        matchData = currentMatch
-                    )
-                }
-            }
-        }
-    }
-
-    private fun updateMatchData(matchData: MatchData){
-        viewModelScope.launch {
-            _state.update { current ->
-                current.copy(
-                    matchData = matchData
-                )
-            }
-
-            updateMatchUseCase(
-                _state.value.matchData
-            )
+            matchStore.dispatch(MatchAction.OnFetchCurrentMatch)
         }
     }
 
@@ -343,48 +197,6 @@ class BattleGridViewModel @Inject constructor(
     private fun restartMatch() {
         viewModelScope.launch {
             matchStore.dispatch(MatchAction.RestartMatch)
-//            val restartedPlayerList = _state.value.totalPlayers
-//
-//            _state.value.selectedScheme?.let { scheme ->
-//                val updatedPlayers = restartedPlayerList.map { player ->
-//                    // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
-//                    player.copy(
-//                        life = _state.value.selectedStartingLife,
-//                        baseLife = _state.value.selectedStartingLife,
-//                        counters = getDefaultCounterData(),
-//                        commanderDamageReceived = prepareCommanderDamage(
-//                            player = player,
-//                            restartedPlayerList,
-//                            scheme.numbersOfPlayers
-//                        )
-//                    )
-//                }
-//
-//                updatePlayersUseCase(updatedPlayers)
-//
-//                val takenPlayers = updatedPlayers.take(scheme.numbersOfPlayers)
-//
-//                updateMatchData(
-//                    matchData = _state.value.matchData.copy(
-//                        players = takenPlayers.toHistoryPlayerBasicDataList()
-//                    )
-//                )
-//
-//                _state.value = _state.value.copy(
-//                    matchFinished = false,
-//                    winnerId = null,
-//                    activePlayers = takenPlayers,
-//                    selectedScheme = _state.value.selectedScheme
-//                )
-//
-//                endCurrentOpenMatchUseCase.invoke(
-//                    matchId = _state.value.matchData.id,
-//                    finishedAt = System.currentTimeMillis()
-//                )
-//
-//                fetchCurrentOpenMatch()
-//
-//            }
         }
     }
 
@@ -421,21 +233,6 @@ class BattleGridViewModel @Inject constructor(
     fun onLifeChange(player: PlayerData, amount: Int) {
         viewModelScope.launch {
             matchStore.dispatch(MatchAction.OnLifeChange(player = player, delta = amount))
-//            val updatedPlayers = _state.value.activePlayers.map {
-//                if (it.playerPosition == player.playerPosition) {
-//                    // Usando uma chave única como a posição
-//                    registerLifeChange(player = it, amount = (it.life + amount))
-//                    it.copy(life = it.life + amount)
-//                } else {
-//                    it
-//                }
-//            }
-//
-//            _state.value = _state.value.copy(activePlayers = updatedPlayers)
-//
-//            lifeChangeEvents.emit(
-//                LifeChangeEvent(player = player, delta = amount)
-//            )
         }
     }
 
@@ -664,6 +461,5 @@ class BattleGridViewModel @Inject constructor(
                 }
         }
     }
-
 }
 

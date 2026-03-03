@@ -3,28 +3,37 @@ package com.example.diceless.data.entity.typeconverters
 import androidx.room.TypeConverter
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
+import com.example.diceless.domain.model.GameSchemeData
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class PlayerConverters {
+val AppJson = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+}
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
+class PlayerConverters {
 
     @TypeConverter
     fun countersToJson(value: List<CounterData>): String =
-        json.encodeToString(value)
+        AppJson.encodeToString(value)
 
     @TypeConverter
     fun jsonToCounters(value: String): List<CounterData> =
-        json.decodeFromString(value)
+        AppJson.decodeFromString(value)
 
     @TypeConverter
     fun commanderDamageToJson(value: List<CommanderDamage>): String =
-        json.encodeToString(value)
+        AppJson.encodeToString(value)
 
     @TypeConverter
     fun jsonToCommanderDamage(value: String): List<CommanderDamage> =
-        json.decodeFromString(value)
+        AppJson.decodeFromString(value)
+
+    @TypeConverter
+    fun gameSchemeToJson(source: GameSchemeData): String = AppJson.encodeToString(source)
+
+    @TypeConverter
+    fun jsonToGameScheme(value: String): GameSchemeData =
+        AppJson.decodeFromString(value)
 }

@@ -6,16 +6,13 @@ import com.example.diceless.data.repository.ScryFallRepository
 import com.example.diceless.data.repository.ScryFallRepositoryImpl
 import com.example.diceless.data.ScryfallApi
 import com.example.diceless.data.dao.BackgroundProfileDao
-import com.example.diceless.data.dao.GameSchemeDao
 import com.example.diceless.data.dao.MatchDao
 import com.example.diceless.data.dao.MatchHistoryDao
 import com.example.diceless.data.dao.PlayerDao
-import com.example.diceless.data.repository.GameSchemeRepositoryImpl
 import com.example.diceless.data.repository.MatchDataRepositoryImpl
 import com.example.diceless.data.repository.MatchHistoryRepositoryImpl
 import com.example.diceless.data.repository.PlayerRepositoryImpl
 import com.example.diceless.data.repository.ProfileRepositoryImpl
-import com.example.diceless.domain.repository.GameSchemeRepository
 import com.example.diceless.domain.repository.MatchDataRepository
 import com.example.diceless.domain.repository.MatchHistoryRepository
 import com.example.diceless.domain.repository.PlayerRepository
@@ -51,12 +48,6 @@ object RepositoryModule {
         playerDao: PlayerDao,
         backgroundDao: BackgroundProfileDao
     ): PlayerRepository = PlayerRepositoryImpl(playerDao, backgroundDao)
-
-    @Provides
-    @Singleton
-    fun provideGameSchemeRepository(
-        gameSchemeDao: GameSchemeDao
-    ): GameSchemeRepository = GameSchemeRepositoryImpl( gameSchemeDao = gameSchemeDao)
 
     @Provides
     @Singleton

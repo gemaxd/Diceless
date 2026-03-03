@@ -93,30 +93,30 @@ fun MatchHistoryChanges(matchData: MatchData, matchHistoryRegistry: MatchHistory
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewMatchHistoryChanges(){
-    Column() {
-        MatchHistoryChanges(
-            matchData = MatchData(
-                id = 1,
-                players = listOf(
-                    HistoryPlayerBasicData(name = "Player 1", backgroundImageUri = ""),
-                    HistoryPlayerBasicData(name = "Player 2", backgroundImageUri = ""),
-                    HistoryPlayerBasicData(name = "Player 3", backgroundImageUri = ""),
-                    HistoryPlayerBasicData(name = "Player 4", backgroundImageUri = "")
-                )
-            ),
-            matchHistoryRegistry = MatchHistoryRegistry(
-                id = 1,
-                matchId = 1,
-                playerId = "PLAYER_ONE",
-                delta = 1,
-                lifeBefore = 1,
-                lifeAfter = 40,
-                timestamp = 1,
-                source = MatchHistoryChangeSource.DAMAGE
-            )
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewMatchHistoryChanges(){
+//    Column() {
+//        MatchHistoryChanges(
+//            matchData = MatchData(
+//                id = 1,
+//                players = listOf(
+//                    HistoryPlayerBasicData(name = "Player 1", backgroundImageUri = ""),
+//                    HistoryPlayerBasicData(name = "Player 2", backgroundImageUri = ""),
+//                    HistoryPlayerBasicData(name = "Player 3", backgroundImageUri = ""),
+//                    HistoryPlayerBasicData(name = "Player 4", backgroundImageUri = "")
+//                )
+//            ),
+//            matchHistoryRegistry = MatchHistoryRegistry(
+//                id = 1,
+//                matchId = 1,
+//                playerId = "PLAYER_ONE",
+//                delta = 1,
+//                lifeBefore = 1,
+//                lifeAfter = 40,
+//                timestamp = 1,
+//                source = MatchHistoryChangeSource.DAMAGE
+//            )
+//        )
+//    }
+//}

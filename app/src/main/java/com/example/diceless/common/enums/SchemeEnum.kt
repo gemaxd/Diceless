@@ -1,5 +1,8 @@
 package com.example.diceless.common.enums
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class SchemeEnum(val numbersOfPlayers: Int) {
     SOLO(numbersOfPlayers = 1),
     VERSUS_OPPOSITE(numbersOfPlayers = 2),

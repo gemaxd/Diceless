@@ -88,8 +88,8 @@ fun HistoryPlayersHeader(matchData: MatchData){
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     AsyncImage(
-                        model = player.backgroundImageUri,
-                        contentDescription = player.backgroundImageUri,
+                        model = player.backgroundProfile?.imageUri,
+                        contentDescription = player.backgroundProfile?.imageUri,
                         modifier = Modifier.matchParentSize(),
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.Center
@@ -109,30 +109,30 @@ fun HistoryPlayersHeader(matchData: MatchData){
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewMatchHistoryHeader(){
-    val matchData = MatchData(
-        id = 1,
-        players = listOf(
-            HistoryPlayerBasicData(name = "Player 1", backgroundImageUri = ""),
-            HistoryPlayerBasicData(name = "Player 2", backgroundImageUri = ""),
-            HistoryPlayerBasicData(name = "Player 3", backgroundImageUri = ""),
-            HistoryPlayerBasicData(name = "Player 4", backgroundImageUri = "")
-        )
-    )
-
-    MatchHistoryHeader(
-        modifier = Modifier
-            .background(color = colorScheme.background),
-        header = {
-            HistoryGameNameCell(matchData = matchData)
-        },
-        details = {
-            HistoryDetails(matchData)
-        },
-        append = {
-            HistoryPlayersHeader(matchData)
-        }
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewMatchHistoryHeader(){
+//    val matchData = MatchData(
+//        id = 1,
+//        players = listOf(
+//            HistoryPlayerBasicData(name = "Player 1", backgroundImageUri = ""),
+//            HistoryPlayerBasicData(name = "Player 2", backgroundImageUri = ""),
+//            HistoryPlayerBasicData(name = "Player 3", backgroundImageUri = ""),
+//            HistoryPlayerBasicData(name = "Player 4", backgroundImageUri = "")
+//        )
+//    )
+//
+//    MatchHistoryHeader(
+//        modifier = Modifier
+//            .background(color = colorScheme.background),
+//        header = {
+//            HistoryGameNameCell(matchData = matchData)
+//        },
+//        details = {
+//            HistoryDetails(matchData)
+//        },
+//        append = {
+//            HistoryPlayersHeader(matchData)
+//        }
+//    )
+//}

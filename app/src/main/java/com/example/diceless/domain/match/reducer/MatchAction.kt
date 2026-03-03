@@ -6,13 +6,23 @@ import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.PlayerData
 
 sealed interface MatchAction {
-    data object FetchCurrentOpenMatch: MatchAction
-    data class OnCurrentMatchFetched(val matchData: MatchData): MatchAction
-    data class RegisterMatch(val matchData: MatchData): MatchAction
-    data class OnMatchRegistered(val matchData: MatchData): MatchAction
+    //Busca por partida aberta
+    data object OnFetchCurrentMatch: MatchAction
+    data class CurrentMatchFetched(val matchData: MatchData): MatchAction
+
+    //Registra nova partida
+    data object OnRegisterMatch: MatchAction
+    data class MatchRegistered(val matchData: MatchData): MatchAction
+
+    //Reinicia o jogo
     data object RestartMatch: MatchAction
     data class OnMatchRestarted(val updatedPlayers: List<PlayerData>): MatchAction
-    data class ChangeScheme(val scheme: SchemeEnum) : MatchAction
+
+    //Scheme
+    data class OnChangeScheme(val scheme: SchemeEnum) : MatchAction
+    data class SchemeChanged(val updatedMatch: MatchData) : MatchAction
+    data class MatchUpdated(val updatedMatch: MatchData) : MatchAction
+
     data class OnBackgroundSelected(val player: PlayerData, val card: BackgroundProfileData) : MatchAction
     data object ToggleMonarchCounter: MatchAction
     data class OnLifeChange(val player: PlayerData, val delta: Int): MatchAction

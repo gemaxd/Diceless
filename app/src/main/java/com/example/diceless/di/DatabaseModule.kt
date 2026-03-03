@@ -3,7 +3,6 @@ package com.example.diceless.di
 import android.content.Context
 import androidx.room.Room
 import com.example.diceless.data.dao.BackgroundProfileDao
-import com.example.diceless.data.dao.GameSchemeDao
 import com.example.diceless.data.dao.MatchDao
 import com.example.diceless.data.dao.MatchHistoryDao
 import com.example.diceless.data.dao.PlayerDao
@@ -43,12 +42,6 @@ object DatabaseModule {
     @Singleton
     fun provideBackgroundProfileDao(database: AppDatabase): BackgroundProfileDao {
         return database.backgroundDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideGameSchemeDao(database: AppDatabase): GameSchemeDao {
-        return database.gameSchemeDao()
     }
 
     @Provides

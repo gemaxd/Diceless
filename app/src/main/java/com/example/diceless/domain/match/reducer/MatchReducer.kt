@@ -9,6 +9,18 @@ class MatchReducer @Inject constructor() {
     ): MatchState {
 
         return when (action) {
+            is MatchAction.CurrentMatchFetched -> {
+                state.copy(matchData = action.matchData)
+            }
+
+            is MatchAction.MatchRegistered -> {
+                state.copy(matchData = action.matchData)
+            }
+
+            is MatchAction.MatchUpdated -> {
+                state.copy(matchData = action.updatedMatch)
+            }
+
             is MatchAction.OnLifeChanged -> {
                 val updatedPlayers = state.players.map {
                     if (it.playerPosition == action.player.playerPosition) {
@@ -23,9 +35,9 @@ class MatchReducer @Inject constructor() {
                 )
             }
 
-            is MatchAction.ChangeScheme -> {
+            is MatchAction.SchemeChanged -> {
                 state.copy(
-                    scheme = action.scheme
+                    matchData = action.updatedMatch
                 )
             }
 

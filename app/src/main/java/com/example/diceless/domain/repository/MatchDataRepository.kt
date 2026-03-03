@@ -8,6 +8,6 @@ interface MatchDataRepository {
     suspend fun fetchCurrentOpenMatch(): MatchData?
     suspend fun fetchMatchById(matchId: Long): MatchData?
     suspend fun registerMatchData(matchDataEntity: MatchDataEntity): Long
-    suspend fun updateMatchDataPlayerQuantity(players: String, matchId: Long)
+    suspend fun updateMatchData(matchDataEntity: MatchDataEntity)
     suspend fun endCurrentMatch(finishedAt: Long, matchId: Long)
 }

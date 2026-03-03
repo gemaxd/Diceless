@@ -4,12 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.diceless.data.dao.BackgroundProfileDao
-import com.example.diceless.data.dao.GameSchemeDao
 import com.example.diceless.data.dao.MatchDao
 import com.example.diceless.data.dao.MatchHistoryDao
 import com.example.diceless.data.dao.PlayerDao
 import com.example.diceless.data.entity.BackgroundProfileEntity
-import com.example.diceless.data.entity.GameSchemeEntity
 import com.example.diceless.data.entity.MatchDataEntity
 import com.example.diceless.data.entity.MatchHistoryEntity
 import com.example.diceless.data.entity.PlayerEntity
@@ -21,7 +19,6 @@ import com.example.diceless.data.entity.typeconverters.PlayerConverters
     entities = [
         PlayerEntity::class,
         BackgroundProfileEntity::class,
-        GameSchemeEntity::class,
         MatchDataEntity::class,
         MatchHistoryEntity::class
     ],
@@ -38,7 +35,6 @@ import com.example.diceless.data.entity.typeconverters.PlayerConverters
 abstract class AppDatabase : RoomDatabase() {
     abstract fun playerDao(): PlayerDao
     abstract fun backgroundDao(): BackgroundProfileDao
-    abstract fun gameSchemeDao(): GameSchemeDao
     abstract fun matchDao(): MatchDao
     abstract fun matchHistoryDao(): MatchHistoryDao
 }

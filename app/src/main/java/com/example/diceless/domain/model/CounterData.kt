@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CounterData(
     val id: String,
-    val iconType: CounterIconType,
+    @Serializable val iconType: CounterIconType,
     var toggleValue: Boolean? = null,
     var value: Int? = null,
     var isSelected: Boolean = false,

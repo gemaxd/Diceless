@@ -2,7 +2,10 @@ package com.example.diceless.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Upsert
 import com.example.diceless.data.entity.MatchDataEntity
 import com.example.diceless.data.entity.relation.MatchWithHistoryChangesEntity
 import com.example.diceless.domain.HistoryPlayerBasicData
@@ -20,6 +23,9 @@ abstract interface MatchDao {
 
     @Query("SELECT * FROM match_data WHERE finishedAt IS NULL LIMIT 1")
     suspend fun fetchCurrentMatch(): MatchData?
+
+    @Update
+    suspend fun updateMatchData(match: MatchDataEntity)
 
     @Query("UPDATE match_data SET players = :players WHERE id = :matchId")
     suspend fun updateMatchPlayerQuantity(players: String, matchId: Long)
