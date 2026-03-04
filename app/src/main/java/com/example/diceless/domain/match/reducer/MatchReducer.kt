@@ -9,47 +9,13 @@ class MatchReducer @Inject constructor() {
     ): MatchState {
 
         return when (action) {
-            is MatchAction.CurrentMatchFetched -> {
-                state.copy(matchData = action.matchData)
-            }
-
-            is MatchAction.MatchRegistered -> {
-                state.copy(matchData = action.matchData)
-            }
-
             is MatchAction.MatchUpdated -> {
                 state.copy(matchData = action.updatedMatch)
             }
 
-            is MatchAction.OnLifeChanged -> {
-                val updatedPlayers = state.players.map {
-                    if (it.playerPosition == action.player.playerPosition) {
-                        it.copy(life = it.life + action.delta)
-                    } else {
-                        it
-                    }
-                }
-
-                state.copy(
-                    players = updatedPlayers
-                )
-            }
-
-            is MatchAction.SchemeChanged -> {
-                state.copy(
-                    matchData = action.updatedMatch
-                )
-            }
-
-            MatchAction.ToggleMonarchCounter -> {
+            is MatchAction.ToggleMonarchCounter -> {
                 state.copy(
                     showMonarchSymbol = !state.showMonarchSymbol
-                )
-            }
-
-            is MatchAction.SchemeLoaded -> {
-                state.copy(
-                    scheme = action.scheme
                 )
             }
 
@@ -62,12 +28,6 @@ class MatchReducer @Inject constructor() {
             is MatchAction.InitialPlayersLoaded -> {
                 state.copy(
                     players = action.players
-                )
-            }
-
-            is MatchAction.UpdateMatchState -> {
-                state.copy(
-                    matchData = action.matchData
                 )
             }
 

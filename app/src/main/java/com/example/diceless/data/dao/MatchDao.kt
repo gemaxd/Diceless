@@ -13,7 +13,7 @@ import com.example.diceless.domain.model.MatchData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract interface MatchDao {
+interface MatchDao {
 
     @Query("SELECT * FROM match_data")
     fun getAllHistories(): Flow<List<MatchWithHistoryChangesEntity>>

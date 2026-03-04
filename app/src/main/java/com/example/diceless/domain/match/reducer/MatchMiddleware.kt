@@ -1,9 +1,7 @@
 package com.example.diceless.domain.match.reducer
 
-import android.util.Log
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.core.utils.prepareCommanderDamage
-import com.example.diceless.domain.model.GameSchemeData
 import com.example.diceless.domain.model.LifeChangeEvent
 import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.MatchHistoryChangeSource
@@ -18,19 +16,18 @@ import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
 import com.example.diceless.domain.usecase.RegisterMatchHistoryUseCase
 import com.example.diceless.domain.usecase.RegisterMatchUseCase
 import com.example.diceless.domain.usecase.UpdateMatchUseCase
-import com.example.diceless.domain.usecase.UpdatePlayerUseCase
 import com.example.diceless.domain.usecase.UpdatePlayersUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MatchMiddleware @Inject constructor(
     private val insertPlayerWithBackgroundUseCase: InsertPlayerWithBackgroundUseCase,
-    private val updatePlayerUseCase: UpdatePlayerUseCase,
     private val updatePlayersUseCase: UpdatePlayersUseCase,
     private val registerMatchHistoryUseCase: RegisterMatchHistoryUseCase,
     private val getAllPlayersUseCase: GetAllPlayersUseCase,
@@ -41,20 +38,30 @@ class MatchMiddleware @Inject constructor(
 ) {
     private val lifeChangeEvents = MutableSharedFlow<LifeChangeEvent>(extraBufferCapacity = 100)
     private val pendingLifeChanges = mutableMapOf<String, PendingLifeChange>()
-    private var currentMatch: MatchData = MatchData()
-    private var totalPlayers: List<PlayerData> = emptyList()
 
     suspend fun process(
         action: MatchAction,
-        state: MatchState,
+        getState: () -> MatchState,
+        scope: CoroutineScope,
         dispatch: suspend (MatchAction) -> Unit
     ) {
 
         when (action) {
-            is MatchAction.InitializeMatch -> { }
+            is MatchAction.InitializeMatch -> {
+                scope.launch {
+                    startLifeObserver(
+                        scope = scope,
+                        getState = getState
+                    )
+                }
+            }
 
             is MatchAction.OnChangeScheme -> {
-                updateMatchScheme(action.scheme, dispatch = dispatch)
+                updateMatchScheme(
+                    state = getState.invoke(),
+                    schemeEnum = action.scheme,
+                    dispatch = dispatch
+                )
             }
 
             is MatchAction.OnBackgroundSelected -> {
@@ -64,23 +71,33 @@ class MatchMiddleware @Inject constructor(
                 )
             }
 
-            is MatchAction.ToggleMonarchCounter -> {}
             is MatchAction.OnLifeChange -> {
                 lifeChangeEvents.emit(
                     LifeChangeEvent(player = action.player, delta = action.delta)
                 )
 
-                onChangeLife(playerId = action.player.playerPosition.name, delta = action.delta, dispatch = dispatch)
+                onChangeLife(
+                    state = getState.invoke(),
+                    playerId = action.player.playerPosition.name,
+                    delta = action.delta,
+                    dispatch = dispatch
+                )
             }
 
-
+            is MatchAction.OnCommanderDamageChanged -> {
+                onCommanderDamageChange(
+                    state = getState.invoke(),
+                    receivingPlayer = action.receivingPlayer,
+                    playerName = action.playerName,
+                    amount = action.amount,
+                    dispatch = dispatch
+                )
+            }
 
             is MatchAction.OnInitialPlayerLoad -> {
-                totalPlayers = getAllPlayersUseCase()
-
                 dispatch(
                     MatchAction.InitialPlayersLoaded(
-                        players = totalPlayers
+                        players = getAllPlayersUseCase()
                     )
                 )
             }
@@ -91,19 +108,23 @@ class MatchMiddleware @Inject constructor(
                 )
 
                 dispatch(
-                    MatchAction.UpdateMatchState(action.matchData)
+                    MatchAction.MatchUpdated(action.matchData)
                 )
             }
 
             is MatchAction.RestartMatch -> {
-                restartMatch(state = state, dispatch = dispatch)
+                val currentState = getState.invoke()
+                restartMatch(state = currentState, dispatch = dispatch)
             }
 
             is MatchAction.OnFetchCurrentMatch -> {
                 val currentOpenMatch = fetchCurrentOpenMatchUseCase()
-                if (currentOpenMatch == null){
+                if (currentOpenMatch == null) {
                     dispatch(MatchAction.OnRegisterMatch)
                 } else {
+                    val currentState = getState.invoke()
+                    var currentMatch = currentState.matchData
+
                     currentMatch = currentMatch.copy(
                         id = currentOpenMatch.id,
                         players = currentOpenMatch.players,
@@ -112,32 +133,30 @@ class MatchMiddleware @Inject constructor(
                     )
 
                     dispatch(
-                        MatchAction.CurrentMatchFetched(
-                            matchData = currentMatch
+                        MatchAction.MatchUpdated(
+                            updatedMatch = currentMatch
                         )
                     )
                 }
             }
 
             is MatchAction.OnRegisterMatch -> {
-                val playersList = totalPlayers.take(currentMatch.gameScheme.schemeEnum.numbersOfPlayers)
+                val currentState = getState.invoke()
+                val playersList = currentState.players.take(
+                    currentState.matchData.gameScheme.schemeEnum.numbersOfPlayers
+                )
 
                 val newMatchData = MatchData(
-                    players = playersList.resetPlayerValues(currentMatch),
-                    startingLife = currentMatch.startingLife,
-                    gameScheme = currentMatch.gameScheme,
+                    players = playersList.resetPlayerValues(currentState.matchData),
+                    startingLife = currentState.matchData.startingLife,
+                    gameScheme = currentState.matchData.gameScheme,
                     createdAt = System.currentTimeMillis(),
                 )
 
-                val scheme = GameSchemeData()
-                Log.d("GameScheme: ", Json.encodeToString(scheme))
-
                 val currentMatchId = registerMatchUseCase(newMatchData)
 
-                currentMatch = newMatchData.copy(id = currentMatchId)
-
                 dispatch(
-                    MatchAction.MatchRegistered(currentMatch)
+                    MatchAction.MatchUpdated(newMatchData.copy(id = currentMatchId))
                 )
             }
 
@@ -146,7 +165,51 @@ class MatchMiddleware @Inject constructor(
         }
     }
 
-    private suspend fun onChangeLife(playerId: String, delta: Int, dispatch: suspend (MatchAction) -> Unit){
+    private suspend fun onCommanderDamageChange(
+        state: MatchState,
+        receivingPlayer: PlayerData, // Quem está recebendo o dano
+        playerName: String,     // O ID de quem causou o dano
+        amount: Int,
+        dispatch: suspend (MatchAction) -> Unit
+    ){
+        val updatedPlayers = state.matchData.players.map { player ->
+            if (player.name == receivingPlayer.name) {
+                val playerWithUpdatedDamage = player.copy(
+                    commanderDamageReceived = player.commanderDamageReceived.map { damageEntry ->
+                        if (damageEntry.name == playerName) {
+                            damageEntry.copy(
+                                damage = maxOf(
+                                    0,
+                                    damageEntry.damage + amount
+                                )
+                            ) // Garante que o dano não seja negativo
+                        } else {
+                            damageEntry
+                        }
+                    }.toMutableList()
+                )
+                playerWithUpdatedDamage
+            } else {
+                player
+            }
+        }
+
+        val currentMatch = state.matchData.copy(
+            players = updatedPlayers
+        )
+
+        dispatch(MatchAction.MatchUpdated(currentMatch))
+        updateMatchUseCase.invoke(currentMatch)
+    }
+
+    private suspend fun onChangeLife(
+        state: MatchState,
+        playerId: String,
+        delta: Int,
+        dispatch: suspend (MatchAction) -> Unit
+    ) {
+        var currentMatch = state.matchData
+
         val updatedPlayers = currentMatch.players.map { player ->
             if (player.playerPosition.name == playerId) {
                 player.copy(life = player.life + delta)
@@ -167,27 +230,33 @@ class MatchMiddleware @Inject constructor(
         updateMatchUseCase.invoke(currentMatch)
     }
 
-    private suspend fun updateMatchScheme(schemeEnum: SchemeEnum, dispatch: suspend (MatchAction) -> Unit){
-        val gameScheme = currentMatch.gameScheme.copy(
+    private suspend fun updateMatchScheme(
+        state: MatchState,
+        schemeEnum: SchemeEnum,
+        dispatch: suspend (MatchAction) -> Unit
+    ) {
+        val gameScheme = state.matchData.gameScheme.copy(
             schemeEnum = schemeEnum,
             schemeName = schemeEnum.name
         )
 
-        val playersList = totalPlayers.take(gameScheme.schemeEnum.numbersOfPlayers)
+        val playersList = state.players.take(gameScheme.schemeEnum.numbersOfPlayers)
 
-        currentMatch = currentMatch.copy(
-            players = playersList.resetPlayerValues(currentMatch),
-            gameScheme = gameScheme
+        val currentState = state.copy(
+            matchData = state.matchData.copy(
+                players = playersList.resetPlayerValues(state.matchData),
+                gameScheme = gameScheme
+            )
         )
 
-        updateMatchUseCase.invoke(currentMatch)
+        updateMatchUseCase.invoke(currentState.matchData)
 
         dispatch(
-            MatchAction.MatchUpdated(currentMatch)
+            MatchAction.MatchUpdated(currentState.matchData)
         )
     }
 
-    private suspend fun restartMatch(state: MatchState, dispatch: suspend (MatchAction) -> Unit){
+    private suspend fun restartMatch(state: MatchState, dispatch: suspend (MatchAction) -> Unit) {
         val updatedPlayers = state.players.map { player ->
             // ✅ Usa selectedStartingLife (que vem do SharedPreferences)
             player.copy(
@@ -246,7 +315,10 @@ class MatchMiddleware @Inject constructor(
         }
     }
 
-    private fun PlayerData.resetPlayerValues(matchData: MatchData, players: List<PlayerData>): PlayerData {
+    private fun PlayerData.resetPlayerValues(
+        matchData: MatchData,
+        players: List<PlayerData>
+    ): PlayerData {
         return PlayerData(
             playerPosition = playerPosition,
             name = name,
@@ -265,16 +337,22 @@ class MatchMiddleware @Inject constructor(
     // Observers
     //------------------------------------
     @OptIn(FlowPreview::class)
-    private suspend fun observeLifeDebounce(state: MatchState) {
+    fun startLifeObserver(
+        scope: CoroutineScope,
+        getState: () -> MatchState
+    ) {
+        scope.launch {
             lifeChangeEvents
                 .onEach { event ->
                     accumulateLifeChange(event)
                 }
                 .debounce(700)
                 .collect {
+                    val state = getState()
                     flushLifeChangesToHistory(state)
                 }
         }
+    }
 
     private fun accumulateLifeChange(event: LifeChangeEvent) {
         val playerKey = event.player.playerPosition.name

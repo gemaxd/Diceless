@@ -18,17 +18,4 @@ object DomainModule {
         return MatchState.initial()
     }
 
-    @Provides
-    fun provideMatchStore(
-        reducer: MatchReducer,
-        middleware: MatchMiddleware,
-        initialState: MatchState
-    ): MatchStore {
-        return MatchStore(
-            reducer = reducer,
-            middleware = middleware,
-            initialState = initialState
-        )
-    }
-
 }

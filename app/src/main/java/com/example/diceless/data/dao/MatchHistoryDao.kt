@@ -7,7 +7,7 @@ import com.example.diceless.data.entity.MatchDataEntity
 import com.example.diceless.data.entity.MatchHistoryEntity
 
 @Dao
-abstract interface MatchHistoryDao {
+interface MatchHistoryDao {
 
     @Insert
     suspend fun insertHistoryChange(historyRegistry: MatchHistoryEntity)

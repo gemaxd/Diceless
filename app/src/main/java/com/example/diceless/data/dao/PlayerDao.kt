@@ -10,7 +10,7 @@ import com.example.diceless.data.entity.relation.PlayerWithBackgroundEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract interface PlayerDao {
+interface PlayerDao {
 
     @Query("SELECT * FROM players")
     suspend fun getAllPlayers(): List<PlayerWithBackgroundEntity>

@@ -6,6 +6,8 @@ import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.common.viewmodel.BaseViewModel
 import com.example.diceless.data.repository.SettingsRepository
 import com.example.diceless.domain.match.reducer.MatchAction
+import com.example.diceless.domain.match.reducer.MatchMiddleware
+import com.example.diceless.domain.match.reducer.MatchReducer
 import com.example.diceless.domain.match.reducer.MatchState
 import com.example.diceless.domain.match.reducer.MatchStore
 import com.example.diceless.domain.model.BackgroundProfileData
@@ -34,8 +36,18 @@ class BattleGridViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val updatePlayerUseCase: UpdatePlayerUseCase,
     private val registerMatchHistoryUseCase: RegisterMatchHistoryUseCase,
-    private val matchStore: MatchStore
+    private val reducer: MatchReducer,
+    private val middleware: MatchMiddleware,
+    private val initialMatchState: MatchState
 ) : BaseViewModel<BattleGridActions, Unit, BattleGridState>() { //ACTION, RESULT, STATE
+
+    private val matchStore = MatchStore(
+        reducer = reducer,
+        middleware = middleware,
+        initialState = initialMatchState,
+        scope = viewModelScope
+    )
+
     private val _state = MutableStateFlow(BattleGridState())
     val state: StateFlow<BattleGridState> = _state
 
@@ -329,33 +341,13 @@ class BattleGridViewModel @Inject constructor(
         amount: Int
     ) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.activePlayers.map { player ->
-                if (player.name == receivingPlayer.name) {
-                    val playerWithUpdatedDamage = player.copy(
-                        commanderDamageReceived = player.commanderDamageReceived.map { damageEntry ->
-                            if (damageEntry.name == playerName) {
-                                damageEntry.copy(
-                                    damage = maxOf(
-                                        0,
-                                        damageEntry.damage + amount
-                                    )
-                                ) // Garante que o dano não seja negativo
-                            } else {
-                                damageEntry
-                            }
-                        }.toMutableList()
-                    )
-                    playerWithUpdatedDamage
-                } else {
-                    player
-                }
-            }
-
-            updatedPlayers.forEach {
-                updatePlayerUseCase(it)
-            }
-
-            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+            matchStore.dispatch(
+                MatchAction.OnCommanderDamageChanged(
+                    receivingPlayer = receivingPlayer,
+                    playerName = playerName,
+                    amount = amount
+                )
+            )
         }
     }
 

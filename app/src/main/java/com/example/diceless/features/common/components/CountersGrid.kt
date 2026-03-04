@@ -155,7 +155,7 @@ fun VerticalCountersGridContent(
                         thickness = 2.dp
                     )
 
-                    selectedCounters.forEach { it ->
+                    selectedCounters.forEach {
                         VerticalCounterContent(
                             counter = it,
                             rotationEnum = rotationEnum,
@@ -186,7 +186,7 @@ fun VerticalCountersGridContent(
                         Column(
                             verticalArrangement = Arrangement.Bottom
                         ) {
-                            firstHalf.forEach { it ->
+                            firstHalf.forEach {
                                 VerticalCounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -204,7 +204,7 @@ fun VerticalCountersGridContent(
                         Column(
                             verticalArrangement = Arrangement.Bottom
                         ) {
-                            secondHalf.forEach { it ->
+                            secondHalf.forEach {
                                 VerticalCounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -225,7 +225,7 @@ fun VerticalCountersGridContent(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         Column {
-                            firstHalf.forEach { it ->
+                            firstHalf.forEach {
                                 VerticalCounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -241,7 +241,7 @@ fun VerticalCountersGridContent(
                             }
                         }
                         Column {
-                            secondHalf.forEach { it ->
+                            secondHalf.forEach {
                                 VerticalCounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -268,7 +268,7 @@ fun VerticalCountersGridContent(
                         )
                     }
 
-                    selectedCounters.forEach { it ->
+                    selectedCounters.forEach {
                         VerticalCounterContent(
                             counter = it,
                             rotationEnum = rotationEnum,
@@ -423,7 +423,7 @@ fun HorizontalCountersGridContent(
                 )
 
                 if (rotationEnum == RotationEnum.NONE) {
-                    selectedCounters.forEach { it ->
+                    selectedCounters.forEach {
                         Spacer(modifier = Modifier.padding(2.dp))
                         CounterControlButton(
                             counter = it,
@@ -452,7 +452,7 @@ fun HorizontalCountersGridContent(
 
                     Column {
                         Row {
-                            firstHalf.forEach { it ->
+                            firstHalf.forEach {
                                 CounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -468,7 +468,7 @@ fun HorizontalCountersGridContent(
                             }
                         }
                         Row {
-                            secondHalf.forEach { it ->
+                            secondHalf.forEach {
                                 CounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -487,7 +487,7 @@ fun HorizontalCountersGridContent(
                 } else {
                     Column {
                         Row {
-                            firstHalf.forEach { it ->
+                            firstHalf.forEach {
                                 CounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -503,7 +503,7 @@ fun HorizontalCountersGridContent(
                             }
                         }
                         Row {
-                            secondHalf.forEach { it ->
+                            secondHalf.forEach {
                                 CounterContent(
                                     counter = it,
                                     rotationEnum = rotationEnum,
@@ -530,7 +530,7 @@ fun HorizontalCountersGridContent(
                         )
                     }
 
-                    selectedCounters.forEach { it ->
+                    selectedCounters.forEach {
                         Spacer(modifier = Modifier.padding(2.dp))
                         CounterControlButton(
                             rotationEnum= rotationEnum,
