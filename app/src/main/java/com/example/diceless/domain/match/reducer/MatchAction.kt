@@ -2,9 +2,9 @@ package com.example.diceless.domain.match.reducer
 
 import com.example.diceless.common.enums.SchemeEnum
 import com.example.diceless.domain.model.BackgroundProfileData
+import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 
 sealed interface MatchAction {
     //Busca por partida aberta
@@ -30,12 +30,19 @@ sealed interface MatchAction {
     data class InitialPlayersLoaded(
         val players: List<PlayerData>
     ): MatchAction
-    data class UpdateMatchData(
-        val matchData: MatchData
-    ): MatchAction
     data class OnCommanderDamageChanged(
         val receivingPlayer: PlayerData, // Quem está recebendo o dano
         val playerName: String,     // O ID de quem causou o dano
         val amount: Int                  // A quantidade (+1 ou -1)
     ) : MatchAction
+    data class OnCounterSelected(
+        val player: PlayerData,
+        val counter: CounterData
+    ) : MatchAction
+    data class OnChangeCounterValue(
+        val player: PlayerData,
+        val counter: CounterData,
+        val delta: Int
+    ): MatchAction
+
 }

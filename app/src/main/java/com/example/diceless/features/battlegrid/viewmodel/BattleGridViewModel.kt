@@ -137,8 +137,6 @@ class BattleGridViewModel @Inject constructor(
                 viewModelScope.launch {
                     matchStore.dispatch(MatchAction.OnChangeScheme(action.schemeEnum))
                 }
-
-                //updateGameScheme(action.schemeEnum)
             }
 
             is BattleGridActions.OnBackgroundSelected -> {
@@ -159,7 +157,6 @@ class BattleGridViewModel @Inject constructor(
     private fun initializeMatchData(){
         viewModelScope.launch {
             matchStore.dispatch(MatchAction.OnInitialPlayerLoad)
-            matchStore.dispatch(MatchAction.OnFetchCurrentMatch)
         }
     }
 
@@ -217,17 +214,12 @@ class BattleGridViewModel @Inject constructor(
         card: BackgroundProfileData
     ) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.activePlayers.map {
-                if (it.playerPosition == player.playerPosition) { // Usando uma chave única como a posição
-                    it.copy(backgroundProfile = card)
-                } else {
-                    it
-                }
-            }
-            _state.value = _state.value.copy(activePlayers = updatedPlayers)
-
-            // 2️⃣ Persiste em paralelo
-            matchStore.dispatch(MatchAction.OnBackgroundSelected(player = player, card = card))
+            matchStore.dispatch(
+                MatchAction.OnBackgroundSelected(
+                    player = player,
+                    card = card
+                )
+            )
         }
     }
 
@@ -279,27 +271,12 @@ class BattleGridViewModel @Inject constructor(
 
     private fun selectCounter(player: PlayerData, counterToToggle: CounterData) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.activePlayers.map { p ->
-                if (p.playerPosition == player.playerPosition) {
-                    // Atualiza a lista de contadores para o jogador específico
-                    val updatedCounters = p.counters.map { c ->
-                        if (c.id == counterToToggle.id) {
-                            c.copy(isSelected = !c.isSelected) // Inverte o estado de seleção
-                        } else {
-                            c
-                        }
-                    }
-                    p.copy(counters = updatedCounters)
-                } else {
-                    p
-                }
-            }
-
-            updatedPlayers.forEach {
-                updatePlayerUseCase(it)
-            }
-
-            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+            matchStore.dispatch(
+                MatchAction.OnCounterSelected(
+                    player = player,
+                    counter = counterToToggle
+                )
+            )
         }
     }
 
@@ -309,29 +286,13 @@ class BattleGridViewModel @Inject constructor(
         updateValue: Int
     ) {
         viewModelScope.launch {
-            val updatedPlayers = _state.value.activePlayers.map { p ->
-                if (p.playerPosition == player.playerPosition) {
-                    // Atualiza a lista de contadores para o jogador específico
-                    val updatedCounters = p.counters.map { c ->
-                        if (c.id == counterToToggle.id) {
-                            c.value?.let { value ->
-                                c.copy(value = value.plus(updateValue)) // Inverte o estado de seleção
-                            } ?: c
-                        } else {
-                            c
-                        }
-                    }
-                    p.copy(counters = updatedCounters)
-                } else {
-                    p
-                }
-            }
-
-            updatedPlayers.forEach {
-                updatePlayerUseCase(it)
-            }
-
-            _state.value = _state.value.copy(activePlayers = updatedPlayers)
+            matchStore.dispatch(
+                MatchAction.OnChangeCounterValue(
+                    player = player,
+                    counter = counterToToggle,
+                    delta = updateValue
+                )
+            )
         }
     }
 
