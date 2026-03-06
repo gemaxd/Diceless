@@ -14,9 +14,11 @@ import com.example.diceless.domain.model.getDefaultCounterData
 import com.example.diceless.domain.usecase.EndCurrentOpenMatchUseCase
 import com.example.diceless.domain.usecase.GetAllPlayersUseCase
 import com.example.diceless.domain.usecase.GetCurrentOpenMatchUseCase
+import com.example.diceless.domain.usecase.InsertPlayerWithBackgroundUseCase
 import com.example.diceless.domain.usecase.RegisterMatchHistoryUseCase
 import com.example.diceless.domain.usecase.RegisterMatchUseCase
 import com.example.diceless.domain.usecase.UpdateMatchUseCase
+import com.example.diceless.domain.usecase.UpdatePlayerUseCase
 import com.example.diceless.domain.usecase.UpdatePlayersUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
@@ -28,12 +30,14 @@ import javax.inject.Inject
 
 class MatchMiddleware @Inject constructor(
     private val updatePlayersUseCase: UpdatePlayersUseCase,
+    private val updatePlayerUseCase: UpdatePlayerUseCase,
     private val registerMatchHistoryUseCase: RegisterMatchHistoryUseCase,
     private val getAllPlayersUseCase: GetAllPlayersUseCase,
     private val updateMatchUseCase: UpdateMatchUseCase,
     private val endCurrentOpenMatchUseCase: EndCurrentOpenMatchUseCase,
     private val fetchCurrentOpenMatchUseCase: GetCurrentOpenMatchUseCase,
     private val registerMatchUseCase: RegisterMatchUseCase,
+    private val insertPlayerWithBackgroundUseCase: InsertPlayerWithBackgroundUseCase
 ) {
     private val lifeChangeEvents = MutableSharedFlow<LifeChangeEvent>(extraBufferCapacity = 100)
     private val pendingLifeChanges = mutableMapOf<String, PendingLifeChange>()
@@ -64,7 +68,7 @@ class MatchMiddleware @Inject constructor(
 
             is MatchAction.OnBackgroundSelected -> {
                 onBackgroundSelected(
-                    state = getState.invoke(),
+                    getState = getState,
                     player = action.player,
                     card = action.card,
                     dispatch = dispatch
@@ -179,11 +183,12 @@ class MatchMiddleware @Inject constructor(
     }
 
     private suspend fun onBackgroundSelected(
-        state: MatchState,
+        getState: () -> MatchState,
         player: PlayerData,
         card: BackgroundProfileData,
         dispatch: suspend (MatchAction) -> Unit
     ){
+        val state = getState.invoke()
         val updatedPlayers = state.matchData.players.map {
             if (it.playerPosition == player.playerPosition) { // Usando uma chave única como a posição
                 it.copy(backgroundProfile = card)
@@ -192,11 +197,31 @@ class MatchMiddleware @Inject constructor(
             }
         }
 
+        val updatedReferencePlayers = state.players.map {
+            if (it.playerPosition == player.playerPosition) { // Usando uma chave única como a posição
+                it.copy(backgroundProfile = card)
+            } else {
+                it
+            }
+        }
+
+        val updatedReferencePlayer = updatedReferencePlayers.first {
+            player.playerPosition.name == it.playerPosition.name
+        }
+
+        insertPlayerWithBackgroundUseCase(
+            updatedReferencePlayer, card
+        )
+
         val currentMatch = state.matchData.copy(
             players = updatedPlayers
         )
 
-        updateMatch(match = currentMatch, dispatch = dispatch)
+        updateMatch(
+            match = currentMatch,
+            dispatch = dispatch,
+            players = updatedReferencePlayers
+        )
     }
 
     private suspend fun onCounterValueChange(
@@ -410,6 +435,7 @@ class MatchMiddleware @Inject constructor(
             life = matchData.startingLife,
             baseLife = matchData.startingLife,
             counters = getDefaultCounterData(),
+            backgroundProfile = this.backgroundProfile,
             commanderDamageReceived = prepareCommanderDamage(
                 player = this,
                 players = players,
@@ -459,10 +485,11 @@ class MatchMiddleware @Inject constructor(
 
     private suspend fun updateMatch(
         match: MatchData,
+        players: List<PlayerData>? = null,
         dispatch: suspend (MatchAction) -> Unit
     ) {
+        dispatch(MatchAction.MatchUpdated(match, players = players))
         updateMatchUseCase(match)
-        dispatch(MatchAction.MatchUpdated(match))
     }
 
 }

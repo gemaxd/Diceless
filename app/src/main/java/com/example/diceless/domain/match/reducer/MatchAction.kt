@@ -19,7 +19,8 @@ sealed interface MatchAction {
 
     //Scheme
     data class OnChangeScheme(val scheme: SchemeEnum) : MatchAction
-    data class MatchUpdated(val updatedMatch: MatchData) : MatchAction
+    data class MatchUpdated(val updatedMatch: MatchData, val players: List<PlayerData>? = null) : MatchAction
+    data class StateUpdate(val state: MatchState) : MatchAction
 
     data class OnBackgroundSelected(val player: PlayerData, val card: BackgroundProfileData) : MatchAction
     data object ToggleMonarchCounter: MatchAction

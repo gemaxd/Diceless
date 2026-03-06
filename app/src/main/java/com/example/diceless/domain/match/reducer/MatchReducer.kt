@@ -10,7 +10,10 @@ class MatchReducer @Inject constructor() {
 
         return when (action) {
             is MatchAction.MatchUpdated -> {
-                state.copy(matchData = action.updatedMatch)
+                state.copy(
+                    matchData = action.updatedMatch,
+                    players = action.players ?: state.players
+                )
             }
 
             is MatchAction.ToggleMonarchCounter -> {
@@ -36,6 +39,10 @@ class MatchReducer @Inject constructor() {
                     players = action.updatedPlayers,
                     winnerId = null
                 )
+            }
+
+            is MatchAction.StateUpdate -> {
+                action.state
             }
 
             else -> state
