@@ -125,8 +125,7 @@ fun BattleGridContent(
     var currentSheet by remember { mutableStateOf<BattleGridSheetState>(BattleGridSheetState.None) }
 
     BoxWithConstraints(
-        modifier = Modifier
-            .statusBarsPadding(),
+        modifier = Modifier,
         contentAlignment = Alignment.Center
     ) {
         val maxHeight = maxHeight
@@ -134,6 +133,7 @@ fun BattleGridContent(
         AnimatedContent(targetState = selectedScheme){ scheme ->
             Box(
                 modifier = Modifier.fillMaxSize()
+                    .statusBarsPadding()
             ) {
                 players.forEachIndexed { index, playerState ->
                     val orientation =
@@ -227,7 +227,7 @@ fun BattleGridContent(
         }
 
         MiddleMenuComponent(
-            uiState = uiState,
+            uiState = matchState,
             expanded = expandedMiddleMenu,
             onUiEvent = onAction,
             onToggle = { expandedMiddleMenu = !expandedMiddleMenu },

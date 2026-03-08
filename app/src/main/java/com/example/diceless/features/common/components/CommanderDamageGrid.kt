@@ -1,10 +1,13 @@
 package com.example.diceless.features.common.components
 
+import android.R.attr.rotation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,12 +23,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.diceless.common.enums.PositionEnum
 import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
+import com.example.diceless.common.style.DiceLessTextStyle.CellLargeValue
+import com.example.diceless.common.style.DiceLessTextStyle.CellValue
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.PlayerData
@@ -82,6 +89,8 @@ fun CommanderDamageGrid(
                 Row {
                     playerData.commanderDamageReceived.forEach { cmd ->
                         CommanderDamageControlCell(
+                            modifier = Modifier.weight(1f),
+                            cmd.backgroundProfile,
                             playerData = playerData,
                             rotationEnum = rotationEnum,
                             cmdDamage = cmd,
@@ -96,17 +105,19 @@ fun CommanderDamageGrid(
                     modifier = Modifier.then(
                         other = if (rotationEnum == RotationEnum.RIGHT) {
                             Modifier
-                                .padding(start = 25.dp)
+                                .padding(start = 25.dp, top = 8.dp, bottom = 8.dp)
                                 .align(Alignment.CenterStart)
                         } else {
                             Modifier
-                                .padding(end = 25.dp)
+                                .padding(end = 25.dp, top = 8.dp, bottom = 8.dp)
                                 .align(Alignment.CenterEnd)
                         }
                     )
                 ) {
                     playerData.commanderDamageReceived.filterNot{ it.name == playerData.name }.forEach { cmd ->
                         CommanderDamageControlCell(
+                            modifier = Modifier.weight(1f),
+                            cmd.backgroundProfile,
                             playerData = playerData,
                             rotationEnum = rotationEnum,
                             cmdDamage = cmd,
@@ -121,30 +132,45 @@ fun CommanderDamageGrid(
 
 @Composable
 fun CommanderDamageControlCell(
+    modifier: Modifier = Modifier,
+    backgroundProfileData: BackgroundProfileData? = null,
     playerData: PlayerData,
     rotationEnum: RotationEnum,
     cmdDamage: CommanderDamage,
     onAction: (BattleGridActions) -> Unit
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .then(
                 if (rotationEnum.isVerticalRotated()) {
                     Modifier
-                        .vertical()
+                        .vertical().fillMaxSize(0.7f)
                 } else {
                     Modifier
                 }
             )
             .rotate(rotationEnum.degrees)
-            .padding(4.dp),
+            .padding(vertical = 12.dp, horizontal = 8.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         ),
-        shape = RoundedCornerShape(50)
+        shape = RoundedCornerShape(15)
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(text = cmdDamage.damage.toString())
+            backgroundProfileData?.let { bg ->
+                AsyncImage(
+                    alpha = 0.5f,
+                    model = bg.imageUri,
+                    contentDescription = bg.cardName,
+                    contentScale = ContentScale.FillWidth,
+                    alignment = Alignment.TopStart
+                )
+            }
+
+            Text(
+                text = cmdDamage.damage.toString(),
+                style = CellLargeValue
+            )
 
             Column {
                 IconButton(

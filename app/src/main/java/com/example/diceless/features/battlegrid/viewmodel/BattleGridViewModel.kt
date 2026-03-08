@@ -156,6 +156,7 @@ class BattleGridViewModel @Inject constructor(
 
     private fun initializeMatchData(){
         viewModelScope.launch {
+            matchStore.dispatch(MatchAction.InitializeMatch)
             matchStore.dispatch(MatchAction.OnInitialPlayerLoad)
         }
     }

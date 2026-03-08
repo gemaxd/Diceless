@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.diceless.common.enums.MenuItemEnum
 import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.match.reducer.MatchState
 import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiddleMenuComponent(
-    uiState: BattleGridState,
+    uiState: MatchState,
     onUiEvent: (BattleGridActions) -> Unit,
     expanded: Boolean,
     onToggle: () -> Unit,
@@ -32,7 +33,7 @@ fun MiddleMenuComponent(
     val scope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (uiState.selectedScheme != SchemeEnum.SOLO){
+        if (uiState.matchData.gameScheme.schemeEnum != SchemeEnum.SOLO){
             MiddleMenu(
                 modifier = Modifier.align(Alignment.Center),
                 expanded = expanded,

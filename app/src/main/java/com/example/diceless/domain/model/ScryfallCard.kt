@@ -48,6 +48,7 @@ data class ImageUris(
 
 fun ScryfallCard.toBackgroundProfile() : BackgroundProfileData =
     BackgroundProfileData(
+        id = this.imageUris.artCrop,
         cardName = this.name,
         imageUri = this.imageUris.artCrop
     )

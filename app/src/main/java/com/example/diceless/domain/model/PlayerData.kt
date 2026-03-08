@@ -46,5 +46,5 @@ fun PlayerData.toEntity(id: String) = PlayerEntity(
     name = name,
     counters = Json.encodeToString(counters),
     commanderDamageReceived = Json.encodeToString(commanderDamageReceived),
-    backgroundProfileId = backgroundProfile?.imageUri
+    backgroundProfileId = backgroundProfile?.id
 )

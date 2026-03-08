@@ -1,6 +1,7 @@
 package com.example.diceless.data.entity.typeconverters
 
 import androidx.room.TypeConverter
+import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.GameSchemeData
@@ -35,5 +36,12 @@ class PlayerConverters {
 
     @TypeConverter
     fun jsonToGameScheme(value: String): GameSchemeData =
+        AppJson.decodeFromString(value)
+
+    @TypeConverter
+    fun backgroundProfileToJson(source: BackgroundProfileData): String = AppJson.encodeToString(source)
+
+    @TypeConverter
+    fun jsonToBackgroundProfile(value: String): BackgroundProfileData =
         AppJson.decodeFromString(value)
 }

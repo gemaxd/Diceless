@@ -10,7 +10,7 @@ class InsertPlayerWithBackgroundUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         player: PlayerData,
-        background: BackgroundProfileData?
+        background: BackgroundProfileData
     ) {
         repository.insertPlayerWithBackground(player.copy(backgroundProfile = background), background)
     }

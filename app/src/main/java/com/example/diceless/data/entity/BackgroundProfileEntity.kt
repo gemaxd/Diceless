@@ -7,13 +7,14 @@ import com.example.diceless.domain.model.BackgroundProfileData
 @Entity(tableName = "background_profiles")
 data class BackgroundProfileEntity(
     @PrimaryKey
-    val imageUri: String,                    // url da imagem (ou path local)
     val id: String,
-    val cardName: String?,
-    val backgroundColor: String
+    val imageUri: String,
+    val cardName: String,
+    val backgroundColor: Long
 )
 
 fun BackgroundProfileEntity.toDomain() = BackgroundProfileData(
+    id = id,
     cardName = cardName,
     imageUri = imageUri,
     backgroundColor = backgroundColor

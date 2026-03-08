@@ -29,6 +29,7 @@ import com.example.diceless.common.enums.RotationEnum
 import com.example.diceless.common.extensions.vertical
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
+import com.example.diceless.domain.model.randomColor
 import com.example.diceless.presentation.battlegrid.components.button.CounterPill
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 
@@ -49,9 +50,9 @@ fun LifeGrid(
                     .fillMaxSize(),
             ) {
                 AsyncImage(
+                    modifier = Modifier.fillMaxSize(),
                     model = playerData.backgroundProfile?.imageUri,
                     contentDescription = playerData.backgroundProfile?.cardName,
-                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center
                 )
@@ -63,7 +64,9 @@ fun LifeGrid(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
                                     Color.Black.copy(alpha = 1f),
-                                    Color.Transparent,
+                                    if(playerData.backgroundProfile?.imageUri.isNullOrEmpty()){
+                                        Color(playerData.backgroundProfile?.backgroundColor ?: randomColor())
+                                    } else Color.Transparent,
                                     Color.Black.copy(alpha = 1f)
                                 ),
                                 startY = 0f,
@@ -145,7 +148,9 @@ fun LifeGrid(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
                                     Color.Black.copy(alpha = 0.7f),
-                                    Color.Transparent,
+                                    if(playerData.backgroundProfile?.imageUri.isNullOrEmpty()){
+                                        Color(playerData.backgroundProfile?.backgroundColor ?: randomColor())
+                                    } else Color.Transparent,
                                     Color.Black.copy(alpha = 0.7f)
                                 ),
                                 startY = 0f,
@@ -230,7 +235,9 @@ fun LifeGrid(
                             brush = Brush.horizontalGradient(
                                 colors = listOf(
                                     Color.Black.copy(alpha = 0.7f),
-                                    Color.Transparent,
+                                    if(playerData.backgroundProfile?.imageUri.isNullOrEmpty()){
+                                        Color(playerData.backgroundProfile?.backgroundColor ?: randomColor())
+                                    } else Color.Transparent,
                                     Color.Black.copy(alpha = 0.7f)
                                 ),
                                 startX = 0f,
@@ -298,7 +305,9 @@ fun LifeGrid(
                             brush = Brush.horizontalGradient(
                                 colors = listOf(
                                     Color.Black.copy(alpha = 0.7f),
-                                    Color.Transparent,
+                                    if(playerData.backgroundProfile?.imageUri.isNullOrEmpty()){
+                                        Color(playerData.backgroundProfile?.backgroundColor ?: randomColor())
+                                    } else Color.Transparent,
                                     Color.Black.copy(alpha = 0.7f)
                                 ),
                                 startX = 0f,

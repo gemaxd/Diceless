@@ -13,6 +13,6 @@ fun prepareCommanderDamage(
             players.take(numberOfPlayers).filter { it.name != player.name }
 
         return opponents.map {
-            CommanderDamage(name = it.name, damage = 0)
+            CommanderDamage(name = it.name, damage = 0, backgroundProfile = it.backgroundProfile)
         }.toMutableList()
     }

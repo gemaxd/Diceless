@@ -20,6 +20,13 @@ object DiceLessTextStyle {
         letterSpacing = (-0.5).sp
     )
 
+    val CellLargeValue = TextStyle(
+        fontFamily = BarlowFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        letterSpacing = (-0.5).sp
+    )
+
     val ButtonText = TextStyle(
         fontFamily = BarlowFont,
         fontWeight = FontWeight.Bold,

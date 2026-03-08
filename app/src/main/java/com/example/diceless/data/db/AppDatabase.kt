@@ -22,7 +22,7 @@ import com.example.diceless.data.entity.typeconverters.PlayerConverters
         MatchDataEntity::class,
         MatchHistoryEntity::class
     ],
-    version = 1,           // comece com 1; incremente quando mudar schema
+    version = 2,           // comece com 1; incremente quando mudar schema
     exportSchema = false   // pode ativar depois se quiser schema exportado
 )
 

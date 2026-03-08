@@ -13,7 +13,7 @@ data class PlayerWithBackgroundEntity(
 
     @Relation(
         parentColumn = "backgroundProfileId",
-        entityColumn = "imageUri"
+        entityColumn = "id"
     )
     val background: BackgroundProfileEntity?
 )
