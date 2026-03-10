@@ -364,6 +364,7 @@ class MatchMiddleware @Inject constructor(
         )
 
         updateMatch(match = currentState.matchData, dispatch = dispatch)
+        dispatch(MatchAction.RestartMatch)
     }
 
     private suspend fun restartMatch(state: MatchState, dispatch: suspend (MatchAction) -> Unit) {
