@@ -1,6 +1,6 @@
 package com.example.diceless.domain.model
 
-import com.example.diceless.data.entity.MatchHistoryEntity
+import com.example.diceless.data.datasource.local.entity.MatchHistoryEntity
 
 data class MatchHistoryRegistry(
     val id: Long = 0L,

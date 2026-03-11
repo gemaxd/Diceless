@@ -7,13 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.diceless.common.enums.MenuItemEnum
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.MenuItemEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import com.example.diceless.domain.match.reducer.MatchState
 import com.example.diceless.domain.model.MenuItem
 import com.example.diceless.domain.model.extension.getIconButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
-import com.example.diceless.features.battlegrid.mvi.BattleGridState
 import com.example.diceless.presentation.battlegrid.components.MiddleMenu
 import com.example.diceless.presentation.battlegrid.components.MiddleMenuSolo
 import kotlinx.coroutines.launch

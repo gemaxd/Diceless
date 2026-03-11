@@ -37,10 +37,10 @@ import com.example.diceless.features.profile.list.mvi.ProfileImageListActions
 import com.example.diceless.features.profile.list.mvi.ProfileImageListResult
 import com.example.diceless.features.profile.list.mvi.ProfileListState
 import com.example.diceless.features.profile.list.presentation.viewmodel.ProfileImageListViewModel
-import com.example.diceless.navigation.LocalNavigator
-import com.example.diceless.navigation.RESULT_CARD_SELECTED
-import com.example.diceless.navigation.RESULT_PLAYER_USED
-import com.example.diceless.navigation.ResultStore
+import com.example.diceless.app.navigation.LocalNavigator
+import com.example.diceless.app.navigation.RESULT_CARD_SELECTED
+import com.example.diceless.app.navigation.RESULT_PLAYER_USED
+import com.example.diceless.app.navigation.ResultStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

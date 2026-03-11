@@ -41,11 +41,11 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.diceless.R
-import com.example.diceless.common.enums.RotationEnum
-import com.example.diceless.common.enums.SchemeEnum
-import com.example.diceless.common.extensions.paddingBasedOnPosition
-import com.example.diceless.common.extensions.vertical
-import com.example.diceless.common.utils.getCorrectOrientation
+import com.example.diceless.domain.model.enums.RotationEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
+import com.example.diceless.core.extensions.paddingBasedOnPosition
+import com.example.diceless.core.extensions.vertical
+import com.example.diceless.core.utils.getCorrectOrientation
 import com.example.diceless.domain.match.reducer.MatchState
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.PlayerData
@@ -58,9 +58,9 @@ import com.example.diceless.features.middlemenu.mvi.BattleGridSheetState
 import com.example.diceless.features.middlemenu.presentation.components.BattleGridBottomSheetsHost
 import com.example.diceless.features.middlemenu.presentation.components.BottomMenuComponent
 import com.example.diceless.features.middlemenu.presentation.components.MiddleMenuComponent
-import com.example.diceless.navigation.RESULT_CARD_SELECTED
-import com.example.diceless.navigation.RESULT_PLAYER_USED
-import com.example.diceless.navigation.ResultStore
+import com.example.diceless.app.navigation.RESULT_CARD_SELECTED
+import com.example.diceless.app.navigation.RESULT_PLAYER_USED
+import com.example.diceless.app.navigation.ResultStore
 import com.example.diceless.presentation.battlegrid.components.draggable.MonarchDraggableComponent
 import java.util.Locale
 

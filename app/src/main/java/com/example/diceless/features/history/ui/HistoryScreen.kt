@@ -36,8 +36,8 @@ import com.example.diceless.features.history.components.HistoryResumedRow
 import com.example.diceless.features.history.components.MatchHistoryHeader
 import com.example.diceless.features.history.mvi.MatchHistoryActions
 import com.example.diceless.features.history.mvi.MatchHistoryState
-import com.example.diceless.navigation.LocalNavigator
-import com.example.diceless.navigation.Route
+import com.example.diceless.app.navigation.LocalNavigator
+import com.example.diceless.app.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

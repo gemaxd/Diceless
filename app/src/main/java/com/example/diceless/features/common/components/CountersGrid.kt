@@ -1,6 +1,5 @@
 package com.example.diceless.features.common.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,15 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.diceless.common.enums.RotationEnum
-import com.example.diceless.common.extensions.vertical
+import com.example.diceless.domain.model.enums.RotationEnum
+import com.example.diceless.core.extensions.vertical
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.toImageVector
 import com.example.diceless.presentation.battlegrid.components.button.CounterControlButton
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
-import com.example.diceless.navigation.LocalNavigator
-import com.example.diceless.navigation.Route
+import com.example.diceless.app.navigation.LocalNavigator
+import com.example.diceless.app.navigation.Route
 
 @Composable
 fun CountersGrid(

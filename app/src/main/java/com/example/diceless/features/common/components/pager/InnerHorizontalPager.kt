@@ -6,7 +6,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.diceless.common.enums.RotationEnum
+import com.example.diceless.domain.model.enums.RotationEnum
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.common.components.CommanderDamageGrid

@@ -1,6 +1,6 @@
 package com.example.diceless.domain.model
 
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import kotlinx.serialization.Serializable
 
 @Serializable

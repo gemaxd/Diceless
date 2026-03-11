@@ -1,6 +1,6 @@
 package com.example.diceless.core.utils
 
-import com.example.diceless.common.enums.PositionEnum
+import com.example.diceless.domain.model.enums.PositionEnum
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.randomColor

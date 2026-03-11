@@ -1,15 +1,12 @@
 package com.example.diceless.features.profile.search.screens
 
-import android.R.attr.visible
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,21 +16,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -54,24 +46,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.diceless.common.enums.PositionEnum
-import com.example.diceless.domain.model.CardFace
-import com.example.diceless.domain.model.ImageUris
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.toBackgroundProfile
 import com.example.diceless.features.profile.search.mvi.ProfileImageSearchListState
 import com.example.diceless.features.profile.search.mvi.ProfileImageSearchActions
 import com.example.diceless.features.profile.search.viewmodel.ProfileImageSearchViewModel
-import com.example.diceless.navigation.LocalNavigator
-import com.example.diceless.navigation.RESULT_CARD_SELECTED
-import com.example.diceless.navigation.RESULT_PLAYER_USED
-import com.example.diceless.navigation.ResultStore
-import kotlinx.coroutines.delay
+import com.example.diceless.app.navigation.LocalNavigator
+import com.example.diceless.app.navigation.RESULT_CARD_SELECTED
+import com.example.diceless.app.navigation.RESULT_PLAYER_USED
+import com.example.diceless.app.navigation.ResultStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

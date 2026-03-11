@@ -1,7 +1,7 @@
 package com.example.diceless.features.history.ui
 
 import androidx.lifecycle.viewModelScope
-import com.example.diceless.common.viewmodel.BaseViewModel
+import com.example.diceless.core.viewmodel.BaseViewModel
 import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.usecase.FetchAllMatchUseCase
 import com.example.diceless.domain.usecase.FetchMatchHistoriesUseCase

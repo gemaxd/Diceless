@@ -1,6 +1,6 @@
 package com.example.diceless.domain
 
-import com.example.diceless.common.enums.PositionEnum
+import com.example.diceless.domain.model.enums.PositionEnum
 import kotlinx.serialization.Serializable
 
 @Serializable

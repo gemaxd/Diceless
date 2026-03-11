@@ -1,6 +1,6 @@
 package com.example.diceless.domain.model
 
-import com.example.diceless.data.entity.BackgroundProfileEntity
+import com.example.diceless.data.datasource.local.entity.BackgroundProfileEntity
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 

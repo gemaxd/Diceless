@@ -26,7 +26,7 @@ import com.example.diceless.features.history.components.MatchHistoryContent
 import com.example.diceless.features.history.components.MatchHistorySkeleton
 import com.example.diceless.features.history.mvi.MatchHistoryActions
 import com.example.diceless.features.history.mvi.MatchHistoryState
-import com.example.diceless.navigation.LocalNavigator
+import com.example.diceless.app.navigation.LocalNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

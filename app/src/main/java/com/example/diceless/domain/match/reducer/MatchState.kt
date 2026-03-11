@@ -1,6 +1,6 @@
 package com.example.diceless.domain.match.reducer
 
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.PlayerData
 

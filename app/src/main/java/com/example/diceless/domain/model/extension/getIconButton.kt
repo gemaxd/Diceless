@@ -11,7 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.diceless.common.enums.MenuItemEnum
+import com.example.diceless.domain.model.enums.MenuItemEnum
 import com.example.diceless.domain.model.MenuItem
 
 fun MenuItem.getIconButton() =

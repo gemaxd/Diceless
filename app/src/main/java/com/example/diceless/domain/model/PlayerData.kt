@@ -1,12 +1,10 @@
 package com.example.diceless.domain.model
 
-import com.example.diceless.common.enums.PositionEnum
-import com.example.diceless.data.entity.PlayerEntity
+import com.example.diceless.domain.model.enums.PositionEnum
+import com.example.diceless.data.datasource.local.entity.PlayerEntity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.io.Serial
-import java.util.UUID
 
 @Serializable
 data class PlayerData(

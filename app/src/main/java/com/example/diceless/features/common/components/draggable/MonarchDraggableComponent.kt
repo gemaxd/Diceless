@@ -23,7 +23,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import com.example.diceless.domain.model.extension.calculateRotation
 import kotlin.math.roundToInt
 

@@ -1,7 +1,7 @@
 package com.example.diceless.data.repository
 
-import com.example.diceless.data.dao.BackgroundProfileDao
-import com.example.diceless.data.entity.toDomain
+import com.example.diceless.data.datasource.local.dao.BackgroundProfileDao
+import com.example.diceless.data.datasource.local.entity.toDomain
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.repository.ProfileRepository
 

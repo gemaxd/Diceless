@@ -2,8 +2,8 @@ package com.example.diceless.features.battlegrid.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.diceless.common.enums.SchemeEnum
-import com.example.diceless.common.viewmodel.BaseViewModel
+import com.example.diceless.domain.model.enums.SchemeEnum
+import com.example.diceless.core.viewmodel.BaseViewModel
 import com.example.diceless.data.repository.SettingsRepository
 import com.example.diceless.domain.match.reducer.MatchAction
 import com.example.diceless.domain.match.reducer.MatchMiddleware

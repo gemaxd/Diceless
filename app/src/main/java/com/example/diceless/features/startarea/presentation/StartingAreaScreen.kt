@@ -3,7 +3,6 @@ package com.example.diceless.features.startarea.presentation
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,9 +21,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -32,32 +29,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices.PIXEL_9
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.diceless.R
-import com.example.diceless.common.style.DiceLessTextStyle.BodyText
-import com.example.diceless.common.style.DiceLessTextStyle.ButtonText
-import com.example.diceless.common.style.DiceLessTextStyle.LogoText
-import com.example.diceless.common.style.DiceLessTextStyle.TitleText
+import com.example.diceless.core.designsystem.text.DiceLessTextStyle.BodyText
+import com.example.diceless.core.designsystem.text.DiceLessTextStyle.ButtonText
+import com.example.diceless.core.designsystem.text.DiceLessTextStyle.LogoText
+import com.example.diceless.core.designsystem.text.DiceLessTextStyle.TitleText
 import com.example.diceless.features.common.components.DiceLessBackground
 import com.example.diceless.features.common.theme.DiceBlack
-import com.example.diceless.features.common.theme.DiceDarkSurface
-import com.example.diceless.features.common.theme.DiceGraphite
-import com.example.diceless.features.common.theme.DiceYellow
 import com.example.diceless.features.common.theme.DiceYellowDark
 import com.example.diceless.features.common.theme.Purple80
 import com.example.diceless.features.common.theme.PurpleGrey40
-import com.example.diceless.navigation.LocalNavigator
-import com.example.diceless.navigation.ResultStore
-import com.example.diceless.navigation.Route
+import com.example.diceless.app.navigation.LocalNavigator
+import com.example.diceless.app.navigation.ResultStore
+import com.example.diceless.app.navigation.Route
 
 @Composable
 fun StartingAreaScreen(

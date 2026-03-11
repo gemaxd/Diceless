@@ -4,8 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import coil.util.CoilUtils.result
-import com.example.diceless.common.viewmodel.BaseViewModel
+import com.example.diceless.core.viewmodel.BaseViewModel
 import com.example.diceless.domain.model.PlayerData
 import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.toBackgroundProfile

@@ -1,10 +1,9 @@
 package com.example.diceless.features.battlegrid.mvi
 
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CounterData
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.domain.model.ScryfallCard
 
 sealed class BattleGridActions {
     data object OnInit: BattleGridActions()

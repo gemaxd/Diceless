@@ -1,20 +1,16 @@
 package com.example.diceless.data.repository
 
 import android.util.Log
-import com.example.diceless.data.ScryfallApi
+import com.example.diceless.data.datasource.remote.api.ScryfallApi
 import com.example.diceless.domain.model.ScryfallCard
+import com.example.diceless.domain.repository.ScryfallRepository
 import retrofit2.HttpException
 import java.net.URLEncoder
 import javax.inject.Inject
 
-interface ScryFallRepository {
-    suspend fun searchCards(query: String): Result<List<ScryfallCard>>
-    suspend fun searchForAllPrints(printsSearchUri: String): Result<List<ScryfallCard>>
-}
-
-class ScryFallRepositoryImpl @Inject constructor(
+class ScryfallRepositoryImpl @Inject constructor(
     private val api: ScryfallApi
-): ScryFallRepository {
+): ScryfallRepository {
     private val cache = mutableMapOf<String, List<ScryfallCard>>()
 
     override suspend fun searchCards(query: String): Result<List<ScryfallCard>> {

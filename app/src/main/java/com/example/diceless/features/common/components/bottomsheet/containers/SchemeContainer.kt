@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
 import com.example.diceless.features.battlegrid.viewmodel.BattleGridViewModel
 import com.example.diceless.presentation.battlegrid.components.groupcomponent.scheme.SchemeView

@@ -1,7 +1,6 @@
 package com.example.diceless.domain.repository
 
-import com.example.diceless.data.entity.MatchDataEntity
-import com.example.diceless.domain.HistoryPlayerBasicData
+import com.example.diceless.data.datasource.local.entity.MatchDataEntity
 import com.example.diceless.domain.model.MatchData
 
 interface MatchDataRepository {

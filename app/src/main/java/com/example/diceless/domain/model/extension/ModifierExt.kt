@@ -1,6 +1,6 @@
 package com.example.diceless.domain.model.extension
 
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import com.example.diceless.presentation.battlegrid.components.draggable.RotationZone
 import com.example.diceless.presentation.battlegrid.components.draggable.toDegrees
 

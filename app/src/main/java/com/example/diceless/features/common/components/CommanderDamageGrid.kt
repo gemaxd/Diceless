@@ -25,10 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.diceless.common.enums.PositionEnum
-import com.example.diceless.common.enums.RotationEnum
-import com.example.diceless.common.extensions.vertical
-import com.example.diceless.common.style.DiceLessTextStyle.CellLargeValue
+import com.example.diceless.domain.model.enums.PositionEnum
+import com.example.diceless.domain.model.enums.RotationEnum
+import com.example.diceless.core.extensions.vertical
+import com.example.diceless.core.designsystem.text.DiceLessTextStyle.CellLargeValue
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.CommanderDamage
 import com.example.diceless.domain.model.PlayerData

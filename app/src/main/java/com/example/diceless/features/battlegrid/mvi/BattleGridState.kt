@@ -1,6 +1,6 @@
 package com.example.diceless.features.battlegrid.mvi
 
-import com.example.diceless.common.enums.SchemeEnum
+import com.example.diceless.domain.model.enums.SchemeEnum
 import com.example.diceless.domain.model.MatchData
 import com.example.diceless.domain.model.PlayerData
 

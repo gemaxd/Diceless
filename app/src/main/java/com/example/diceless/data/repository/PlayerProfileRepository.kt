@@ -1,15 +1,10 @@
 package com.example.diceless.data.repository
 
-import com.example.diceless.data.dao.PlayerDao
+import com.example.diceless.data.datasource.local.dao.PlayerDao
 import com.example.diceless.domain.model.BackgroundProfileData
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.domain.model.ScryfallCard
 import com.example.diceless.domain.model.toEntity
-import java.util.UUID
-
-interface PlayerProfileRepository {
-    suspend fun savePlayer(player: PlayerData, backgroundProfileId: BackgroundProfileData? = null)
-}
+import com.example.diceless.domain.repository.PlayerProfileRepository
 
 class PlayerProfileRepositoryImpl (val playerDao: PlayerDao) : PlayerProfileRepository {
 

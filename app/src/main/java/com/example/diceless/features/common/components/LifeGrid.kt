@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,16 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.Coil
 import coil.compose.AsyncImage
-import coil.compose.EqualityDelegate
-import com.example.diceless.common.enums.RotationEnum
-import com.example.diceless.common.extensions.vertical
+import com.example.diceless.domain.model.enums.RotationEnum
+import com.example.diceless.core.extensions.vertical
 import com.example.diceless.domain.model.PlayerData
-import com.example.diceless.domain.model.aggregated.PlayerWithBackgroundData
 import com.example.diceless.domain.model.randomColor
 import com.example.diceless.presentation.battlegrid.components.button.CounterPill
 import com.example.diceless.features.battlegrid.mvi.BattleGridActions
