@@ -1,0 +1,18 @@
+package com.manarimjesse.diceless.features.battlegrid.mvi
+
+import com.manarimjesse.diceless.domain.model.enums.SchemeEnum
+import com.manarimjesse.diceless.domain.model.MatchData
+import com.manarimjesse.diceless.domain.model.PlayerData
+
+data class BattleGridState(
+    val matchFinished: Boolean = false,
+    val winnerId: String? = null,
+    val activePlayers: List<PlayerData> = emptyList(),
+    val totalPlayers: List<PlayerData> = emptyList(),
+    var selectedScheme: SchemeEnum? = null,
+    val selectedStartingLife: Int = 40,
+    val matchData: MatchData = MatchData(),
+    val allowSelfCommanderDamage: Boolean = false,
+    val linkCommanderDamageToLife: Boolean = false,
+    var showMonarchSymbol: Boolean = false
+)

@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.diceless"
+    namespace = "com.manarimjesse.diceless"
     compileSdk = 36
 
     defaultConfig {

@@ -1,0 +1,48 @@
+package com.manarimjesse.diceless.data.datasource.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Upsert
+import com.manarimjesse.diceless.data.datasource.local.entity.PlayerEntity
+import com.manarimjesse.diceless.data.datasource.local.entity.relation.PlayerWithBackgroundEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface PlayerDao {
+
+    @Query("SELECT * FROM players")
+    suspend fun getAllPlayers(): List<PlayerWithBackgroundEntity>
+
+    @Query("SELECT * FROM players WHERE id = :id")
+    fun getPlayerById(id: String): Flow<PlayerEntity?>
+
+    @Upsert
+    suspend fun upsertPlayer(player: PlayerEntity)
+
+    @Upsert
+    suspend fun upsertPlayers(players: List<PlayerEntity>)
+
+    @Query("UPDATE players SET backgroundProfileId = :imageUri WHERE id = :playerId")
+    suspend fun updateBackgroundProfileId(playerId: String, imageUri: String?)
+
+    @Query("UPDATE players SET life = :actualLife WHERE id = :playerId")
+    suspend fun updatePlayerLife(playerId: String, actualLife: Int)
+
+    // Se quiser deletar
+    @Query("DELETE FROM players WHERE id = :id")
+    suspend fun deletePlayer(id: String)
+
+    @Transaction
+    @Query("SELECT * FROM players WHERE id = :playerId")
+    suspend fun getPlayerWithBackground(
+        playerId: String
+    ): PlayerWithBackgroundEntity?
+
+    @Query("SELECT * FROM players")
+    suspend fun getPlayersSnapshot(): List<PlayerEntity>
+
+    @Insert
+    suspend fun insertPlayers(players: List<PlayerEntity>)
+}

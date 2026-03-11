@@ -1,0 +1,72 @@
+package com.manarimjesse.diceless.data.repository
+
+import com.manarimjesse.diceless.data.datasource.local.dao.BackgroundProfileDao
+import com.manarimjesse.diceless.data.datasource.local.dao.PlayerDao
+import com.manarimjesse.diceless.data.datasource.local.entity.relation.toDomain
+import com.manarimjesse.diceless.data.datasource.local.entity.toDomain
+import com.manarimjesse.diceless.domain.model.BackgroundProfileData
+import com.manarimjesse.diceless.domain.model.PlayerData
+import com.manarimjesse.diceless.domain.model.aggregated.PlayerWithBackgroundData
+import com.manarimjesse.diceless.domain.model.toEntity
+import com.manarimjesse.diceless.domain.repository.PlayerRepository
+import kotlin.collections.map
+
+class PlayerRepositoryImpl(
+    private val playerDao: PlayerDao,
+    private val backgroundDao: BackgroundProfileDao
+) : PlayerRepository {
+    override suspend fun getAllPlayers(): List<PlayerData> {
+        return playerDao
+            .getAllPlayers()
+            .map { entity ->
+                    entity.player.toDomain().copy(
+                        backgroundProfile = entity.background?.toDomain()
+                    )
+            }
+    }
+
+    override suspend fun getPlayerWithBackground(
+        playerId: String
+    ): PlayerWithBackgroundData? {
+        return playerDao
+            .getPlayerWithBackground(playerId)
+            ?.toDomain()
+    }
+
+    override suspend fun insertPlayerWithBackground(
+        player: PlayerData,
+        background: BackgroundProfileData?
+    ) {
+        background?.let {
+            backgroundDao.upsertBackground(it.toEntity())
+        }
+
+        playerDao.upsertPlayer(
+            player.toEntity(
+                id = player.playerPosition.name
+            )
+        )
+    }
+
+    override suspend fun updatePlayers(players: List<PlayerData>) {
+        playerDao.upsertPlayers(
+            players = players.map { it.toEntity(it.playerPosition.name) }
+        )
+    }
+
+    override suspend fun updatePlayer(player: PlayerData) {
+        playerDao.upsertPlayer(
+            player = player.toEntity(player.playerPosition.name)
+        )
+    }
+
+    override suspend fun getPlayerSnapShot(): List<PlayerData> {
+        return playerDao.getPlayersSnapshot().map { playerEntity -> playerEntity.toDomain() }
+    }
+
+    override suspend fun insertPlayers(players: List<PlayerData>) {
+        playerDao.insertPlayers(players = players.map { playerData -> playerData.toEntity(playerData.playerPosition.name) })
+    }
+
+
+}

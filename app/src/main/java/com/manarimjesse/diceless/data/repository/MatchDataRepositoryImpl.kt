@@ -1,0 +1,35 @@
+package com.manarimjesse.diceless.data.repository
+
+import com.manarimjesse.diceless.data.datasource.local.dao.MatchDao
+import com.manarimjesse.diceless.data.datasource.local.entity.MatchDataEntity
+import com.manarimjesse.diceless.domain.model.MatchData
+import com.manarimjesse.diceless.domain.repository.MatchDataRepository
+import javax.inject.Inject
+
+class MatchDataRepositoryImpl @Inject constructor(
+    val matchDao: MatchDao
+): MatchDataRepository {
+    override suspend fun fetchCurrentOpenMatch(): MatchData? {
+        return matchDao.fetchCurrentMatch()
+    }
+
+    override suspend fun fetchMatchById(matchId: Long): MatchData? {
+        return matchDao.fetchMatchById(matchId = matchId)
+    }
+
+    override suspend fun registerMatchData(matchDataEntity: MatchDataEntity): Long {
+        return matchDao.insertMatch(matchDataEntity)
+    }
+
+    override suspend fun updateMatchData(matchDataEntity: MatchDataEntity) {
+        matchDao.updateMatchData(match = matchDataEntity)
+    }
+
+    override suspend fun endCurrentMatch(
+        finishedAt: Long,
+        matchId: Long
+    ) {
+        matchDao.endCurrentMatch(finishedAt, matchId)
+    }
+
+}

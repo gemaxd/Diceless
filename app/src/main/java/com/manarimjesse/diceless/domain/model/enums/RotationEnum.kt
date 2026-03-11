@@ -1,0 +1,12 @@
+package com.manarimjesse.diceless.domain.model.enums
+
+enum class RotationEnum(val degrees: Float) {
+    NONE(degrees = 0f),
+    INVERTED(degrees = 180f),
+    RIGHT(degrees = 90f),
+    LEFT(degrees = 270f);
+
+    fun isVerticalRotated() : Boolean {
+        return this == RIGHT || this == LEFT
+    }
+}
